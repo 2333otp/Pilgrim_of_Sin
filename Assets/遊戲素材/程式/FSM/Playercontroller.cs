@@ -63,7 +63,13 @@ namespace PilgrimOfSin.StateMachine
         // ── 內部計時器 ───────────────────────────────────────────────
         private float _specialCdTimer;
         private float _weaponSwitchCdTimer;
-        private bool _isInvincible;
+
+        // 無敵來源分開管理，避免善區免疫與翻滾/特殊招式無敵幀互相覆蓋
+        // 只有兩個都是 false 才真正可以受傷
+        private bool _isFrameInvincible; // 翻滾、特殊招式、武器切換等動作幀無敵
+        private bool _isSafeZoneImmune;  // 玩家在善區內的環境免疫
+
+        private bool IsInvincible => _isFrameInvincible || _isSafeZoneImmune;
 
         // ── 動畫事件（各狀態訂閱） ───────────────────────────────────
         public event Action OnAttackAnimationEnd;
@@ -165,7 +171,7 @@ namespace PilgrimOfSin.StateMachine
 
         public void TakeDamage(float amount)
         {
-            if (_isInvincible) return;
+            if (IsInvincible) return;
             CurrentHp = Mathf.Max(0f, CurrentHp - amount);
 
             if (CurrentHp <= 0f)
@@ -179,7 +185,18 @@ namespace PilgrimOfSin.StateMachine
             _stateMachine.RequestTransition(PlayerStateType.Damaged);
         }
 
-        public void SetInvincible(bool value) => _isInvincible = value;
+        /// <summary>
+        /// 動作幀無敵（翻滾、特殊招式、武器切換）。
+        /// 由各狀態的 Enter/Exit 呼叫。
+        /// </summary>
+        public void SetInvincible(bool value) => _isFrameInvincible = value;
+
+        /// <summary>
+        /// 善區環境免疫（癡 Boss 的 SafeZone）。
+        /// 由 SafeZone.OnTriggerEnter/Exit 呼叫。
+        /// 與動作幀無敵完全獨立，不會互相覆蓋。
+        /// </summary>
+        public void SetSafeZoneImmune(bool value) => _isSafeZoneImmune = value;
 
         public void StartSpecialSkillCooldown() => _specialCdTimer = _specialCd;
         public void StartWeaponSwitchCooldown() => _weaponSwitchCdTimer = _weaponSwitchCd;
