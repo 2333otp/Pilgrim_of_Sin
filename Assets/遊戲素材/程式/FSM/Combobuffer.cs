@@ -15,6 +15,11 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>目前記錄的連段索引（1~4），0 表示尚未判斷或輸入不符。</summary>
         public int CurrentComboIndex { get; private set; }
 
+        /// <summary>最後一個輸入，供攻擊狀態判斷下一步。</summary>
+        public AttackInput LastInput => _inputs.Count > 0
+                                        ? _inputs[_inputs.Count - 1]
+                                        : AttackInput.Light;
+
         private const float InputWindow = 0.5f; // 秒：連段輸入窗口
         private float _windowTimer;
 
@@ -36,6 +41,8 @@ namespace PilgrimOfSin.StateMachine
         {
             comboIndex = EvaluateCombo();
             CurrentComboIndex = comboIndex;
+            if (comboIndex > 0)
+                UnityEngine.Debug.Log($"[ComboBuffer] 觸發 Combo{comboIndex}，輸入序列：{string.Join(",", _inputs)}");
             return comboIndex > 0;
         }
 

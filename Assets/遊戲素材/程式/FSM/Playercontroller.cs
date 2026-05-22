@@ -21,6 +21,7 @@ namespace PilgrimOfSin.StateMachine
         public Animator Animator { get; private set; }
         public PlayerInputReader InputReader { get; private set; }
         public Rigidbody Rb { get; private set; }
+        public PlayerCombat Combat { get; private set; }
 
         // 簡寫（各狀態常用）
         public PlayerInputReader Input => InputReader;
@@ -45,9 +46,12 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _specialCd = 5f;
         [SerializeField] private float _weaponSwitchCd = 1.5f;
 
+        [Header("Ground Check")]
+        [SerializeField] private float _groundCheckDistance = 0.6f; // 依角色高度調整
+        [SerializeField] private LayerMask _groundLayer = ~0;       // 預設偵測所有層
+
         public float StunDuration => _stunDuration;
 
-        // ── 狀態 ─────────────────────────────────────────────────────
         public float CurrentHp { get; private set; }
         public bool IsDead => CurrentHp <= 0f;
         public bool IsGrounded { get; private set; }
@@ -88,6 +92,7 @@ namespace PilgrimOfSin.StateMachine
             Animator = GetComponent<Animator>();
             InputReader = GetComponent<PlayerInputReader>();
             Rb = GetComponent<Rigidbody>();
+            Combat = GetComponent<PlayerCombat>();
 
             ComboBuffer = new ComboBuffer();
             CurrentHp = _maxHp;
@@ -203,14 +208,16 @@ namespace PilgrimOfSin.StateMachine
 
         public void RequestWeaponSwitch(int index)
         {
-            if (_weaponSwitchCdTimer > 0f) return; // CD 未到
+            if (_weaponSwitchCdTimer > 0f) return;          // CD 未到
+            if (Combat != null && Combat.CurrentWeaponIndex == index) return; // 已是當前武器
             PendingWeaponIndex = index;
             _stateMachine.RequestTransition(PlayerStateType.WeaponSwitch);
         }
 
         public void ApplyWeaponSwitch()
         {
-            // TODO: 實際切換武器資料
+            if (Combat != null)
+                Combat.CurrentWeaponIndex = PendingWeaponIndex;
             Debug.Log($"[Player] 切換至武器 {PendingWeaponIndex}");
         }
 
@@ -242,7 +249,8 @@ namespace PilgrimOfSin.StateMachine
 
         private void UpdateGroundCheck()
         {
-            IsGrounded = Physics.Raycast(transform.position, Vector3.down, 0.2f);
+            IsGrounded = Physics.Raycast(transform.position, Vector3.down,
+                                         _groundCheckDistance, _groundLayer);
             IsFalling = !IsGrounded && Rb.linearVelocity.y < -0.1f;
         }
     }

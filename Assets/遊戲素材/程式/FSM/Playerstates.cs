@@ -83,7 +83,11 @@ namespace PilgrimOfSin.StateMachine
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
             // 切換武器
-            if (Input.WeaponSwitchPressed) { RequestTransition(PlayerStateType.WeaponSwitch); return; }
+            if (Input.WeaponSwitchPressed)
+            {
+                Player.RequestWeaponSwitch(Input.WeaponSwitchIndex);
+                return;
+            }
             // 跳躍
             if (Input.JumpPressed) { RequestTransition(PlayerStateType.Jump); return; }
             // 翻滾
@@ -122,7 +126,7 @@ namespace PilgrimOfSin.StateMachine
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
-            if (Input.WeaponSwitchPressed) { RequestTransition(PlayerStateType.WeaponSwitch); return; }
+            if (Input.WeaponSwitchPressed) { Player.RequestWeaponSwitch(Input.WeaponSwitchIndex); return; }
             if (Input.JumpPressed) { RequestTransition(PlayerStateType.Jump); return; }
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
@@ -167,6 +171,7 @@ namespace PilgrimOfSin.StateMachine
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
+            if (Input.WeaponSwitchPressed) { Player.RequestWeaponSwitch(Input.WeaponSwitchIndex); return; }
             if (Input.JumpPressed) { RequestTransition(PlayerStateType.Jump); return; }
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
@@ -187,26 +192,34 @@ namespace PilgrimOfSin.StateMachine
     {
         public override PlayerStateType StateType => PlayerStateType.Jump;
 
+        private float _airTime; // 起跳後已經過的時間
+        private const float MinAirTime = 0.15f; // 至少滯空這麼久才判斷落地
+
         public JumpState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
+            _airTime = 0f;
             PlayAnimation("Jump");
             Player.ApplyJumpForce();
         }
 
         public override void Update(float dt)
         {
+            _airTime += dt;
+
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
-            // 特殊招式可打斷跳躍（優先1 < 3）
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
-            // 空中攻擊
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
             if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
-            // 頂點後轉 Fall
+
+            // MinAirTime 內不判斷落地，避免起跳第一幀就被 IsGrounded 拉回
+            if (_airTime < MinAirTime) return;
+
             if (Player.IsFalling) { RequestTransition(PlayerStateType.Fall); return; }
+            if (Player.IsGrounded) { RequestTransition(PlayerStateType.Idle); return; } // 矮跳直接落地
         }
 
         public override void FixedUpdate(float fdt)
@@ -283,48 +296,76 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.LightAttack;
 
         private bool _animDone;
+        private float _timer;
+        private bool _nextInputBuffered; // 動畫中提前輸入的緩衝
+
+        [UnityEngine.Header("Temp - 無動畫時使用")]
+        private const float FallbackDuration = 0.6f;
 
         public LightAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
+            _timer = FallbackDuration;
+            _nextInputBuffered = false;
             PlayAnimation("LightAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
+            Player.Combat?.StartLightAttack();
+            Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
         }
 
         public override void Update(float dt)
         {
+            Player.ComboBuffer.Tick(dt);
+
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
-            // 特殊招式打斷普攻（最高優先）
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
-            if (!_animDone) return;
 
-            // 動畫結束後接下一個輸入
-            if (Input.HeavyAttackPressed)
+            // 動畫進行中：提前記錄下一個輸入
+            if (!_animDone)
             {
-                // 查詢連段緩衝器
-                if (Player.ComboBuffer.TryGetCombo(out var comboType))
-                    RequestTransition(PlayerStateType.ComboAttack);
-                else
-                    RequestTransition(PlayerStateType.HeavyAttack);
+                _timer -= dt;
+                if (Input.HeavyAttackPressed)
+                {
+                    Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Heavy);
+                    _nextInputBuffered = true;
+                }
+                else if (Input.LightAttackPressed)
+                {
+                    Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
+                    _nextInputBuffered = true;
+                }
+                if (_timer <= 0f) _animDone = true;
+                else return;
+            }
+
+            // 動畫結束：判斷是否觸發連段
+            if (Player.ComboBuffer.TryGetCombo(out _))
+            {
+                RequestTransition(PlayerStateType.ComboAttack);
                 return;
             }
-            if (Input.LightAttackPressed)
+            if (_nextInputBuffered)
             {
-                if (Player.ComboBuffer.TryGetCombo(out _))
-                    RequestTransition(PlayerStateType.ComboAttack);
-                else
-                    RequestTransition(PlayerStateType.LightAttack); // 可連續施放
+                // 有輸入但不符合連段 → 執行對應攻擊
+                var lastInput = Player.ComboBuffer.LastInput;
+                Player.ComboBuffer.Reset();
+                RequestTransition(lastInput == ComboBuffer.AttackInput.Heavy
+                    ? PlayerStateType.HeavyAttack
+                    : PlayerStateType.LightAttack);
                 return;
             }
             RequestTransition(PlayerStateType.Idle);
         }
 
         public override void Exit()
-            => Player.OnAttackAnimationEnd -= HandleAnimEnd;
+        {
+            Player.OnAttackAnimationEnd -= HandleAnimEnd;
+            Player.Combat?.EndAttack();
+        }
 
         private void HandleAnimEnd() => _animDone = true;
     }
@@ -337,36 +378,71 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.HeavyAttack;
 
         private bool _animDone;
+        private float _timer;
+        private bool _nextInputBuffered;
+        private const float FallbackDuration = 0.6f;
 
         public HeavyAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
+            _timer = FallbackDuration;
+            _nextInputBuffered = false;
             PlayAnimation("HeavyAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
+            Player.Combat?.StartHeavyAttack();
+            Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Heavy);
         }
 
         public override void Update(float dt)
         {
+            Player.ComboBuffer.Tick(dt);
+
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
-            if (!_animDone) return;
+
+            if (!_animDone)
+            {
+                _timer -= dt;
+                if (Input.HeavyAttackPressed)
+                {
+                    Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Heavy);
+                    _nextInputBuffered = true;
+                }
+                else if (Input.LightAttackPressed)
+                {
+                    Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
+                    _nextInputBuffered = true;
+                }
+                if (_timer <= 0f) _animDone = true;
+                else return;
+            }
 
             if (Player.ComboBuffer.TryGetCombo(out _))
             {
                 RequestTransition(PlayerStateType.ComboAttack);
                 return;
             }
-            if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
-            if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
+            if (_nextInputBuffered)
+            {
+                var lastInput = Player.ComboBuffer.LastInput;
+                Player.ComboBuffer.Reset();
+                RequestTransition(lastInput == ComboBuffer.AttackInput.Heavy
+                    ? PlayerStateType.HeavyAttack
+                    : PlayerStateType.LightAttack);
+                return;
+            }
             RequestTransition(PlayerStateType.Idle);
         }
 
         public override void Exit()
-            => Player.OnAttackAnimationEnd -= HandleAnimEnd;
+        {
+            Player.OnAttackAnimationEnd -= HandleAnimEnd;
+            Player.Combat?.EndAttack();
+        }
 
         private void HandleAnimEnd() => _animDone = true;
     }
@@ -379,26 +455,34 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.ComboAttack;
 
         private bool _animDone;
+        private float _timer;
+        private const float FallbackDuration = 0.8f;
 
         public ComboAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
+            _timer = FallbackDuration;
             int comboIndex = Player.ComboBuffer.CurrentComboIndex;
             PlayAnimation($"Combo{comboIndex}");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
+            Player.Combat?.StartComboAttack(comboIndex);
         }
 
         public override void Update(float dt)
         {
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
-            // 特殊招式可打斷連段
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
-            // 被打斷（Damaged 狀態由受傷系統透過 ForceTransition 觸發）
-            if (!_animDone) return;
+
+            if (!_animDone)
+            {
+                _timer -= dt;
+                if (_timer <= 0f) _animDone = true;
+                else return;
+            }
 
             Player.ComboBuffer.Reset();
             RequestTransition(PlayerStateType.Idle);
@@ -408,10 +492,12 @@ namespace PilgrimOfSin.StateMachine
         {
             Player.OnAttackAnimationEnd -= HandleAnimEnd;
             Player.ComboBuffer.Reset();
+            Player.Combat?.EndAttack();
         }
 
         private void HandleAnimEnd() => _animDone = true;
     }
+
 
     // ════════════════════════════════════════════════════════════════
     //  SpecialSkillState  （有無敵幀，大部分幀，末尾幾幀無）
@@ -421,34 +507,49 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.SpecialSkill;
 
         private float _timer;
+        private bool _animDone;
+        private const float FallbackDuration = 1.2f; // 無動畫時的招式持續時間
+        private const float InvincibleEndPercent = 0.8f; // 前80%有無敵幀
 
         public SpecialSkillState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _timer = 0f;
+            _animDone = false;
             Player.SetInvincible(true);
             PlayAnimation("SpecialSkill");
             Player.OnSpecialSkillAnimationEnd += HandleAnimEnd;
+            Player.Combat?.StartSpecialAttack();
         }
 
         public override void Update(float dt)
         {
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
+
             _timer += dt;
-            // 末尾幾幀移除無敵（在 PlayerController 中由動畫事件觸發）
+
+            // 前80%有無敵，後20%移除（模擬末尾幾幀無無敵）
+            if (_timer >= FallbackDuration * InvincibleEndPercent)
+                Player.SetInvincible(false);
+
+            if (!_animDone && _timer >= FallbackDuration)
+                _animDone = true;
+
+            if (_animDone)
+                RequestTransition(PlayerStateType.SpecialSkillCooldown);
         }
 
         public override void Exit()
         {
             Player.SetInvincible(false);
             Player.OnSpecialSkillAnimationEnd -= HandleAnimEnd;
+            Player.Combat?.EndAttack();
             Player.StartSpecialSkillCooldown();
         }
 
-        private void HandleAnimEnd()
-            => RequestTransition(PlayerStateType.SpecialSkillCooldown);
+        private void HandleAnimEnd() => _animDone = true;
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -472,29 +573,38 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.WeaponSwitch;
 
         private bool _animDone;
+        private float _timer;
+        private const float FallbackDuration = 0.5f;
 
         public WeaponSwitchState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
+            _timer = FallbackDuration;
             int weaponIndex = Player.PendingWeaponIndex;
             PlayAnimation($"WeaponSwitch_{weaponIndex}");
             Player.OnWeaponSwitchAnimationEnd += HandleAnimEnd;
-            // 動畫中武器切換輸入無效（由狀態機本身攔截）
+            Player.SetInvincible(true);
         }
 
         public override void Update(float dt)
         {
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
-            // 動畫中忽略 WeaponSwitch 輸入（優先級系統會攔截）
-            if (!_animDone) return;
+
+            if (!_animDone)
+            {
+                _timer -= dt;
+                if (_timer <= 0f) _animDone = true;
+                else return;
+            }
             RequestTransition(PlayerStateType.Idle);
         }
 
         public override void Exit()
         {
+            Player.SetInvincible(false);
             Player.OnWeaponSwitchAnimationEnd -= HandleAnimEnd;
             Player.ApplyWeaponSwitch();
             Player.StartWeaponSwitchCooldown();

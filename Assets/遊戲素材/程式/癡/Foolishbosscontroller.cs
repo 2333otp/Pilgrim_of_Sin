@@ -11,7 +11,7 @@ namespace PilgrimOfSin.StateMachine
     /// 惡區大小隨 Boss HP 線性縮小（HP百分比 = 惡區百分比）。
     /// </summary>
     [RequireComponent(typeof(Animator))]
-    public class FoolishBossController : MonoBehaviour
+    public class FoolishBossController : MonoBehaviour, IDamageable
     {
         // ── References ───────────────────────────────────────────────
         [Header("References")]

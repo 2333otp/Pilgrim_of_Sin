@@ -12,7 +12,7 @@ namespace PilgrimOfSin.StateMachine
     ///   - 持有所有 Inspector 可調數值
     /// </summary>
     [RequireComponent(typeof(Animator))]
-    public class GreedBossController : MonoBehaviour
+    public class GreedBossController : MonoBehaviour, IDamageable
     {
         // ── References ───────────────────────────────────────────────
         [Header("References")]

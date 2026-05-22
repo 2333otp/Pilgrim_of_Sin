@@ -4,14 +4,15 @@ using UnityEngine.InputSystem;
 namespace PilgrimOfSin.StateMachine
 {
     /// <summary>
-    /// 封裝 Input System 輸入，供各狀態讀取。
+    /// 新版 Input System（Send Messages 模式）的輸入讀取器。
+    /// PlayerInput 組件會自動呼叫 On{ActionName} 方法。
     /// </summary>
     public class PlayerInputReader : MonoBehaviour
     {
         // ── 移動 ─────────────────────────────────────────────────────
         public Vector2 MoveInput { get; private set; }
 
-        // ── 攻擊 ─────────────────────────────────────────────────────
+        // ── 攻擊（每幀只有按下那幀為 true） ──────────────────────────
         public bool LightAttackPressed { get; private set; }
         public bool HeavyAttackPressed { get; private set; }
         public bool SpecialPressed { get; private set; }
@@ -19,49 +20,78 @@ namespace PilgrimOfSin.StateMachine
         // ── 動作 ─────────────────────────────────────────────────────
         public bool JumpPressed { get; private set; }
         public bool RollPressed { get; private set; }
-        public bool InteractPressed { get; private set; } // 保留，互動補回時使用
 
-        // ── 武器 ─────────────────────────────────────────────────────
+        // ── 武器切換 ─────────────────────────────────────────────────
         public bool WeaponSwitchPressed { get; private set; }
-        public int WeaponSwitchIndex { get; private set; } // 1~4
+        public int WeaponSwitchIndex { get; private set; }
 
         // ── 系統 ─────────────────────────────────────────────────────
         public bool PausePressed { get; private set; }
         public bool LockOnPressed { get; private set; }
+        public bool LockOnSwitchPressed { get; private set; }   // 鎖定切換（P 鍵）
+        public bool InteractPressed { get; private set; }
 
-        // ── Input Actions（請在 Inspector 中連結） ───────────────────
-        [SerializeField] private InputActionReference _moveAction;
-        [SerializeField] private InputActionReference _lightAttackAction;
-        [SerializeField] private InputActionReference _heavyAttackAction;
-        [SerializeField] private InputActionReference _specialAction;
-        [SerializeField] private InputActionReference _jumpAction;
-        [SerializeField] private InputActionReference _rollAction;
-        [SerializeField] private InputActionReference _interactAction;
-        [SerializeField] private InputActionReference _pauseAction;
-        [SerializeField] private InputActionReference _lockOnAction;
-        [SerializeField] private InputActionReference _weapon1Action;
-        [SerializeField] private InputActionReference _weapon2Action;
-        [SerializeField] private InputActionReference _weapon3Action;
-        [SerializeField] private InputActionReference _weapon4Action;
-
-        private void Update()
+        // ── 每幀結束清除一次性按鍵 ───────────────────────────────────
+        private void LateUpdate()
         {
-            MoveInput = _moveAction?.action.ReadValue<Vector2>() ?? Vector2.zero;
-            LightAttackPressed = _lightAttackAction?.action.WasPressedThisFrame() ?? false;
-            HeavyAttackPressed = _heavyAttackAction?.action.WasPressedThisFrame() ?? false;
-            SpecialPressed = _specialAction?.action.WasPressedThisFrame() ?? false;
-            JumpPressed = _jumpAction?.action.WasPressedThisFrame() ?? false;
-            RollPressed = _rollAction?.action.WasPressedThisFrame() ?? false;
-            InteractPressed = _interactAction?.action.WasPressedThisFrame() ?? false;
-            PausePressed = _pauseAction?.action.WasPressedThisFrame() ?? false;
-            LockOnPressed = _lockOnAction?.action.WasPressedThisFrame() ?? false;
-
-            // 武器切換（1~4）
+            LightAttackPressed = false;
+            HeavyAttackPressed = false;
+            SpecialPressed = false;
+            JumpPressed = false;
+            RollPressed = false;
             WeaponSwitchPressed = false;
-            if (_weapon1Action?.action.WasPressedThisFrame() ?? false) { WeaponSwitchPressed = true; WeaponSwitchIndex = 1; }
-            else if (_weapon2Action?.action.WasPressedThisFrame() ?? false) { WeaponSwitchPressed = true; WeaponSwitchIndex = 2; }
-            else if (_weapon3Action?.action.WasPressedThisFrame() ?? false) { WeaponSwitchPressed = true; WeaponSwitchIndex = 3; }
-            else if (_weapon4Action?.action.WasPressedThisFrame() ?? false) { WeaponSwitchPressed = true; WeaponSwitchIndex = 4; }
+            PausePressed = false;
+            LockOnPressed = false;
+            LockOnSwitchPressed = false;
+            InteractPressed = false;
         }
+
+        // ── Send Messages 回呼（PlayerInput 自動呼叫） ───────────────
+
+        private void OnMove(InputValue value)
+            => MoveInput = value.Get<Vector2>();
+
+        private void OnJump(InputValue value)
+        { if (value.isPressed) JumpPressed = true; }
+
+        private void OnRoll(InputValue value)
+        { if (value.isPressed) RollPressed = true; }
+
+        private void OnLightAttack(InputValue value)
+        { if (value.isPressed) LightAttackPressed = true; }
+
+        // 注意：企劃書 LightAttack 打錯成 LightAttackk，Action 名稱要跟 Asset 一致
+        private void OnLightAttackk(InputValue value)
+        { if (value.isPressed) LightAttackPressed = true; }
+
+        private void OnHeavyAttack(InputValue value)
+        { if (value.isPressed) HeavyAttackPressed = true; }
+
+        private void OnSpecial(InputValue value)
+        { if (value.isPressed) SpecialPressed = true; }
+
+        private void OnWeaponSwitch1(InputValue value)
+        { if (value.isPressed) { WeaponSwitchPressed = true; WeaponSwitchIndex = 1; } }
+
+        private void OnWeaponSwitch2(InputValue value)
+        { if (value.isPressed) { WeaponSwitchPressed = true; WeaponSwitchIndex = 2; } }
+
+        private void OnWeaponSwitch3(InputValue value)
+        { if (value.isPressed) { WeaponSwitchPressed = true; WeaponSwitchIndex = 3; } }
+
+        private void OnWeaponSwitch4(InputValue value)
+        { if (value.isPressed) { WeaponSwitchPressed = true; WeaponSwitchIndex = 4; } }
+
+        private void OnPause(InputValue value)
+        { if (value.isPressed) PausePressed = true; }
+
+        private void OnLockOn(InputValue value)
+        { if (value.isPressed) LockOnPressed = true; }
+
+        private void OnLockOnSwitch(InputValue value)
+        { if (value.isPressed) LockOnSwitchPressed = true; }
+
+        private void OnInteract(InputValue value)
+        { if (value.isPressed) InteractPressed = true; }
     }
 }
