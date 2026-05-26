@@ -1,57 +1,66 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
 namespace PilgrimOfSin.StateMachine
 {
     /// <summary>
-    /// Cinemachine 3.x 鏡頭控制器。
-    /// - Q：鎖定 / 解除鎖定最近敵人
-    /// - P：切換鎖定目標（依距離循環，全切一輪後重置，死亡自動順延）
-    /// - R：重置鏡頭方向（非鎖定時有效）
+    /// 純程式碼鏡頭控制器（不依賴 Cinemachine）。
+    /// 非鎖定：鏡頭在玩家正後方，滑鼠旋轉，以玩家為中心。
+    /// 鎖定：鏡頭自動轉向讓敵人出現在畫面中央，玩家置中。
+    /// Q：鎖定 / 解除。P：切換目標。R：重置鏡頭方向。
     /// </summary>
     public class CameraController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private CinemachineCamera _cinemachineCamera;
         [SerializeField] private Transform _player;
-        [SerializeField] private Transform _lockOnTarget;   // 空 GameObject 當中點錨點
         [SerializeField] private PlayerInputReader _input;
+        [SerializeField] private Camera _camera;
+
+        [Header("Camera Position")]
+        [SerializeField] private float _distance = 5f;    // 玩家後方距離
+        [SerializeField] private float _height = 2f;    // 玩家上方高度
+        [SerializeField] private float _followSpeed = 10f;   // 跟隨速度（Damping）
+
+        [Header("Mouse Rotation")]
+        [SerializeField] private float _mouseSensitivityX = 3f;
+        [SerializeField] private float _mouseSensitivityY = 2f;
+        [SerializeField] private float _minPitch = -20f;     // 仰角下限
+        [SerializeField] private float _maxPitch = 60f;     // 仰角上限
 
         [Header("Lock-On Settings")]
         [SerializeField] private float _lockOnRange = 20f;
         [SerializeField] private LayerMask _enemyLayer = ~0;
+        [SerializeField] private float _lockOnSpeed = 8f;  // 鎖定時鏡頭轉向速度
 
+        // ── 公開狀態 ─────────────────────────────────────────────────
         public bool IsLockedOn { get; private set; }
         public Transform LockTarget { get; private set; }
 
-        // 鎖定切換：記錄已切換過的目標，循環用
-        private readonly List<Transform> _switchHistory = new List<Transform>();
+        // ── 內部 ─────────────────────────────────────────────────────
+        private float _yaw;    // 水平角（Y 軸旋轉）
+        private float _pitch;  // 垂直角（X 軸旋轉）
 
         private float _lockOnCooldown;
         private float _switchCooldown;
         private const float CooldownDuration = 0.3f;
 
-        private CinemachineOrbitalFollow _orbitalFollow;
-        private CinemachineInputAxisController _inputController;
+        private readonly List<Transform> _switchHistory = new List<Transform>();
 
         // ── Unity 生命周期 ────────────────────────────────────────────
-
-        private void Awake()
-        {
-            if (_cinemachineCamera != null)
-            {
-                _orbitalFollow = _cinemachineCamera.GetComponent<CinemachineOrbitalFollow>();
-                _inputController = _cinemachineCamera.GetComponent<CinemachineInputAxisController>();
-            }
-        }
 
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            SetTrackingTarget(_player);
+
+            // 初始角度對齊玩家
+            if (_player != null)
+            {
+                _yaw = _player.eulerAngles.y;
+                _pitch = 15f;
+            }
         }
 
         private void Update()
@@ -62,14 +71,70 @@ namespace PilgrimOfSin.StateMachine
             if (_switchCooldown > 0f) _switchCooldown -= Time.deltaTime;
 
             HandleLockOnInput();
-            HandleLockOnSwitchInput();
-            UpdateLockOnTargetPosition();
-
-            if (Input.GetKeyDown(KeyCode.R))
-                ResetCamera();
+            HandleSwitchInput();
+            HandleResetInput();
+            CheckLockTargetAlive();
         }
 
-        // ── 鎖定 / 解除 ───────────────────────────────────────────────
+        private void LateUpdate()
+        {
+            if (_player == null || _camera == null) return;
+
+            if (IsLockedOn && LockTarget != null)
+                UpdateLockOnCamera();
+            else
+                UpdateFreeCamera();
+        }
+
+        // ── 非鎖定鏡頭 ───────────────────────────────────────────────
+
+        private void UpdateFreeCamera()
+        {
+            // 讀取滑鼠輸入旋轉
+            var mouseDelta = Mouse.current?.delta.ReadValue() ?? Vector2.zero;
+            _yaw += mouseDelta.x * _mouseSensitivityX;
+            _pitch -= mouseDelta.y * _mouseSensitivityY;
+            _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
+
+            ApplyCameraTransform(_yaw, _pitch);
+        }
+
+        // ── 鎖定鏡頭 ─────────────────────────────────────────────────
+
+        private void UpdateLockOnCamera()
+        {
+            // 計算玩家→敵人方向的 yaw/pitch
+            Vector3 toEnemy = LockTarget.position - _player.position;
+            float targetYaw = Mathf.Atan2(toEnemy.x, toEnemy.z) * Mathf.Rad2Deg;
+            float targetPitch = 15f; // 鎖定時固定俯角
+
+            // 平滑插值
+            _yaw = Mathf.LerpAngle(_yaw, targetYaw, Time.deltaTime * _lockOnSpeed);
+            _pitch = Mathf.LerpAngle(_pitch, targetPitch, Time.deltaTime * _lockOnSpeed);
+
+            ApplyCameraTransform(_yaw, _pitch);
+        }
+
+        // ── 套用鏡頭位置與旋轉 ───────────────────────────────────────
+
+        private void ApplyCameraTransform(float yaw, float pitch)
+        {
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+
+            // 鏡頭目標位置：玩家後方 + 上方偏移
+            Vector3 lookAtPoint = _player.position + Vector3.up * (_height * 0.5f);
+            Vector3 targetPos = lookAtPoint - rotation * Vector3.forward * _distance
+                                  + Vector3.up * _height * 0.5f;
+
+            // 平滑跟隨
+            _camera.transform.position = Vector3.Lerp(
+                _camera.transform.position, targetPos, Time.deltaTime * _followSpeed);
+
+            // 看向玩家上半身
+            _camera.transform.LookAt(lookAtPoint);
+        }
+
+        // ── 輸入處理 ──────────────────────────────────────────────────
 
         private void HandleLockOnInput()
         {
@@ -81,20 +146,44 @@ namespace PilgrimOfSin.StateMachine
             _lockOnCooldown = CooldownDuration;
         }
 
+        private void HandleSwitchInput()
+        {
+            if (!IsLockedOn) return;
+            if (_input == null || _switchCooldown > 0f) return;
+            if (!_input.LockOnSwitchPressed) return;
+
+            TrySwitchTarget();
+            _switchCooldown = CooldownDuration;
+        }
+
+        private void HandleResetInput()
+        {
+            if (IsLockedOn) return;
+            if (_input == null) return;
+            if (!_input.ResetCameraPressed) return;
+
+            // 重置鏡頭到玩家正後方
+            _yaw = _player.eulerAngles.y;
+            _pitch = 15f;
+            Debug.Log("[Camera] 鏡頭重置。");
+        }
+
+        // ── 鎖定邏輯 ─────────────────────────────────────────────────
+
         private void TryLockOn()
         {
-            var target = GetEnemiesInRange().FirstOrDefault();
-            if (target != null)
-            {
-                ApplyLockTarget(target);
-                _switchHistory.Clear();
-                _switchHistory.Add(target);
-                Debug.Log($"[Camera] 鎖定：{target.name}");
-            }
-            else
+            var enemies = GetEnemiesInRange();
+            if (enemies.Count == 0)
             {
                 Debug.Log("[Camera] 範圍內沒有敵人。");
+                return;
             }
+
+            LockTarget = enemies[0];
+            IsLockedOn = true;
+            _switchHistory.Clear();
+            _switchHistory.Add(LockTarget);
+            Debug.Log($"[Camera] 鎖定：{LockTarget.name}");
         }
 
         private void Unlock()
@@ -102,91 +191,38 @@ namespace PilgrimOfSin.StateMachine
             LockTarget = null;
             IsLockedOn = false;
             _switchHistory.Clear();
-
-            if (_cinemachineCamera != null)
-                _cinemachineCamera.LookAt = _player;
-
-            if (_inputController != null)
-                _inputController.enabled = true;
-
             Debug.Log("[Camera] 解除鎖定。");
         }
 
-        // ── 鎖定切換（P 鍵）─────────────────────────────────────────
-
-        private void HandleLockOnSwitchInput()
+        private void TrySwitchTarget()
         {
-            if (!IsLockedOn) return;
-            if (_input == null || _switchCooldown > 0f) return;
-            if (!_input.LockOnSwitchPressed) return;
+            var enemies = GetEnemiesInRange();
+            if (enemies.Count == 0) { Unlock(); return; }
 
-            TrySwitchLockTarget();
-            _switchCooldown = CooldownDuration;
-        }
-
-        private void TrySwitchLockTarget()
-        {
-            var allEnemies = GetEnemiesInRange();
-            if (allEnemies.Count == 0) { Unlock(); return; }
-
-            // 找第一個還沒切換過的目標
-            Transform next = allEnemies.FirstOrDefault(e => !_switchHistory.Contains(e));
-
+            Transform next = enemies.FirstOrDefault(e => !_switchHistory.Contains(e));
             if (next == null)
             {
-                // 全部切過了 → 重置循環，從最近的重新開始
                 _switchHistory.Clear();
-                next = allEnemies[0];
+                next = enemies[0];
             }
 
             _switchHistory.Add(next);
-            ApplyLockTarget(next);
+            LockTarget = next;
             Debug.Log($"[Camera] 切換鎖定：{next.name}");
         }
 
-        // ── 更新中點錨點 + 敵人死亡自動順延 ─────────────────────────
-
-        private void UpdateLockOnTargetPosition()
+        private void CheckLockTargetAlive()
         {
-            if (!IsLockedOn || LockTarget == null || _lockOnTarget == null) return;
-
-            // 敵人死亡或消失 → 自動切換下一個
+            if (!IsLockedOn || LockTarget == null) return;
             if (!LockTarget.gameObject.activeInHierarchy)
             {
                 Debug.Log("[Camera] 鎖定目標消失，嘗試順延。");
-                TrySwitchLockTarget();
-                return;
+                TrySwitchTarget();
             }
-
-            // 更新中點錨點位置（玩家與敵人之間 + 往上偏移）
-            _lockOnTarget.position = (_player.position + LockTarget.position) * 0.5f
-                                     + Vector3.up;
         }
 
-        // ── 重置鏡頭 ──────────────────────────────────────────────────
+        // ── 輔助 ─────────────────────────────────────────────────────
 
-        private void ResetCamera()
-        {
-            if (IsLockedOn || _orbitalFollow == null) return;
-            _orbitalFollow.HorizontalAxis.Value = _player.eulerAngles.y;
-            Debug.Log("[Camera] 鏡頭重置。");
-        }
-
-        // ── 輔助方法 ──────────────────────────────────────────────────
-
-        private void ApplyLockTarget(Transform target)
-        {
-            LockTarget = target;
-            IsLockedOn = true;
-
-            if (_cinemachineCamera != null && _lockOnTarget != null)
-                _cinemachineCamera.LookAt = _lockOnTarget;
-
-            if (_inputController != null)
-                _inputController.enabled = false;
-        }
-
-        /// <summary>取得範圍內所有有效敵人，依距離由近到遠排序。</summary>
         private List<Transform> GetEnemiesInRange()
         {
             var hits = Physics.OverlapSphere(_player.position, _lockOnRange, _enemyLayer);
@@ -205,13 +241,6 @@ namespace PilgrimOfSin.StateMachine
                 .CompareTo(Vector3.Distance(_player.position, b.position)));
 
             return result;
-        }
-
-        private void SetTrackingTarget(Transform target)
-        {
-            if (_cinemachineCamera == null || target == null) return;
-            _cinemachineCamera.Follow = target;
-            _cinemachineCamera.LookAt = target;
         }
     }
 }

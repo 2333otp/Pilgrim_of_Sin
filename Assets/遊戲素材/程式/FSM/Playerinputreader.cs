@@ -29,6 +29,7 @@ namespace PilgrimOfSin.StateMachine
         public bool PausePressed { get; private set; }
         public bool LockOnPressed { get; private set; }
         public bool LockOnSwitchPressed { get; private set; }   // 鎖定切換（P 鍵）
+        public bool ResetCameraPressed { get; private set; }   // 鏡頭重置（R 鍵）
         public bool InteractPressed { get; private set; }
 
         // ── 每幀結束清除一次性按鍵 ───────────────────────────────────
@@ -43,6 +44,7 @@ namespace PilgrimOfSin.StateMachine
             PausePressed = false;
             LockOnPressed = false;
             LockOnSwitchPressed = false;
+            ResetCameraPressed = false;
             InteractPressed = false;
         }
 
@@ -90,6 +92,9 @@ namespace PilgrimOfSin.StateMachine
 
         private void OnLockOnSwitch(InputValue value)
         { if (value.isPressed) LockOnSwitchPressed = true; }
+
+        private void OnResetCamera(InputValue value)
+        { if (value.isPressed) ResetCameraPressed = true; }
 
         private void OnInteract(InputValue value)
         { if (value.isPressed) InteractPressed = true; }

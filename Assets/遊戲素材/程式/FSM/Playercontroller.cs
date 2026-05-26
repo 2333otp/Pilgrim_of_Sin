@@ -21,6 +21,8 @@ namespace PilgrimOfSin.StateMachine
         public Animator Animator { get; private set; }
         public PlayerInputReader InputReader { get; private set; }
         public Rigidbody Rb { get; private set; }
+        [Header("Camera")]
+        [SerializeField] private CameraController _cameraController;
         public PlayerCombat Combat { get; private set; }
 
         // 簡寫（各狀態常用）
@@ -146,7 +148,7 @@ namespace PilgrimOfSin.StateMachine
 
         public void Move(Vector2 input, float speed)
         {
-            Vector3 dir = new Vector3(input.x, 0f, input.y).normalized;
+            Vector3 dir = GetCameraRelativeDirection(input);
             Rb.MovePosition(Rb.position + dir * speed * Time.fixedDeltaTime);
             if (dir != Vector3.zero)
                 transform.rotation = Quaternion.Slerp(transform.rotation,
@@ -155,7 +157,7 @@ namespace PilgrimOfSin.StateMachine
 
         public void MoveAerial(Vector2 input)
         {
-            Vector3 dir = new Vector3(input.x, 0f, input.y).normalized;
+            Vector3 dir = GetCameraRelativeDirection(input);
             Rb.AddForce(dir * _walkSpeed * _aerialControl, ForceMode.Force);
         }
 
@@ -165,9 +167,21 @@ namespace PilgrimOfSin.StateMachine
         public void ApplyRollForce(Vector2 input)
         {
             Vector3 dir = input.sqrMagnitude > 0.01f
-                          ? new Vector3(input.x, 0f, input.y).normalized
+                          ? GetCameraRelativeDirection(input)
                           : transform.forward;
             Rb.AddForce(dir * _rollForce, ForceMode.Impulse);
+        }
+
+        private Vector3 GetCameraRelativeDirection(Vector2 input)
+        {
+            if (input.sqrMagnitude < 0.01f) return Vector3.zero;
+
+            // 直接用 Main Camera 的方向，不是 CameraManager
+            Transform cam = Camera.main.transform;
+            Vector3 camForward = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
+            Vector3 camRight = Vector3.ProjectOnPlane(cam.right, Vector3.up).normalized;
+
+            return (camForward * input.y + camRight * input.x).normalized;
         }
 
         // ────────────────────────────────────────────────────────────
