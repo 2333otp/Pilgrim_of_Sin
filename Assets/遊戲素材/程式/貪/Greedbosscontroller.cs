@@ -250,6 +250,7 @@ namespace PilgrimOfSin.StateMachine
         {
             // TODO: 觸發通關演出
             Debug.Log("[Greed] Boss 死亡，通關。");
+            BossResultPortal.Instance?.OnBossDefeated();
         }
 
         // ════════════════════════════════════════════════════════════

@@ -6,8 +6,20 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/MainScene.unity
+    guid: 287284e2856136f4bb95260c1d64e894
+  - enabled: 1
+    path: Assets/Scenes/HubScene.unity
+    guid: e38b6758b4169c940a6c7a72d627cdb0
+  - enabled: 1
+    path: Assets/Scenes/GreedBossScene.unity
+    guid: fd2a3a71a36398c48ab7a4809a498f38
+  - enabled: 1
+    path: Assets/Scenes/WrathBossScene.unity
+    guid: 5b44e5be764c7c94ba00777f09dec8cc
+  - enabled: 1
+    path: Assets/Scenes/FoolishBossScene.unity
+    guid: adba8a1482bf81c4b934857ceb1e6314
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

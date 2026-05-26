@@ -652,6 +652,7 @@ namespace PilgrimOfSin.StateMachine
         {
             PlayAnimation("Death");
             Player.OnDeath();
+            BossResultPortal.Instance?.OnPlayerDefeated();
         }
 
         // 死亡後不再接受任何輸入

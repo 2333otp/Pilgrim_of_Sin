@@ -250,6 +250,7 @@ namespace PilgrimOfSin.StateMachine
             SetSafeZonesVisible(true);
             if (_evilZone) _evilZone.gameObject.SetActive(false);
             Debug.Log("[Foolish] Boss 死亡，通關。");
+            BossResultPortal.Instance?.OnBossDefeated();
         }
 
         // ════════════════════════════════════════════════════════════
