@@ -61,9 +61,12 @@ namespace PilgrimOfSin
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // 確保 fade group 存在
+            // 一開始保持全黑
             if (_fadeCanvasGroup != null)
-                _fadeCanvasGroup.alpha = 0f;
+            {
+                _fadeCanvasGroup.alpha = 1f;
+                _fadeCanvasGroup.blocksRaycasts = false; // 不擋按鈕點擊
+            }
         }
 
         private void OnEnable()
@@ -165,24 +168,21 @@ namespace PilgrimOfSin
         {
             _isTransitioning = true;
 
-            // 1. 淡出（黑畫面）
-            yield return StartCoroutine(FadeOut());
+            // 若畫面已經是全黑（如 MainScene 開始狀態），跳過淡出
+            if (_fadeCanvasGroup == null || _fadeCanvasGroup.alpha < 1f)
+                yield return StartCoroutine(FadeOut());
 
-            // 2. 載入場景
+            // 載入場景
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);
             asyncLoad.allowSceneActivation = false;
 
-            // 等待載入完成（progress 到 0.9 代表準備好了）
             while (asyncLoad.progress < 0.9f)
                 yield return null;
 
             asyncLoad.allowSceneActivation = true;
-
-            // 等一幀讓場景完全啟動
             yield return null;
 
             _isTransitioning = false;
-            // FadeIn 會由 OnSceneLoaded 觸發
         }
 
         private IEnumerator FadeOut()

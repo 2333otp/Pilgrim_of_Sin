@@ -451,6 +451,28 @@
                 },
                 {
                     "name": "",
+                    "id": "90ebcb49-a4ee-4ed5-91c3-af9570f340c0",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "106982ae-588c-48b8-a121-1fc22121804f",
+                    "path": "<Keyboard>/0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "0d951f56-96b4-400f-8e50-fdfc7d675c88",
                     "path": "<Keyboard>/q",
                     "interactions": "",

@@ -104,9 +104,13 @@ namespace PilgrimOfSin.StateMachine
 
         private void Update()
         {
+            // timeScale = 0 時只跑狀態機（讓 PausedState 可以偵測輸入恢復）
+            _stateMachine.Update(Time.unscaledDeltaTime);
+
+            if (Time.timeScale == 0f) return;
+
             UpdateTimers(Time.deltaTime);
             UpdateGroundCheck();
-            _stateMachine.Update(Time.deltaTime);
         }
 
         private void FixedUpdate()
@@ -239,6 +243,17 @@ namespace PilgrimOfSin.StateMachine
         {
             // TODO: 觸發死亡流程（返回存檔點）
             Debug.Log("[Player] 死亡，返回存檔點。");
+        }
+
+        // 把這個方法加在 PlayerController.cs 的 OnDeath() 方法下面
+
+        /// <summary>
+        /// 由 PauseMenuUI 的「繼續遊戲」按鈕呼叫，
+        /// 等同玩家再按一次 Esc 離開暫停狀態。
+        /// </summary>
+        public void ResumeFromPause()
+        {
+            _stateMachine.RequestTransition(PlayerStateType.Idle);
         }
 
         // ────────────────────────────────────────────────────────────

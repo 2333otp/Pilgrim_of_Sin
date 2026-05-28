@@ -85,7 +85,10 @@ namespace PilgrimOfSin.StateMachine
         { if (value.isPressed) { WeaponSwitchPressed = true; WeaponSwitchIndex = 4; } }
 
         private void OnPause(InputValue value)
-        { if (value.isPressed) PausePressed = true; }
+        {
+            Debug.Log("[InputReader] OnPause 被呼叫！isPressed = " + value.isPressed);
+            if (value.isPressed) PausePressed = true;
+        }
 
         private void OnLockOn(InputValue value)
         { if (value.isPressed) LockOnPressed = true; }

@@ -632,6 +632,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
+            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; } 
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             _stunTimer += dt;
             if (_stunTimer >= Player.StunDuration)
@@ -674,22 +675,28 @@ namespace PilgrimOfSin.StateMachine
             // Machine.PreviousStateType 是進入 Paused 之前的狀態
             // 過濾掉不適合恢復的狀態（Damaged / Dead / Paused 本身）
             // → 這些情況一律回 Idle
+            Debug.Log("[PausedState] Enter 被呼叫！PauseMenuUI = " + PilgrimOfSin.PauseMenuUI.Instance);
             var prev = Machine.PreviousStateType;
             _resumeState = IsSafeResumeState(prev) ? prev : PlayerStateType.Idle;
 
             Time.timeScale = 0f;
-            // TODO: 顯示暫停 UI
+            // 顯示暫停 UI（若場景中有 PauseMenuUI）
+            PilgrimOfSin.PauseMenuUI.Instance?.Show(Player);
         }
 
         public override void Update(float dt)
         {
             // timeScale = 0，用 unscaled delta time 偵測輸入
+            // 繼續遊戲可由 Esc 鍵或 PauseMenuUI 的「繼續遊戲」按鈕觸發
             if (Input.PausePressed)
                 RequestTransition(_resumeState);
         }
 
         public override void Exit()
-            => Time.timeScale = 1f;
+        {
+            // 隱藏暫停 UI
+            PilgrimOfSin.PauseMenuUI.Instance?.Hide();
+        }
 
         /// <summary>
         /// 判斷是否為可安全恢復的狀態。
@@ -704,4 +711,5 @@ namespace PilgrimOfSin.StateMachine
                 && state != PlayerStateType.SpecialSkillCooldown;
         }
     }
+
 }
