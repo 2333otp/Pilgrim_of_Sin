@@ -36,6 +36,7 @@ namespace PilgrimOfSin
 
         private void Awake()
         {
+            Debug.Log("PauseMenuUI Awake 執行了，_resumeButton = " + _resumeButton);
             Instance = this;
 
             // 一開始隱藏暫停面板
@@ -50,6 +51,32 @@ namespace PilgrimOfSin
             _resumeButton?.onClick.AddListener(OnResumeClicked);
             _returnHubButton?.onClick.AddListener(OnReturnHubClicked);
             _returnMainMenuButton?.onClick.AddListener(OnReturnMainMenuClicked);
+        }
+
+        private void Update()
+        {
+            if (_pausePanel == null || !_pausePanel.activeSelf) return;
+
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                Vector2 mousePos = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+                CheckButtonClick(mousePos);
+            }
+        }
+
+        private void CheckButtonClick(Vector2 mousePos)
+        {
+            TryClick(_resumeButton, mousePos, OnResumeClicked);
+            TryClick(_returnHubButton, mousePos, OnReturnHubClicked);
+            TryClick(_returnMainMenuButton, mousePos, OnReturnMainMenuClicked);
+        }
+
+        private void TryClick(Button btn, Vector2 mousePos, System.Action callback)
+        {
+            if (btn == null || !btn.gameObject.activeSelf || !btn.interactable) return;
+            RectTransform rt = btn.GetComponent<RectTransform>();
+            if (RectTransformUtility.RectangleContainsScreenPoint(rt, mousePos, null))
+                callback?.Invoke();
         }
 
         private void OnDestroy()
@@ -85,6 +112,7 @@ namespace PilgrimOfSin
 
         private void OnResumeClicked()
         {
+            Debug.Log("OnResumeClicked 被呼叫了！");
             _playerController?.ResumeFromPause();
         }
 
@@ -99,6 +127,7 @@ namespace PilgrimOfSin
         {
             Time.timeScale = 1f;
             if (_pausePanel != null) _pausePanel.SetActive(false);
+            _playerController?.ForceExitPause(); // 強制離開暫停狀態
             SceneTransitionManager.Instance?.ReturnToMainMenu();
         }
     }
