@@ -102,6 +102,12 @@ namespace PilgrimOfSin.StateMachine
             BuildStateMachine();
         }
 
+        public void ForceExitPause()
+        {
+            Time.timeScale = 1f;
+            _stateMachine.ForceTransition(PlayerStateType.Idle);
+        }
+
         private void Update()
         {
             // timeScale = 0 時只跑狀態機（讓 PausedState 可以偵測輸入恢復）

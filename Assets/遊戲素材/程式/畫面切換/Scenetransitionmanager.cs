@@ -61,9 +61,6 @@ namespace PilgrimOfSin
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            if (_fadeCanvasGroup == null)
-                Debug.LogWarning("FadeCanvasGroup 是 null！請在 Inspector 拖入！");
-
             // 一開始保持全黑
             if (_fadeCanvasGroup != null)
             {
@@ -170,7 +167,6 @@ namespace PilgrimOfSin
         private IEnumerator TransitionRoutine(string targetScene)
         {
             _isTransitioning = true;
-            Time.timeScale = 1f;
 
             // 若畫面已經是全黑（如 MainScene 開始狀態），跳過淡出
             if (_fadeCanvasGroup == null || _fadeCanvasGroup.alpha < 1f)
@@ -198,7 +194,7 @@ namespace PilgrimOfSin
 
             while (elapsed < _fadeDuration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Time.deltaTime;
                 _fadeCanvasGroup.alpha = Mathf.Clamp01(elapsed / _fadeDuration);
                 yield return null;
             }
@@ -214,13 +210,12 @@ namespace PilgrimOfSin
 
             while (elapsed < _fadeDuration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Time.deltaTime;
                 _fadeCanvasGroup.alpha = 1f - Mathf.Clamp01(elapsed / _fadeDuration);
                 yield return null;
             }
             _fadeCanvasGroup.alpha = 0f;
             _fadeCanvasGroup.blocksRaycasts = false;
-            Debug.Log("FadeIn 完成，blocksRaycasts = " + _fadeCanvasGroup.blocksRaycasts);
         }
     }
 
