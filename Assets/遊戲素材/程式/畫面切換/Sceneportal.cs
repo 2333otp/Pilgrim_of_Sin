@@ -16,6 +16,7 @@ namespace PilgrimOfSin
 
         private void Update()
         {
+            Debug.Log($"[ScenePortal] Update: PlayerInRange={_playerInRange}");
             if (!_playerInRange) return;
 
             // 新版 Input System：直接讀鍵盤 X 鍵（互動鍵）

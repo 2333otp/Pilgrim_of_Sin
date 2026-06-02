@@ -113,8 +113,10 @@ namespace PilgrimOfSin
         /// <summary>從小木屋進入 Boss 場景。</summary>
         public void LoadBossScene(BossType bossType)
         {
+            Debug.Log($"[SceneTransition] LoadBossScene: {bossType} (Transitioning={_isTransitioning})");
             if (_isTransitioning) return;
 
+            Debug.Log("[SceneTransition] 開始切換boss房");
             LastBossType = bossType;
             string sceneName = bossType switch
             {

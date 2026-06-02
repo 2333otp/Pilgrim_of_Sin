@@ -844,10 +844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d808d0c3829d834db07f49191f93dcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.ScenePortal
-  _portalType: 0
-  _targetBoss: 1
-  _autoTrigger: 0
-  _interactPrompt: {fileID: 0}
+  _bossType: 1
 --- !u!23 &1339375323
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -937,10 +934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d808d0c3829d834db07f49191f93dcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.ScenePortal
-  _portalType: 0
-  _targetBoss: 3
-  _autoTrigger: 0
-  _interactPrompt: {fileID: 0}
+  _bossType: 3
 --- !u!65 &1417088973
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1311,10 +1305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d808d0c3829d834db07f49191f93dcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.ScenePortal
-  _portalType: 0
-  _targetBoss: 2
-  _autoTrigger: 0
-  _interactPrompt: {fileID: 0}
+  _bossType: 2
 --- !u!65 &2101219104
 BoxCollider:
   m_ObjectHideFlags: 0
