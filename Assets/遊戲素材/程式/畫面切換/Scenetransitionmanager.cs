@@ -1,58 +1,39 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 namespace PilgrimOfSin
 {
-    /// <summary>
-    /// 場景切換管理器（單例）
-    /// 負責所有場景間的切換，含淡入淡出效果。
-    ///
-    /// 【場景名稱對照】（請在 Unity Build Settings 中確認名稱一致）
-    ///   主選單     → "MainScene"
-    ///   小木屋     → "HubScene"
-    ///   貪Boss房   → "GreedBossScene"
-    ///   嗔Boss房   → "WrathBossScene"
-    ///   癡Boss房   → "FoolishBossScene"
-    ///
-    /// 【使用方式】
-    ///   主選單開始遊戲：SceneTransitionManager.Instance.LoadHubScene();
-    ///   從小木屋進入關卡：SceneTransitionManager.Instance.LoadBossScene(BossType.Greed);
-    ///   Boss死亡後回小木屋：SceneTransitionManager.Instance.ReturnToHub();
-    ///   回主選單：SceneTransitionManager.Instance.ReturnToMainMenu();
-    ///
-    /// 【SceneTransitionManager 物件要放在哪？】
-    ///   放在 MainScene。DontDestroyOnLoad 會讓它跟著跑完整個遊戲。
-    /// </summary>
     public class SceneTransitionManager : MonoBehaviour
     {
-        // ── 場景名稱常數（與 Build Settings 保持一致）────────────────
+        // ── 場景名稱常數（與 Build Settings 保持一致）──────────────────
         public const string MAIN_SCENE = "MainScene";
+        public const string CUTSCENE_SCENE = "CutsceneScene";
         public const string HUB_SCENE = "HubScene";
         public const string GREED_SCENE = "GreedBossScene";
         public const string WRATH_SCENE = "WrathBossScene";
         public const string FOOLISH_SCENE = "FoolishBossScene";
 
-        // ── 單例 ─────────────────────────────────────────────────────
+        // ── 單例 ────────────────────────────────────────────────────────
         public static SceneTransitionManager Instance { get; private set; }
 
-        // ── Inspector 設定 ────────────────────────────────────────────
+        // ── Inspector 設定 ──────────────────────────────────────────────
         [Header("淡入淡出設定")]
         [SerializeField] private float _fadeDuration = 0.5f;
 
         [Header("Canvas Group（掛在全螢幕黑色 Image 上）")]
         [SerializeField] private CanvasGroup _fadeCanvasGroup;
 
-        // ── 狀態 ─────────────────────────────────────────────────────
+        // ── 狀態 ────────────────────────────────────────────────────────
         private bool _isTransitioning = false;
 
-        /// <summary>目前玩家是從哪個 Boss 房進來的（用於回小木屋時記錄）</summary>
+        /// <summary>目前最後啟動的 Boss 場景（用於小木屋返回後記憶）</summary>
         public static BossType LastBossType { get; private set; } = BossType.None;
 
-        // ── 生命週期 ──────────────────────────────────────────────────
+        // ── 生命週期 ─────────────────────────────────────────────────────
         private void Awake()
         {
-            // 單例：跨場景保留
+            // 單例：跨場景保留，重複時銷毀
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -61,11 +42,11 @@ namespace PilgrimOfSin
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // 一開始保持全黑
+            // 一開始設為全黑
             if (_fadeCanvasGroup != null)
             {
                 _fadeCanvasGroup.alpha = 1f;
-                _fadeCanvasGroup.blocksRaycasts = false; // 不擋按鈕點擊
+                _fadeCanvasGroup.blocksRaycasts = false;
             }
         }
 
@@ -81,21 +62,37 @@ namespace PilgrimOfSin
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // MainScene 不執行淡入（玩家還沒按開始遊戲）
-            if (scene.name == MAIN_SCENE) return;
+            Debug.Log($"SceneTransitionManager OnSceneLoaded {scene.name}");
+            // MainScene 不淡入，畫面保持全黑等玩家按按鈕
+            if (scene.name == MAIN_SCENE)
+            {
+                _isTransitioning = false; // ← 這行是關鍵修正！
+                return;
+            }
 
-            // 每次新場景載入後淡入
+            // CutsceneScene 也不淡入，由 CutsceneManager 自己控制淡入
+            if (scene.name == CUTSCENE_SCENE)
+            {
+                _isTransitioning = false; // ← 同樣需要重置！
+                return;
+            }
+
+            // 其他場景：淡入
             StartCoroutine(FadeIn());
         }
 
-        // ── 公開 API ──────────────────────────────────────────────────
+        // ── 公開 API ─────────────────────────────────────────────────────
 
-        /// <summary>
-        /// 從主選單進入小木屋。
-        /// 流程圖：開始遊戲 → 劇情動畫 → 進小木屋地圖
-        /// （劇情動畫請在 HubScene 的 Awake 中自行處理，
-        ///  或在按下開始按鈕後先播完動畫再呼叫此方法）
-        /// </summary>
+        /// <summary>從主選單進入過場動畫。</summary>
+        public void LoadCutscene()
+        {
+            if (_isTransitioning) return;
+
+            Debug.Log("[SceneTransition] 進入過場動畫");
+            StartCoroutine(TransitionRoutine(CUTSCENE_SCENE));
+        }
+
+        /// <summary>從主選單直接進入小木屋（跳過過場，測試用）。</summary>
         public void LoadHubScene()
         {
             if (_isTransitioning) return;
@@ -104,10 +101,7 @@ namespace PilgrimOfSin
             StartCoroutine(TransitionRoutine(HUB_SCENE));
         }
 
-        /// <summary>
-        /// 回到主選單（主選單的「返回選單」按鈕用）。
-        /// 流程圖：小木屋 → 可返回選單 → 遊戲選單
-        /// </summary>
+        /// <summary>回到主選單。</summary>
         public void ReturnToMainMenu()
         {
             if (_isTransitioning) return;
@@ -116,11 +110,7 @@ namespace PilgrimOfSin
             StartCoroutine(TransitionRoutine(MAIN_SCENE));
         }
 
-        /// <summary>
-        /// 從小木屋進入 Boss 關卡。
-        /// 流程圖：選擇關卡 → 罪行前導動畫 → 挑戰BOSS
-        /// （若有過場動畫，在 Boss 場景的 Awake 中自行處理）
-        /// </summary>
+        /// <summary>從小木屋進入 Boss 場景。</summary>
         public void LoadBossScene(BossType bossType)
         {
             if (_isTransitioning) return;
@@ -138,10 +128,7 @@ namespace PilgrimOfSin
             StartCoroutine(TransitionRoutine(sceneName));
         }
 
-        /// <summary>
-        /// 從 Boss 房回到小木屋（贏或輸都走這條路）。
-        /// 流程圖：贏/輸 → 小木屋
-        /// </summary>
+        /// <summary>從 Boss 場景回到小木屋（贏或輸）。</summary>
         public void ReturnToHub()
         {
             if (_isTransitioning) return;
@@ -150,10 +137,7 @@ namespace PilgrimOfSin
             StartCoroutine(TransitionRoutine(HUB_SCENE));
         }
 
-        /// <summary>
-        /// 重新挑戰目前的 Boss（輸了重新開始）。
-        /// 流程圖：輸 → 重新 → 挑戰BOSS
-        /// </summary>
+        /// <summary>重新挑戰目前的 Boss（輸了重試）。</summary>
         public void RestartCurrentBoss()
         {
             if (_isTransitioning) return;
@@ -163,12 +147,13 @@ namespace PilgrimOfSin
             StartCoroutine(TransitionRoutine(currentScene));
         }
 
-        // ── 協程：淡出 → 載入 → 淡入 ──────────────────────────────────
+        // ── 核心：淡出 → 載入 → 淡入 ────────────────────────────────────
         private IEnumerator TransitionRoutine(string targetScene)
         {
+            Debug.Log($"[SceneTransition] 開始切換到 {targetScene}");
             _isTransitioning = true;
 
-            // 若畫面已經是全黑（如 MainScene 開始狀態），跳過淡出
+            // 若畫面已經是全黑（如 MainScene 開始時），直接淡出不需再等
             if (_fadeCanvasGroup == null || _fadeCanvasGroup.alpha < 1f)
                 yield return StartCoroutine(FadeOut());
 
@@ -182,7 +167,7 @@ namespace PilgrimOfSin
             asyncLoad.allowSceneActivation = true;
             yield return null;
 
-            _isTransitioning = false;
+            // _isTransitioning 在 OnSceneLoaded 裡重置（各場景自己決定）
         }
 
         private IEnumerator FadeOut()
@@ -191,7 +176,6 @@ namespace PilgrimOfSin
 
             float elapsed = 0f;
             _fadeCanvasGroup.blocksRaycasts = true;
-
             while (elapsed < _fadeDuration)
             {
                 elapsed += Time.deltaTime;
@@ -203,11 +187,11 @@ namespace PilgrimOfSin
 
         private IEnumerator FadeIn()
         {
+            Debug.Log("[SceneTransition] 淡入開始");
             if (_fadeCanvasGroup == null) yield break;
 
             float elapsed = 0f;
             _fadeCanvasGroup.alpha = 1f;
-
             while (elapsed < _fadeDuration)
             {
                 elapsed += Time.deltaTime;
@@ -216,15 +200,18 @@ namespace PilgrimOfSin
             }
             _fadeCanvasGroup.alpha = 0f;
             _fadeCanvasGroup.blocksRaycasts = false;
-        }
-    }
 
-    // ── Boss 類型枚舉 ──────────────────────────────────────────────────
-    public enum BossType
-    {
-        None,
-        Greed,   // 貪
-        Wrath,   // 嗔
-        Foolish  // 癡
+            Debug.Log("[SceneTransition] 淡入完成");
+            _isTransitioning = false;
+        }
+
+        // ── Boss 類型枚舉 ─────────────────────────────────────────────────
+        public enum BossType
+        {
+            None,
+            Greed,   // 貪
+            Wrath,   // 嗔
+            Foolish, // 癡
+        }
     }
 }

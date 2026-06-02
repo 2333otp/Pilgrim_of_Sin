@@ -130,6 +130,7 @@ namespace PilgrimOfSin
 
         private void OnReturnMainMenuClicked()
         {
+            print("按下返回主選單");
             Time.timeScale = 1f;
             if (_pausePanel != null) _pausePanel.SetActive(false);
             _playerController?.ForceExitPause(); // 強制離開暫停狀態
