@@ -120,6 +120,11 @@ namespace PilgrimOfSin
         {
             Time.timeScale = 1f;
             if (_pausePanel != null) _pausePanel.SetActive(false);
+            _playerController?.ForceExitPause();
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             SceneTransitionManager.Instance?.ReturnToHub();
         }
 
@@ -128,6 +133,10 @@ namespace PilgrimOfSin
             Time.timeScale = 1f;
             if (_pausePanel != null) _pausePanel.SetActive(false);
             _playerController?.ForceExitPause(); // 強制離開暫停狀態
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             SceneTransitionManager.Instance?.ReturnToMainMenu();
         }
     }
