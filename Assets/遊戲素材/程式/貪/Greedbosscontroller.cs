@@ -9,6 +9,7 @@ namespace PilgrimOfSin.StateMachine
     /// 負責：
     ///   - 組裝並驅動 GreedBossStateMachine（AI 行為層）
     ///   - 管理天秤相位（ScalePhase）與 10 秒攻擊窗口計時
+    ///   - 整合 MoneybagSpawner 控制錢袋生成/清除
     ///   - 持有所有 Inspector 可調數值
     /// </summary>
     [RequireComponent(typeof(Animator))]
@@ -17,8 +18,9 @@ namespace PilgrimOfSin.StateMachine
         // ── References ───────────────────────────────────────────────
         [Header("References")]
         [SerializeField] private Transform _player;
-        [SerializeField] private ScaleObject _scale;      // 天秤場景物件
-        [SerializeField] private Collider _scaleHitbox;// 天秤踢翻碰撞體
+        [SerializeField] private ScaleObject _scale;         // 天秤場景物件
+        [SerializeField] private Collider _scaleHitbox;   // 天秤踢翻碰撞體
+        [SerializeField] private MoneybagSpawner _spawner;       // 錢袋生成器
 
         public Animator Animator { get; private set; }
 
@@ -26,7 +28,7 @@ namespace PilgrimOfSin.StateMachine
         [Header("Boss Stats")]
         [SerializeField] private float _maxHp = 12000f;
         [SerializeField] private float _moveSpeed = 4f;
-        [SerializeField] private float _idleDuration = 1f;   // Idle 待機秒數
+        [SerializeField] private float _idleDuration = 1f;
 
         [Header("Attack Range")]
         [SerializeField] private float _attack1Range = 3f;
@@ -41,22 +43,15 @@ namespace PilgrimOfSin.StateMachine
         // ── 天秤機制數值 ──────────────────────────────────────────────
         [Header("Scale Mechanic")]
         [SerializeField] private float _balanceWindowDuration = 10f;  // 攻擊窗口秒數
-        [SerializeField] private float _scaleBalanceThreshold = 25f;  // 天秤平衡閾值（最高50）
         [SerializeField] private float _attackBoostMultiplier = 1.5f; // 天秤傾斜時攻擊倍率
         [SerializeField] private float _scaleKickDamage = 700f; // 天秤踢翻傷害
-
-        [Header("Moneybag")]
-        [SerializeField] private int _moneybagCountMin = 1;
-        [SerializeField] private int _moneybagCountMax = 10;
-        [SerializeField] private float _moneybagWeightMin = 2f;
-        [SerializeField] private float _moneybagWeightMax = 10f;
 
         // ── Stagger（選配） ───────────────────────────────────────────
         [Header("Stagger (Optional)")]
         [SerializeField] public bool enableStagger = false;
         [SerializeField] public float StaggerDuration = 0.5f;
 
-        // ── 公開屬性（各狀態讀取） ────────────────────────────────────
+        // ── 公開屬性 ──────────────────────────────────────────────────
         public float CurrentHp { get; private set; }
         public bool IsDead => CurrentHp <= 0f;
         public float IdleDuration => _idleDuration;
@@ -64,23 +59,23 @@ namespace PilgrimOfSin.StateMachine
         public float Attack2Range => _attack2Range;
         public float Attack3Range => _attack3Range;
         public float DistanceToPlayer => _player != null
-                                         ? Vector3.Distance(transform.position, _player.position)
-                                         : float.MaxValue;
+            ? Vector3.Distance(transform.position, _player.position)
+            : float.MaxValue;
 
-        // 天秤相位
+        // ── 天秤相位 ──────────────────────────────────────────────────
         public ScalePhase CurrentPhase { get; private set; } = ScalePhase.Unbalanced;
 
-        // ── 動畫事件 ─────────────────────────────────────────────────
+        // ── 動畫事件 ──────────────────────────────────────────────────
         public event Action OnAttackAnimEnd;
         public event Action OnKickScaleAnimEnd;
 
-        // ── 內部 ─────────────────────────────────────────────────────
+        // ── 內部 ──────────────────────────────────────────────────────
         private GreedBossStateMachine _fsm;
-        private float _balanceTimer;   // 10 秒攻擊窗口倒計時
+        private float _balanceTimer;
         private float _currentAttackMultiplier = 1f;
 
         // ════════════════════════════════════════════════════════════
-        //  Unity 生命周期
+        //  Unity 生命週期
         // ════════════════════════════════════════════════════════════
 
         private void Awake()
@@ -88,7 +83,6 @@ namespace PilgrimOfSin.StateMachine
             Animator = GetComponent<Animator>();
             CurrentHp = _maxHp;
             if (_scaleHitbox) _scaleHitbox.enabled = false;
-
             BuildFSM();
         }
 
@@ -97,16 +91,24 @@ namespace PilgrimOfSin.StateMachine
             if (_scale != null)
                 _scale.OnWeightChanged += HandleScaleWeightChanged;
 
-            SpawnMoneybags();
+            // 第一次循環生成錢袋
+            _spawner?.SpawnCycle();
         }
 
         private void Update()
         {
+            // 暫停時跳過（坑 #9）
+            if (Time.timeScale == 0f) return;
+
             UpdateBalanceWindow(Time.deltaTime);
             _fsm.Update(Time.deltaTime);
         }
 
-        private void FixedUpdate() => _fsm.FixedUpdate(Time.fixedDeltaTime);
+        private void FixedUpdate()
+        {
+            if (Time.timeScale == 0f) return;
+            _fsm.FixedUpdate(Time.fixedDeltaTime);
+        }
 
         private void OnDestroy()
         {
@@ -124,14 +126,14 @@ namespace PilgrimOfSin.StateMachine
 
             var states = new Dictionary<GreedBossStateType, GreedBossState>
             {
-                { GreedBossStateType.Idle,      new GreedIdleState(this, _fsm)                              },
-                { GreedBossStateType.Move,      new GreedMoveState(this, _fsm)                              },
-                { GreedBossStateType.Attack1,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack1)},
-                { GreedBossStateType.Attack2,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack2)},
-                { GreedBossStateType.Attack3,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack3)},
-                { GreedBossStateType.KickScale, new GreedKickScaleState(this, _fsm)                        },
-                { GreedBossStateType.Stagger,   new GreedStaggerState(this, _fsm)                          },
-                { GreedBossStateType.Dead,      new GreedDeadState(this, _fsm)                             },
+                { GreedBossStateType.Idle,      new GreedIdleState(this, _fsm)                               },
+                { GreedBossStateType.Move,      new GreedMoveState(this, _fsm)                               },
+                { GreedBossStateType.Attack1,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack1) },
+                { GreedBossStateType.Attack2,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack2) },
+                { GreedBossStateType.Attack3,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack3) },
+                { GreedBossStateType.KickScale, new GreedKickScaleState(this, _fsm)                         },
+                { GreedBossStateType.Stagger,   new GreedStaggerState(this, _fsm)                           },
+                { GreedBossStateType.Dead,      new GreedDeadState(this, _fsm)                              },
             };
 
             _fsm.Init(states, GreedBossStateType.Idle);
@@ -142,16 +144,22 @@ namespace PilgrimOfSin.StateMachine
         // ════════════════════════════════════════════════════════════
 
         /// <summary>天秤重量變化時由 ScaleObject 呼叫。</summary>
-        private void HandleScaleWeightChanged(float weightDifference)
+        private void HandleScaleWeightChanged(float rightWeight)
         {
+            // 踢翻動畫播放中不切換相位
             if (CurrentPhase == ScalePhase.Kicked) return;
 
-            bool balanced = Mathf.Abs(weightDifference) <= _scaleBalanceThreshold;
-
-            if (balanced && CurrentPhase == ScalePhase.Unbalanced)
-                EnterBalancedPhase();
-            else if (!balanced && CurrentPhase == ScalePhase.Balanced)
-                EnterUnbalancedPhase();
+            if (_scale.IsBalanced())
+            {
+                if (CurrentPhase != ScalePhase.Balanced)
+                    EnterBalancedPhase();
+            }
+            else
+            {
+                // 左重或右重都算 Unbalanced
+                if (CurrentPhase == ScalePhase.Balanced)
+                    EnterUnbalancedPhase();
+            }
         }
 
         private void EnterBalancedPhase()
@@ -183,21 +191,32 @@ namespace PilgrimOfSin.StateMachine
             }
         }
 
-        /// <summary>KickScaleState 動畫結束後呼叫，重置天秤。</summary>
+        // ════════════════════════════════════════════════════════════
+        //  循環重置（由 KickScaleState 動畫結束後呼叫）
+        // ════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// KickScaleState 動畫結束後呼叫。
+        /// 重置天秤重量，清除舊錢袋，生成新一批錢袋。
+        /// </summary>
         public void ResetScale()
         {
             CurrentPhase = ScalePhase.Unbalanced;
             _currentAttackMultiplier = _attackBoostMultiplier;
+
+            // 天秤視覺與重量歸零
             _scale?.ResetScale();
-            SpawnMoneybags();
-            Debug.Log("[Greed] 天秤重置，錢袋重新生成。");
+
+            // 清除舊錢袋並生成新一批（新循環開始）
+            _spawner?.SpawnCycle();
+
+            Debug.Log("[Greed] 天秤重置，新循環錢袋生成。");
         }
 
         // ════════════════════════════════════════════════════════════
         //  戰鬥介面
         // ════════════════════════════════════════════════════════════
 
-        /// <summary>玩家攻擊命中 Boss 時呼叫。</summary>
         public void TakeDamage(float amount)
         {
             // 天秤傾斜時 Boss 無敵
@@ -216,12 +235,10 @@ namespace PilgrimOfSin.StateMachine
                 return;
             }
 
-            // Stagger 選配
             if (enableStagger)
                 _fsm.Request(GreedBossStateType.Stagger);
         }
 
-        /// <summary>取得當前實際攻擊傷害（天秤傾斜時乘以係數）。</summary>
         public float GetAttackDamage(GreedBossStateType attackType)
         {
             float baseDmg = attackType switch
@@ -233,7 +250,6 @@ namespace PilgrimOfSin.StateMachine
             return baseDmg * _currentAttackMultiplier;
         }
 
-        /// <summary>移動朝向玩家（由 MoveState.FixedUpdate 呼叫）。</summary>
         public void MoveTowardPlayer(float dt)
         {
             if (_player == null) return;
@@ -242,46 +258,28 @@ namespace PilgrimOfSin.StateMachine
             transform.position += dir * _moveSpeed * dt;
             if (dir != Vector3.zero)
                 transform.rotation = Quaternion.Slerp(transform.rotation,
-                                                       Quaternion.LookRotation(dir), 10f * dt);
+                    Quaternion.LookRotation(dir), 10f * dt);
         }
 
-        /// <summary>死亡流程（由 DeadState 呼叫）。</summary>
         public void OnDeath()
         {
-            // TODO: 觸發通關演出
-            Debug.Log("[Greed] Boss 死亡，通關。");
+            _spawner?.ClearAll();
             BossResultPortal.Instance?.OnBossDefeated();
+            Debug.Log("[Greed] Boss 死亡，通關。");
         }
 
         // ════════════════════════════════════════════════════════════
-        //  錢袋
-        // ════════════════════════════════════════════════════════════
-
-        private void SpawnMoneybags()
-        {
-            int count = UnityEngine.Random.Range(_moneybagCountMin, _moneybagCountMax + 1);
-            for (int i = 0; i < count; i++)
-            {
-                float weight = UnityEngine.Random.Range(_moneybagWeightMin, _moneybagWeightMax);
-                _scale?.SpawnMoneybag(weight);
-            }
-            Debug.Log($"[Greed] 生成 {count} 個錢袋。");
-        }
-
-        // ════════════════════════════════════════════════════════════
-        //  Animation Events（掛在 Animator 的動畫事件上）
+        //  Animation Events
         // ════════════════════════════════════════════════════════════
 
         public void AnimEvent_AttackEnd() => OnAttackAnimEnd?.Invoke();
         public void AnimEvent_KickScaleEnd() => OnKickScaleAnimEnd?.Invoke();
 
-        /// <summary>踢翻動畫的特定幀：啟用天秤碰撞體造成傷害。</summary>
         public void AnimEvent_EnableScaleHitbox()
         {
             if (_scaleHitbox) _scaleHitbox.enabled = true;
         }
 
-        /// <summary>踢翻動畫結束後：關閉天秤碰撞體。</summary>
         public void AnimEvent_DisableScaleHitbox()
         {
             if (_scaleHitbox) _scaleHitbox.enabled = false;
