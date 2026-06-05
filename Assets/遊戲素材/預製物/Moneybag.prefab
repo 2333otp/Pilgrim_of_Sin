@@ -128,4 +128,8 @@ MonoBehaviour:
   _interactRadius: 2
   _arcHeight: 2
   _arcDuration: 0.5
-  _spawnY: -0.5
+  _knockoffMinDist: 6
+  _knockoffMaxDist: 12
+  _scaleCenter: {fileID: 0}
+  _scaleExcludeRadius: 5
+  _minBagSpacing: 3

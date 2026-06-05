@@ -17,12 +17,13 @@
     }
 
     /// <summary>
-    /// 天秤相位，驅動無敵與攻擊力係數。
+    /// 天秤相位，驅動傷害係數與 Boss 行為。
     /// </summary>
     public enum ScalePhase
     {
-        Unbalanced, // 天秤傾斜：Boss 無敵＋攻擊力提升
-        Balanced,   // 天秤平衡：Boss 可受傷，10 秒攻擊窗口
-        Kicked,     // 踢翻動畫播放中，完成後回 Unbalanced
+        StatueHeavy,   // 雕像重：雙方傷害正常，Boss 主動追擊
+        Balanced,      // 天秤平衡：玩家傷害×1.5，Boss 靜止（10秒窗口）
+        MoneyBagHeavy, // 錢袋重：玩家高減傷，Boss 攻擊×1.5，Boss 主動追擊
+        Kicked,        // 踢翻動畫播放中，完成後回 StatueHeavy
     }
 }

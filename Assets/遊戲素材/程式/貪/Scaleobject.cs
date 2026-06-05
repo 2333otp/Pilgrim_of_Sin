@@ -21,7 +21,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 平衡區間 ──────────────────────────────────────────────────
         [Header("Balance Range")]
         [SerializeField] private float _balanceMin = 25f; // 平衡下限
-        [SerializeField] private float _balanceMax = 30f; // 平衡上限
+        [SerializeField] private float _balanceMax = 40f; // 平衡上限（視窗寬15，較易達成）
         [SerializeField] private float _maxWeight = 50f; // 右側最大重量上限（Clamp 用）
 
         // ── 視覺傾斜 ──────────────────────────────────────────────────

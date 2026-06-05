@@ -36,16 +36,23 @@ namespace PilgrimOfSin.StateMachine
         // ── 平衡區間 ──────────────────────────────────────────────────
         [Header("Balance Range")]
         [SerializeField] private float _balanceMin = 25f;
-        [SerializeField] private float _balanceMax = 30f;
+        [SerializeField] private float _balanceMax = 40f;  // 與 ScaleObject 對齊
 
         // ── 單顆重量範圍 ──────────────────────────────────────────────
         [Header("Moneybag Weight")]
         [SerializeField] private float _weightMin = 3f;
-        [SerializeField] private float _weightMax = 15f;
+        [SerializeField] private float _weightMax = 8f;   // 袋子更輕，不易一次超重
 
         // ── 驗證上限 ──────────────────────────────────────────────────
         [Header("Validation")]
         [SerializeField] private int _maxRetries = 100;
+
+        [Header("Scale Exclusion Zone")]
+        [SerializeField] private Transform _scaleCenter;   // 拖入 Scale 物件
+        [SerializeField] private float _scaleExcludeRadius = 5f;
+
+        [Header("Moneybag Spacing")]
+        [SerializeField] private float _minBagSpacing = 3f;
 
         // ── 內部 ──────────────────────────────────────────────────────
         private readonly List<MoneybagObject> _activeBags = new List<MoneybagObject>();
@@ -66,10 +73,12 @@ namespace PilgrimOfSin.StateMachine
                 weights = FallbackWeights();
             }
 
-            foreach (float w in weights)
+            var spawnedPositions = new List<Vector3>();
+            for (int i = 0; i < weights.Count; i++)
             {
-                Vector3 pos = RandomSpawnPosition();
-                SpawnOne(w, pos);
+                Vector3 pos = RandomSpawnPosition(spawnedPositions);
+                spawnedPositions.Add(pos);
+                SpawnOne(weights[i], pos, i);
             }
 
             Debug.Log($"[MoneybagSpawner] 本循環生成 {weights.Count} 個錢袋。");
@@ -87,7 +96,7 @@ namespace PilgrimOfSin.StateMachine
         //  生成邏輯
         // ════════════════════════════════════════════════════════════
 
-        private void SpawnOne(float weight, Vector3 position)
+        private void SpawnOne(float weight, Vector3 position, int slotIndex, Transform scaleCenter = null)
         {
             if (_moneybagPrefab == null) return;
 
@@ -95,15 +104,39 @@ namespace PilgrimOfSin.StateMachine
             var bag = go.GetComponent<MoneybagObject>();
             if (bag == null) { Destroy(go); return; }
 
-            bag.Init(weight, _scale, _scaleRightSide, _interactPromptUI);
+            bag.Init(weight, _scale, _scaleRightSide, _interactPromptUI, _spawnY, slotIndex, _scaleCenter);
             _activeBags.Add(bag);
         }
-
-        private Vector3 RandomSpawnPosition()
+        private Vector3 RandomSpawnPosition(List<Vector3> existingPositions)
         {
-            float x = Random.Range(_spawnAreaMinX, _spawnAreaMaxX);
-            float z = Random.Range(_spawnAreaMinZ, _spawnAreaMaxZ);
-            return new Vector3(x, _spawnY, z);
+            Vector3 pos;
+            int safety = 100;
+            do
+            {
+                float x = Random.Range(_spawnAreaMinX, _spawnAreaMaxX);
+                float z = Random.Range(_spawnAreaMinZ, _spawnAreaMaxZ);
+                pos = new Vector3(x, _spawnY, z);
+                safety--;
+
+                if (safety <= 0) break;
+
+                // 檢查天秤禁區
+                if (_scaleCenter != null &&
+                    Vector2.Distance(new Vector2(pos.x, pos.z),
+                                     new Vector2(_scaleCenter.position.x, _scaleCenter.position.z))
+                    < _scaleExcludeRadius) continue;
+
+                // 檢查與其他錢袋的間距
+                bool tooClose = false;
+                foreach (var ep in existingPositions)
+                    if (Vector2.Distance(new Vector2(pos.x, pos.z), new Vector2(ep.x, ep.z)) < _minBagSpacing)
+                    { tooClose = true; break; }
+
+                if (!tooClose) break;
+            }
+            while (true);
+
+            return pos;
         }
 
         // ════════════════════════════════════════════════════════════
@@ -159,6 +192,15 @@ namespace PilgrimOfSin.StateMachine
             float w2 = target * 0.35f;
             float w3 = target - w1 - w2;
             return new List<float> { w1, w2, w3 };
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (_scaleCenter == null) return;
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(
+                new Vector3(_scaleCenter.position.x, 0f, _scaleCenter.position.z),
+                _scaleExcludeRadius);
         }
     }
 }

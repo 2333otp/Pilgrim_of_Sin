@@ -1,0 +1,101 @@
+{
+  "ExportTimestamp": "2026-06-05 13:45:27",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "ImageCutsceneScene",
+    "nodeCount": 6,
+    "maxDepth": 1
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "ImageCutsceneScene",
+      "stats": {
+        "rootCount": 3,
+        "nodeCount": 6,
+        "maxDepth": 1
+      },
+      "roots": [
+        {
+          "name": "Canvas",
+          "isActive": true,
+          "components": [
+            "RectTransform",
+            "Canvas",
+            "CanvasScaler",
+            "GraphicRaycaster"
+          ],
+          "siblingIndex": 0,
+          "tag": "Untagged",
+          "layer": 5,
+          "children": [
+            {
+              "name": "Background",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 5,
+              "children": []
+            },
+            {
+              "name": "DisplayImage",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 5,
+              "children": []
+            },
+            {
+              "name": "FadeOverlay",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image",
+                "CanvasGroup"
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 5,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "EventSystem",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "EventSystem",
+            "InputSystemUIInputModule"
+          ],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "ImageCutsceneController",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "ImageCutsceneManager"
+          ],
+          "siblingIndex": 2,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

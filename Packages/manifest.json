@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "io.github.hatayama.uloopmcp": "https://github.com/hatayama/unity-cli-loop.git?path=/Packages/src",
     "com.unity.ai.navigation": "2.0.10",
     "com.unity.cinemachine": "3.1.6",
     "com.unity.collab-proxy": "2.11.3",

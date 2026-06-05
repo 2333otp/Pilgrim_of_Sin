@@ -42,9 +42,11 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 天秤機制數值 ──────────────────────────────────────────────
         [Header("Scale Mechanic")]
-        [SerializeField] private float _balanceWindowDuration = 10f;  // 攻擊窗口秒數
-        [SerializeField] private float _attackBoostMultiplier = 1.5f; // 天秤傾斜時攻擊倍率
-        [SerializeField] private float _scaleKickDamage = 700f; // 天秤踢翻傷害
+        [SerializeField] private float _balanceWindowDuration = 10f;       // 攻擊窗口秒數
+        [SerializeField] private float _playerDamageBoostMultiplier = 1.5f; // 平衡時玩家傷害倍率
+        [SerializeField] private float _bossAttackBoostMultiplier = 1.5f;   // 錢袋重時 Boss 攻擊倍率
+        [SerializeField] private float _heavyBagDamageReduction = 0.15f;    // 錢袋重時玩家傷害乘數（高減傷）
+        [SerializeField] private float _scaleKickDamage = 700f;             // 天秤踢翻傷害
 
         // ── Stagger（選配） ───────────────────────────────────────────
         [Header("Stagger (Optional)")]
@@ -63,7 +65,7 @@ namespace PilgrimOfSin.StateMachine
             : float.MaxValue;
 
         // ── 天秤相位 ──────────────────────────────────────────────────
-        public ScalePhase CurrentPhase { get; private set; } = ScalePhase.Unbalanced;
+        public ScalePhase CurrentPhase { get; private set; } = ScalePhase.StatueHeavy;
 
         // ── 動畫事件 ──────────────────────────────────────────────────
         public event Action OnAttackAnimEnd;
@@ -71,8 +73,9 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 內部 ──────────────────────────────────────────────────────
         private GreedBossStateMachine _fsm;
-        private float _balanceTimer;
-        private float _currentAttackMultiplier = 1f;
+        private float _balanceWindowTimeRemaining;
+        private bool _balanceWindowActive;
+        private float _windowLogTimer;
 
         // ════════════════════════════════════════════════════════════
         //  Unity 生命週期
@@ -90,8 +93,17 @@ namespace PilgrimOfSin.StateMachine
         {
             if (_scale != null)
                 _scale.OnWeightChanged += HandleScaleWeightChanged;
+            else
+                Debug.LogError("[Greed] ❌ _scale 未設定！天秤機制無法運作。");
 
-            // 第一次循環生成錢袋
+            if (_player == null)
+                Debug.LogError("[Greed] ❌ _player 未設定！Boss 無法追蹤玩家。請在 Inspector 拖入 Player。");
+
+            if (_spawner == null)
+                Debug.LogError("[Greed] ❌ _spawner 未設定！錢袋無法生成。");
+
+            Debug.Log($"[Greed] ✅ 初始化完成 — Phase={CurrentPhase}，HP={CurrentHp}，玩家距離={DistanceToPlayer:F1}");
+
             _spawner?.SpawnCycle();
         }
 
@@ -146,48 +158,56 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>天秤重量變化時由 ScaleObject 呼叫。</summary>
         private void HandleScaleWeightChanged(float rightWeight)
         {
-            // 踢翻動畫播放中不切換相位
+            Debug.Log($"[Greed] 天秤重量更新：右側={rightWeight:F1}，Balanced={_scale.IsBalanced()}，RightHeavy={_scale.IsRightHeavy()}");
+
             if (CurrentPhase == ScalePhase.Kicked) return;
 
             if (_scale.IsBalanced())
             {
-                if (CurrentPhase != ScalePhase.Balanced)
-                    EnterBalancedPhase();
+                if (!_balanceWindowActive)
+                {
+                    _balanceWindowActive = true;
+                    _balanceWindowTimeRemaining = _balanceWindowDuration;
+                    _windowLogTimer = 0f;
+                    Debug.Log($"[Greed] ⚖️ 天秤平衡！10 秒攻擊窗口啟動，玩家傷害 ×{_playerDamageBoostMultiplier}，Boss 靜止。");
+                }
+                else
+                {
+                    Debug.Log($"[Greed] ⚖️ 再次平衡，從剩餘 {_balanceWindowTimeRemaining:F1} 秒繼續倒數。");
+                }
+                CurrentPhase = ScalePhase.Balanced;
+            }
+            else if (_scale.IsRightHeavy())
+            {
+                CurrentPhase = ScalePhase.MoneyBagHeavy;
+                Debug.Log($"[Greed] 💰 錢袋重（右側={rightWeight:F1}），Boss 攻擊 ×{_bossAttackBoostMultiplier}，玩家高減傷。");
             }
             else
             {
-                // 左重或右重都算 Unbalanced
-                if (CurrentPhase == ScalePhase.Balanced)
-                    EnterUnbalancedPhase();
+                CurrentPhase = ScalePhase.StatueHeavy;
+                Debug.Log($"[Greed] 🗿 雕像重（右側={rightWeight:F1}），雙方傷害正常，撿更多錢袋！");
             }
-        }
-
-        private void EnterBalancedPhase()
-        {
-            CurrentPhase = ScalePhase.Balanced;
-            _balanceTimer = _balanceWindowDuration;
-            _currentAttackMultiplier = 1f;
-            Debug.Log("[Greed] 天秤平衡，10 秒攻擊窗口開始。");
-        }
-
-        private void EnterUnbalancedPhase()
-        {
-            CurrentPhase = ScalePhase.Unbalanced;
-            _balanceTimer = 0f;
-            _currentAttackMultiplier = _attackBoostMultiplier;
-            Debug.Log("[Greed] 天秤傾斜，Boss 無敵＋攻擊力提升。");
         }
 
         private void UpdateBalanceWindow(float dt)
         {
-            if (CurrentPhase != ScalePhase.Balanced) return;
+            if (!_balanceWindowActive) return;
 
-            _balanceTimer -= dt;
-            if (_balanceTimer <= 0f)
+            _balanceWindowTimeRemaining -= dt;
+
+            _windowLogTimer -= dt;
+            if (_windowLogTimer <= 0f)
             {
+                _windowLogTimer = 2f;
+                Debug.Log($"[Greed] ⏱ 攻擊窗口剩餘 {_balanceWindowTimeRemaining:F1} 秒，當前相位={CurrentPhase}");
+            }
+
+            if (_balanceWindowTimeRemaining <= 0f)
+            {
+                _balanceWindowActive = false;
                 CurrentPhase = ScalePhase.Kicked;
                 _fsm.Force(GreedBossStateType.KickScale);
-                Debug.Log("[Greed] 10 秒到，強制 KickScale。");
+                Debug.Log("[Greed] ⚡ 10 秒到，Boss 準備踢翻天秤！");
             }
         }
 
@@ -201,16 +221,14 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         public void ResetScale()
         {
-            CurrentPhase = ScalePhase.Unbalanced;
-            _currentAttackMultiplier = _attackBoostMultiplier;
+            CurrentPhase = ScalePhase.StatueHeavy;
+            _balanceWindowActive = false;
+            _balanceWindowTimeRemaining = 0f;
 
-            // 天秤視覺與重量歸零
             _scale?.ResetScale();
-
-            // 清除舊錢袋並生成新一批（新循環開始）
             _spawner?.SpawnCycle();
 
-            Debug.Log("[Greed] 天秤重置，新循環錢袋生成。");
+            Debug.Log("[Greed] 🔄 新一輪開始！天秤重置，錢袋重新生成，Boss 恢復追擊。");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -219,15 +237,15 @@ namespace PilgrimOfSin.StateMachine
 
         public void TakeDamage(float amount)
         {
-            // 天秤傾斜時 Boss 無敵
-            if (CurrentPhase == ScalePhase.Unbalanced)
+            float actualDamage = CurrentPhase switch
             {
-                Debug.Log("[Greed] 無敵中，傷害無效。");
-                return;
-            }
+                ScalePhase.Balanced      => amount * _playerDamageBoostMultiplier,
+                ScalePhase.MoneyBagHeavy => amount * _heavyBagDamageReduction,
+                _                        => amount,
+            };
 
-            CurrentHp = Mathf.Max(0f, CurrentHp - amount);
-            Debug.Log($"[Greed] 受傷 {amount}，剩餘 HP {CurrentHp}");
+            CurrentHp = Mathf.Max(0f, CurrentHp - actualDamage);
+            Debug.Log($"[Greed] 受傷 {actualDamage:F1}（原始 {amount:F1}，相位 {CurrentPhase}），剩餘 HP {CurrentHp:F0}");
 
             if (CurrentHp <= 0f)
             {
@@ -247,7 +265,8 @@ namespace PilgrimOfSin.StateMachine
                 GreedBossStateType.Attack2 => _attack2Damage,
                 _ => _attack3Damage,
             };
-            return baseDmg * _currentAttackMultiplier;
+            float mult = CurrentPhase == ScalePhase.MoneyBagHeavy ? _bossAttackBoostMultiplier : 1f;
+            return baseDmg * mult;
         }
 
         public void MoveTowardPlayer(float dt)

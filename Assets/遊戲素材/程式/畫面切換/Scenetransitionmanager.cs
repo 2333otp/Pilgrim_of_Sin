@@ -9,6 +9,7 @@ namespace PilgrimOfSin
         // ── 場景名稱常數（與 Build Settings 保持一致）──────────────────
         public const string MAIN_SCENE = "MainScene";
         public const string CUTSCENE_SCENE = "CutsceneScene";
+        public const string IMAGE_CUTSCENE_SCENE = "ImageCutsceneScene";
         public const string HUB_SCENE = "HubScene";
         public const string GREED_SCENE = "GreedBossScene";
         public const string WRATH_SCENE = "WrathBossScene";
@@ -77,6 +78,14 @@ namespace PilgrimOfSin
                 return;
             }
 
+            // ImageCutsceneScene 不淡入，由 ImageCutsceneManager 自己控制淡入
+            if (scene.name == IMAGE_CUTSCENE_SCENE)
+            {
+                _isTransitioning = false;
+                if (_fadeCanvasGroup != null) _fadeCanvasGroup.alpha = 0f;
+                return;
+            }
+
             // 其他場景：淡入
             StartCoroutine(FadeIn());
         }
@@ -90,6 +99,14 @@ namespace PilgrimOfSin
 
             Debug.Log("[SceneTransition] 進入過場動畫");
             StartCoroutine(TransitionRoutine(CUTSCENE_SCENE));
+        }
+
+        /// <summary>Boss 擊敗後進入過場圖片場景，結束後自動回小木屋。</summary>
+        public void LoadImageCutscene()
+        {
+            if (_isTransitioning) return;
+            Debug.Log($"[SceneTransition] 進入過場圖片場景，Boss={LastBossType}");
+            StartCoroutine(TransitionRoutine(IMAGE_CUTSCENE_SCENE));
         }
 
         /// <summary>從主選單直接進入小木屋（跳過過場，測試用）。</summary>

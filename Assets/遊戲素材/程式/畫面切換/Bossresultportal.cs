@@ -57,7 +57,10 @@ namespace PilgrimOfSin
             yield return new WaitForSeconds(_winDelay);
 
             if (SceneTransitionManager.Instance != null)
-                SceneTransitionManager.Instance.ReturnToHub();
+                SceneTransitionManager.Instance.LoadImageCutscene();
+            else
+                UnityEngine.SceneManagement.SceneManager.LoadScene(
+                    SceneTransitionManager.IMAGE_CUTSCENE_SCENE);
         }
 
         private IEnumerator LoseRoutine()

@@ -3,14 +3,6 @@ using UnityEngine.InputSystem;
 
 namespace PilgrimOfSin.StateMachine
 {
-    /// <summary>
-    /// 錢袋個體。
-    /// 負責：
-    ///   - 追蹤自己的狀態（地板上 / 天秤上）
-    ///   - 玩家走近時顯示「按 X 撿起」提示，按 X 後放上天秤
-    ///   - 被玩家攻擊後以拋物線掉回地板
-    ///   - 實作 IDamageable，讓 PlayerAttackHitbox 可以打到
-    /// </summary>
     public class MoneybagObject : MonoBehaviour, IDamageable
     {
         // ── 狀態 ──────────────────────────────────────────────────────
@@ -28,6 +20,13 @@ namespace PilgrimOfSin.StateMachine
         [Header("Knockoff Arc")]
         [SerializeField] private float _arcHeight = 2f;
         [SerializeField] private float _arcDuration = 0.5f;
+        [SerializeField] private float _knockoffMinDist = 4f;
+        [SerializeField] private float _knockoffMaxDist = 9f;
+
+        [SerializeField] private Transform _scaleCenter;      // 拖入 Scale 物件
+        [SerializeField] private float _scaleExcludeRadius = 5f;
+
+        [SerializeField] private float _minBagSpacing = 3f;
 
         // ── 內部 ──────────────────────────────────────────────────────
         private ScaleObject _scale;
@@ -39,20 +38,28 @@ namespace PilgrimOfSin.StateMachine
         private float _flyTimer;
         private Vector3 _flyStart;
         private Vector3 _flyEnd;
+        private float _spawnY;          // 由 Spawner 傳入，不再是 SerializeField
+        private int _slotIndex;       // 天秤右側排列用
 
         // ════════════════════════════════════════════════════════════
         //  初始化（由 MoneybagSpawner 呼叫）
         // ════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 初始化錢袋。4 個參數版本。
+        /// 初始化錢袋。新增 spawnY 與 slotIndex 參數。
+        /// slotIndex 用於讓多顆錢袋在天秤右側排開，不重疊。
         /// </summary>
-        public void Init(float weight, ScaleObject scale, Transform scaleRightSide, GameObject interactPromptUI)
+        public void Init(float weight, ScaleObject scale, Transform scaleRightSide,
+                         GameObject interactPromptUI, float spawnY, int slotIndex = 0,
+                         Transform scaleCenter = null)
         {
             Weight = weight;
             _scale = scale;
             _scaleRightSide = scaleRightSide;
             _interactPromptUI = interactPromptUI;
+            _spawnY = spawnY;
+            _slotIndex = slotIndex;
+            _scaleCenter = scaleCenter;
             CurrentState = BagState.OnGround;
 
             var playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -105,8 +112,6 @@ namespace PilgrimOfSin.StateMachine
         private void CheckPickupInput()
         {
             if (!_playerNearby) return;
-
-            // 新版 Input System
             if (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
                 PickUp();
         }
@@ -120,15 +125,16 @@ namespace PilgrimOfSin.StateMachine
             if (_interactPromptUI) _interactPromptUI.SetActive(false);
             _playerNearby = false;
 
-            // 移到天秤右側
+            // 移到天秤右側，依 slotIndex 橫向排開（每顆間距 0.4）
             if (_scaleRightSide)
                 transform.SetParent(_scaleRightSide);
-            transform.localPosition = Vector3.zero;
 
-            // 通知天秤增加右側重量
+            float offset = (_slotIndex - 2) * 0.4f; // 以 0 為中心左右排列
+            transform.localPosition = new Vector3(offset, 0f, 0f);
+
             _scale?.AddMoneybagWeight(Weight);
 
-            Debug.Log($"[Moneybag] 撿起，重量 {Weight:F1}，放上天秤右側。");
+            Debug.Log($"[Moneybag] 撿起，重量 {Weight:F1}，放上天秤右側 slot {_slotIndex}。");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -137,9 +143,7 @@ namespace PilgrimOfSin.StateMachine
 
         public void TakeDamage(float amount)
         {
-            // 只有在天秤上才能被打落
             if (CurrentState != BagState.OnScale) return;
-
             KnockOff();
         }
 
@@ -150,21 +154,39 @@ namespace PilgrimOfSin.StateMachine
         private void KnockOff()
         {
             CurrentState = BagState.OnGround;
-
-            // 通知天秤減少右側重量
             _scale?.RemoveMoneybagWeight(Weight);
+            transform.SetParent(null, true);
 
-            // 脫離天秤父物件
-            transform.SetParent(null);
-
-            // 計算拋物線終點
-            Vector3 randomOffset = new Vector3(
-                Random.Range(-1.5f, 1.5f), 0f, Random.Range(-1.5f, 1.5f));
             _flyStart = transform.position;
-            _flyEnd = new Vector3(
-                _flyStart.x + randomOffset.x,
-                _spawnY,
-                _flyStart.z + randomOffset.z);
+
+            Vector3 candidate;
+            int safety = 50;
+            do
+            {
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                float dist = Random.Range(_knockoffMinDist, _knockoffMaxDist);
+                Vector3 dir = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+                candidate = new Vector3(_flyStart.x + dir.x * dist, _spawnY, _flyStart.z + dir.z * dist);
+                safety--;
+            }
+            while (safety > 0 && (
+            (_scaleCenter != null &&
+             Vector2.Distance(new Vector2(candidate.x, candidate.z),
+                              new Vector2(_scaleCenter.position.x, _scaleCenter.position.z))
+             < _scaleExcludeRadius)
+             ||
+             IsNearOtherBag(candidate)
+             ));
+
+            if (safety <= 0 && _scaleCenter != null)
+            {
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                candidate = new Vector3(
+                    _scaleCenter.position.x + Mathf.Cos(angle) * (_knockoffMaxDist + 3f),
+                    _spawnY,
+                    _scaleCenter.position.z + Mathf.Sin(angle) * (_knockoffMaxDist + 3f));
+            }
+            _flyEnd = candidate;
 
             _flyTimer = 0f;
             _isFlying = true;
@@ -172,7 +194,22 @@ namespace PilgrimOfSin.StateMachine
             if (_interactPromptUI) _interactPromptUI.SetActive(false);
             _playerNearby = false;
 
-            Debug.Log($"[Moneybag] 被打落，拋物線掉回地板。");
+            Debug.Log($"[Moneybag] 被打落，從 {_flyStart} 飛到 {_flyEnd}。");
+        }
+
+        private bool IsNearOtherBag(Vector3 candidate)
+        {
+            var allBags = FindObjectsByType<MoneybagObject>(FindObjectsSortMode.None);
+            foreach (var bag in allBags)
+            {
+                if (bag == this) continue;
+                if (bag.CurrentState != BagState.OnGround) continue;
+                if (Vector2.Distance(new Vector2(candidate.x, candidate.z),
+                                     new Vector2(bag.transform.position.x, bag.transform.position.z))
+                    < _minBagSpacing)
+                    return true;
+            }
+            return false;
         }
 
         private void UpdateArc()
@@ -188,10 +225,6 @@ namespace PilgrimOfSin.StateMachine
             if (t >= 1f)
                 _isFlying = false;
         }
-
-        // ── 地板 Y 值（與 MoneybagSpawner._spawnY 對應） ─────────────
-        // 錢袋落地後的 Y 座標，預設 0.5
-        [SerializeField] private float _spawnY = 0.5f;
 
         // ════════════════════════════════════════════════════════════
         //  清理

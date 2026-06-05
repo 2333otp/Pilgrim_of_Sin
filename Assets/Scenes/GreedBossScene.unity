@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.ScaleObject
   _beam: {fileID: 1709667777}
   _balanceMin: 25
-  _balanceMax: 30
+  _balanceMax: 40
   _maxWeight: 50
   _maxTiltAngle: 30
   _tiltSpeed: 5
@@ -163,7 +163,7 @@ Transform:
   m_GameObject: {fileID: 41600401}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -415,7 +415,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 41600403}
@@ -512,7 +512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c470582c1870a7749ace0481db696f5e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.76
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c470582c1870a7749ace0481db696f5e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -618,17 +618,19 @@ MonoBehaviour:
   _scale: {fileID: 41600402}
   _scaleHitbox: {fileID: 1434837447}
   _spawner: {fileID: 942762640}
-  _maxHp: 12000
+  _maxHp: 200
   _moveSpeed: 4
   _idleDuration: 1
   _attack1Range: 3
   _attack2Range: 6
-  _attack3Range: 10
+  _attack3Range: 5
   _attack1Damage: 900
   _attack2Damage: 1200
   _attack3Damage: 2300
   _balanceWindowDuration: 10
-  _attackBoostMultiplier: 1.5
+  _playerDamageBoostMultiplier: 1.5
+  _bossAttackBoostMultiplier: 1.5
+  _heavyBagDamageReduction: 0.15
   _scaleKickDamage: 700
   enableStagger: 0
   StaggerDuration: 0.5
@@ -701,14 +703,17 @@ MonoBehaviour:
   _spawnAreaMaxX: 10
   _spawnAreaMinZ: -10
   _spawnAreaMaxZ: 10
-  _spawnY: -0.5
+  _spawnY: 0.5
   _countMin: 3
   _countMax: 6
   _balanceMin: 25
-  _balanceMax: 30
+  _balanceMax: 40
   _weightMin: 3
-  _weightMax: 15
+  _weightMax: 8
   _maxRetries: 100
+  _scaleCenter: {fileID: 41600403}
+  _scaleExcludeRadius: 8
+  _minBagSpacing: 3
 --- !u!1 &983881324
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,7 +932,9 @@ MonoBehaviour:
   _attack2Damage: 1200
   _attack3Damage: 2300
   _balanceWindowDuration: 10
-  _attackBoostMultiplier: 1.5
+  _playerDamageBoostMultiplier: 1.5
+  _bossAttackBoostMultiplier: 1.5
+  _heavyBagDamageReduction: 0.15
   _scaleKickDamage: 700
   enableStagger: 0
   StaggerDuration: 0.5
@@ -1097,7 +1104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6998285119623690126, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 6998285119623690126, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1678,7 +1685,7 @@ Transform:
   m_GameObject: {fileID: 1793369430}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []

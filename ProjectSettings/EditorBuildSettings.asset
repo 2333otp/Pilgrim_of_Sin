@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FoolishBossScene.unity
     guid: adba8a1482bf81c4b934857ceb1e6314
+  - enabled: 1
+    path: Assets/Scenes/ImageCutsceneScene.unity
+    guid: 7709d36d49dc2a043997045315441dbe
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
   m_UseUCBPForAssetBundles: 0
