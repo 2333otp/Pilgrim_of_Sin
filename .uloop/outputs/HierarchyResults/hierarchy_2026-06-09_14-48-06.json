@@ -1,0 +1,299 @@
+{
+  "ExportTimestamp": "2026-06-09 14:48:06",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 20,
+    "maxDepth": 3
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 20,
+        "maxDepth": 3
+      },
+      "componentsLut": [
+        "Transform",
+        "BoxCollider",
+        "PlayerInput",
+        "Rigidbody",
+        "Animator",
+        "PlayerInputReader",
+        "PlayerController",
+        "PlayerCombat",
+        "SphereCollider",
+        "PlayerAttackHitbox",
+        "MeshFilter",
+        "MeshRenderer"
+      ],
+      "roots": [
+        {
+          "name": "Player",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "siblingIndex": 5,
+          "tag": "Player",
+          "layer": 0,
+          "children": [
+            {
+              "name": "AttackHitBox",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                8,
+                9
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_WhiteModel",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Muir_bag_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_body_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_belt_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_pants_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shirt_01_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shirt_02_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shirt_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shoes_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_eyebrow_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_eyes_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_hair_bangs_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_hair_main_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 11,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_hair_tail_HairStrand_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    10,
+                    11
+                  ],
+                  "siblingIndex": 12,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_mouth_grp",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 13,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Muir_teeth_down_geo",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        10,
+                        11
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "Muir_teeth_up_geo",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        10,
+                        11
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "Muir_tongue_geo",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        10,
+                        11
+                      ],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

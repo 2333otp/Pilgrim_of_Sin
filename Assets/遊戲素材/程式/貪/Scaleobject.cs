@@ -16,7 +16,8 @@ namespace PilgrimOfSin.StateMachine
     {
         // ── References ────────────────────────────────────────────────
         [Header("References")]
-        [SerializeField] private Transform _beam;           // 天秤橫桿 Transform（負責 Z 軸旋轉）
+        [SerializeField] private Transform _beam;                       // 天秤橫桿 Transform（負責 Z 軸旋轉）
+        [SerializeField] private GreedBossController _bossController;   // 拖入 GreedBossController
 
         // ── 平衡區間 ──────────────────────────────────────────────────
         [Header("Balance Range")]
@@ -47,6 +48,23 @@ namespace PilgrimOfSin.StateMachine
         private void Update()
         {
             UpdateTiltVisual();
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  攻擊偵測 — 任何帶 PlayerAttackHitbox 的碰撞進入時
+        //  打落天秤上所有錢袋，並重置攻擊窗口計時器
+        // ════════════════════════════════════════════════════════════
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.GetComponent<PlayerAttackHitbox>() == null) return;
+
+            var bags = FindObjectsByType<MoneybagObject>(FindObjectsSortMode.None);
+            foreach (var bag in bags)
+                bag.TakeDamage(0f);
+
+            _bossController?.ResetBalanceWindow();
+            Debug.Log("[Scale] 攻擊命中天秤，所有錢袋打落，攻擊窗口重置。");
         }
 
         // ════════════════════════════════════════════════════════════

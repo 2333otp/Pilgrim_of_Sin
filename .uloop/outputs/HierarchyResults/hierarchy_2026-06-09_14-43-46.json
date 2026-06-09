@@ -1,0 +1,538 @@
+{
+  "ExportTimestamp": "2026-06-09 14:43:46",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 35,
+    "maxDepth": 3
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 12,
+        "nodeCount": 35,
+        "maxDepth": 3
+      },
+      "componentsLut": [
+        "Transform",
+        "Camera",
+        "AudioListener",
+        "CinemachineBrain",
+        "UniversalAdditionalCameraData",
+        "Light",
+        "UniversalAdditionalLightData",
+        "MeshFilter",
+        "MeshRenderer",
+        "MeshCollider",
+        "Animator",
+        "Rigidbody",
+        "GreedBossController",
+        "CapsuleCollider",
+        "ScaleObject",
+        "SphereCollider",
+        "ScaleHitbox",
+        "BoxCollider",
+        "PlayerInput",
+        "PlayerInputReader",
+        "PlayerController",
+        "PlayerCombat",
+        "PlayerAttackHitbox",
+        "CameraController",
+        "EventSystem",
+        "InputSystemUIInputModule",
+        "BossResultPortal",
+        "RectTransform",
+        "Canvas",
+        "CanvasScaler",
+        "GraphicRaycaster",
+        "PauseMenuUI",
+        "CanvasRenderer",
+        "Image",
+        "Button",
+        "TextMeshProUGUI",
+        "MoneybagSpawner"
+      ],
+      "roots": [
+        {
+          "name": "Main Camera",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "siblingIndex": 0,
+          "tag": "MainCamera",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            5,
+            6
+          ],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "地板",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            9
+          ],
+          "siblingIndex": 2,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "GreedBoss",
+          "isActive": false,
+          "componentsIdx": [
+            0,
+            10,
+            11,
+            12,
+            13,
+            8,
+            7
+          ],
+          "siblingIndex": 3,
+          "tag": "Untagged",
+          "layer": 6,
+          "children": []
+        },
+        {
+          "name": "Scale",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            14
+          ],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "ScaleHitBox",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                15,
+                16
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ScaleBeam",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8,
+                17
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ScaleRightSide",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ScaleLeftSide",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Player",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            17,
+            18,
+            11,
+            10,
+            19,
+            20,
+            21
+          ],
+          "siblingIndex": 5,
+          "tag": "Player",
+          "layer": 0,
+          "children": [
+            {
+              "name": "AttackHitBox",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                15,
+                22
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "CameraManager",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            23
+          ],
+          "siblingIndex": 6,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "EventSystem",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            24,
+            25
+          ],
+          "siblingIndex": 7,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "BossResultPortal",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            26
+          ],
+          "siblingIndex": 8,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "PauseCanvas",
+          "isActive": true,
+          "componentsIdx": [
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "siblingIndex": 9,
+          "tag": "Untagged",
+          "layer": 5,
+          "children": [
+            {
+              "name": "PausePanel",
+              "isActive": true,
+              "componentsIdx": [
+                27
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 5,
+              "children": [
+                {
+                  "name": "ReturnHubButton",
+                  "isActive": true,
+                  "componentsIdx": [
+                    27,
+                    32,
+                    33,
+                    34
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": [
+                    {
+                      "name": "回小木屋",
+                      "isActive": true,
+                      "componentsIdx": [
+                        27,
+                        32,
+                        35
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 5,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "ReturnMainMenuButton",
+                  "isActive": true,
+                  "componentsIdx": [
+                    27,
+                    32,
+                    33,
+                    34
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": [
+                    {
+                      "name": "回主選單",
+                      "isActive": true,
+                      "componentsIdx": [
+                        27,
+                        32,
+                        35
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 5,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "ResumeButton",
+                  "isActive": true,
+                  "componentsIdx": [
+                    27,
+                    32,
+                    33,
+                    34
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": [
+                    {
+                      "name": "繼續遊戲",
+                      "isActive": true,
+                      "componentsIdx": [
+                        27,
+                        32,
+                        35
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 5,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Chicken",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            10,
+            11,
+            12,
+            13,
+            36
+          ],
+          "siblingIndex": 10,
+          "tag": "Untagged",
+          "layer": 6,
+          "children": [
+            {
+              "name": "body_geo_low",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "chestFeather_geo",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "eyes_geo_grp",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "eyes_geo_L",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "eyes_geo_R",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "longfeather_geo",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "necklace_geo",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8
+              ],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "necklace_geo_02",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8
+              ],
+              "siblingIndex": 5,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "wingFeather_geo",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                7,
+                8
+              ],
+              "siblingIndex": 6,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "GameplayCanvas",
+          "isActive": true,
+          "componentsIdx": [
+            27,
+            28,
+            29,
+            30
+          ],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 5,
+          "children": [
+            {
+              "name": "InteractPrompt",
+              "isActive": true,
+              "componentsIdx": [
+                27,
+                32
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 5,
+              "children": [
+                {
+                  "name": "PromptText",
+                  "isActive": true,
+                  "componentsIdx": [
+                    27,
+                    32,
+                    35
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -23,7 +23,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Update(float dt)
         {
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
-            if (Boss.CurrentPhase == ScalePhase.Balanced) return;
+            if (Boss.IsInBalanceWindow) return;
 
             _timer -= dt;
             if (_timer > 0f) return;
@@ -54,7 +54,7 @@ namespace PilgrimOfSin.StateMachine
         public override void FixedUpdate(float dt)
         {
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
-            if (Boss.CurrentPhase == ScalePhase.Balanced) { Debug.Log("[Move] 天秤平衡，Boss 停止追擊"); Go(GreedBossStateType.Idle); return; }
+            if (Boss.IsInBalanceWindow) { Debug.Log("[Move] 攻擊窗口啟動，Boss 停止追擊"); Go(GreedBossStateType.Idle); return; }
 
             Boss.MoveTowardPlayer(dt);
 

@@ -66,6 +66,7 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 天秤相位 ──────────────────────────────────────────────────
         public ScalePhase CurrentPhase { get; private set; } = ScalePhase.StatueHeavy;
+        public bool IsInBalanceWindow => _balanceWindowActive;
 
         // ── 動畫事件 ──────────────────────────────────────────────────
         public event Action OnAttackAnimEnd;
@@ -209,6 +210,22 @@ namespace PilgrimOfSin.StateMachine
                 _fsm.Force(GreedBossStateType.KickScale);
                 Debug.Log("[Greed] ⚡ 10 秒到，Boss 準備踢翻天秤！");
             }
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  攻擊天秤重置窗口（由 ScaleObject.TakeDamage 呼叫）
+        // ════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 玩家攻擊天秤碰撞體時呼叫。
+        /// 取消本輪攻擊窗口，計時器歸零，等待天秤下次進入平衡才重新計時。
+        /// </summary>
+        public void ResetBalanceWindow()
+        {
+            if (!_balanceWindowActive) return;
+            _balanceWindowActive = false;
+            _balanceWindowTimeRemaining = 0f;
+            Debug.Log("[Greed] ⚡ 天秤被攻擊，攻擊窗口取消，等待下次平衡重新計時。");
         }
 
         // ════════════════════════════════════════════════════════════
