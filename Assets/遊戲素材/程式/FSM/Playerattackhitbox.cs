@@ -19,15 +19,22 @@ namespace PilgrimOfSin.StateMachine
             _damage = damage;
             _hitTargets.Clear();
             gameObject.SetActive(true);
+            Debug.Log($"[AttackHitbox] 啟動，傷害={damage}");
         }
 
         public void Deactivate() => gameObject.SetActive(false);
 
+        private void OnEnable()
+        {
+            Debug.Log("[AttackHitbox] 碰撞體 OnEnable");
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             var target = other.GetComponentInParent<IDamageable>();
+            Debug.Log($"[AttackHitbox] 碰到 {other.name}，IDamageable={(target != null ? target.GetType().Name : "null")}");
             if (target == null) return;
-            if (_hitTargets.Contains(target)) return; // 同一次攻擊不重複打
+            if (_hitTargets.Contains(target)) return;
 
             _hitTargets.Add(target);
             target.TakeDamage(_damage);

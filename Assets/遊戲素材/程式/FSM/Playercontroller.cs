@@ -75,6 +75,10 @@ namespace PilgrimOfSin.StateMachine
         private bool _isFrameInvincible; // 翻滾、特殊招式、武器切換等動作幀無敵
         private bool _isSafeZoneImmune;  // 玩家在善區內的環境免疫
 
+        // 受到傷害倍率（1.0 = 正常；< 1.0 = 有防禦增益）
+        // 由關卡 Boss 邏輯呼叫 ApplyDefenseBonus() 設定，Inspector 無法直接看到此值
+        private float _incomingDamageMultiplier = 1.0f;
+
         private bool IsInvincible => _isFrameInvincible || _isSafeZoneImmune;
 
         // ── 動畫事件（各狀態訂閱） ───────────────────────────────────
@@ -201,7 +205,7 @@ namespace PilgrimOfSin.StateMachine
         public void TakeDamage(float amount)
         {
             if (IsInvincible) return;
-            CurrentHp = Mathf.Max(0f, CurrentHp - amount);
+            CurrentHp = Mathf.Max(0f, CurrentHp - amount * _incomingDamageMultiplier);
 
             if (CurrentHp <= 0f)
             {
@@ -227,6 +231,19 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         public void SetSafeZoneImmune(bool value) => _isSafeZoneImmune = value;
 
+        /// <summary>
+        /// 嗔關卡：改第一幅畫後由 WrathBossController 呼叫。
+        /// multiplier 傳入 0.8 表示受到傷害降低 20%（Inspector 由 Boss 那邊調整）。
+        /// </summary>
+        public void ApplyDefenseBonus(float multiplier)
+        {
+            _incomingDamageMultiplier = Mathf.Clamp01(multiplier);
+            Debug.Log($"[Player] 防禦增益啟動，受傷倍率 {_incomingDamageMultiplier:P0}");
+        }
+
+        /// <summary>關卡結束或重試時重置防禦倍率。</summary>
+        public void ResetDefenseBonus() => _incomingDamageMultiplier = 1.0f;
+
         public void StartSpecialSkillCooldown() => _specialCdTimer = _specialCd;
         public void StartWeaponSwitchCooldown() => _weaponSwitchCdTimer = _weaponSwitchCd;
 
@@ -247,11 +264,9 @@ namespace PilgrimOfSin.StateMachine
 
         public void OnDeath()
         {
-            // TODO: 觸發死亡流程（返回存檔點）
-            Debug.Log("[Player] 死亡，返回存檔點。");
+            // 死亡後續流程由 DeadState.Enter() 呼叫 BossResultPortal.OnPlayerDefeated() 處理
+            Debug.Log("[Player] 死亡。");
         }
-
-        // 把這個方法加在 PlayerController.cs 的 OnDeath() 方法下面
 
         /// <summary>
         /// 由 PauseMenuUI 的「繼續遊戲」按鈕呼叫，

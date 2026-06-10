@@ -67,12 +67,19 @@ namespace PilgrimOfSin
         {
             yield return new WaitForSeconds(_loseDelay);
 
-            if (SceneTransitionManager.Instance == null) yield break;
-
-            if (_restartOnLose)
-                SceneTransitionManager.Instance.RestartCurrentBoss();
+            if (SceneTransitionManager.Instance != null)
+            {
+                if (_restartOnLose)
+                    SceneTransitionManager.Instance.RestartCurrentBoss();
+                else
+                    SceneTransitionManager.Instance.ReturnToHub();
+            }
             else
-                SceneTransitionManager.Instance.ReturnToHub();
+            {
+                // 直接從 Boss 場景 Play 測試時的 fallback（沒有 SceneTransitionManager）
+                UnityEngine.SceneManagement.SceneManager.LoadScene(
+                    UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+            }
         }
     }
 }

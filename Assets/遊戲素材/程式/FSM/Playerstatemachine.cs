@@ -149,7 +149,8 @@ namespace PilgrimOfSin.StateMachine
             CurrentState = nextState;
             CurrentState.Enter();
             OnStateChanged?.Invoke(PreviousStateType, nextState.StateType);
-            Debug.Log($"[StateMachine] {PreviousStateType} → {nextState.StateType}");
+            if (nextState.StateType != PlayerStateType.Idle && nextState.StateType != PlayerStateType.Walk)
+                Debug.Log($"[StateMachine] {PreviousStateType} → {nextState.StateType}");
         }
 
         private static int GetPriority(PlayerStateType type)

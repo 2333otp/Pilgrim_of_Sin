@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace PilgrimOfSin.StateMachine
 {
@@ -54,7 +54,7 @@ namespace PilgrimOfSin.StateMachine
             _timer -= dt;
             if (_timer > 0f) return;
 
-            // 有下一個五芒星節點就衝刺，否則普通攻擊
+            // 永遠有五芒星頂點可衝，所以 Idle 後必定進 Dash
             if (Boss.HasNextDashTarget)
                 Go(WrathBossStateType.Dash);
             else
@@ -67,7 +67,8 @@ namespace PilgrimOfSin.StateMachine
 
     // ════════════════════════════════════════════════════════════════
     //  DashState  沿五芒星軌跡衝刺
-    //  衝撞判定（400）由 DashHitbox 碰撞體負責
+    //  - 衝撞判定（400）由 DashHitbox 碰撞體負責
+    //  - 每移動 _pathSpawnInterval 距離生成一個 PathDamageTrigger（殘留 5 秒，400 傷害）
     // ════════════════════════════════════════════════════════════════
     public class WrathDashState : WrathBossState
     {
@@ -78,7 +79,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             Trigger("Dash");
-            Boss.EnableDashHitbox(true);   // 開啟衝撞碰撞體
+            Boss.EnableDashHitbox(true);
             Boss.StartDashToNextTarget();
         }
 
@@ -88,85 +89,140 @@ namespace PilgrimOfSin.StateMachine
 
             Boss.MoveDash(dt);
 
-            // 抵達目標點 → 爆炸
             if (Boss.ReachedDashTarget)
-                Go(WrathBossStateType.Explode);
+                Go(WrathBossStateType.StayAtVertex);
         }
 
         public override void Exit() => Boss.EnableDashHitbox(false);
     }
 
     // ════════════════════════════════════════════════════════════════
-    //  ExplodeState  抵達定點後爆炸
-    //  爆炸判定（600）由 ExplosionHitbox 負責，Animation Event 觸發
+    //  StayAtVertexState  抵達頂點後停留 10 秒
+    //
+    //  進入時：
+    //    - 畫未改 → 觸發爆炸動畫（Animation Event 開關 ExplosionHitbox，傷害 600）
+    //    - 畫已改 → 播待機動畫，不爆炸
+    //    - 同時開始 10 秒計時（爆炸時間算在 10 秒內）
+    //
+    //  出招排程（placeholder）：
+    //    - 第一次：3~4 秒（固定觸發）
+    //    - 第二次：7~8 秒（50% 機率觸發）
+    //    - 出招使用 Boss.DecideAttack() 依距離選招式
+    //    - 出招動畫在 StayAtVertex 內部處理，不離開此狀態
+    //
+    //  10 秒到且不在出招中 → 回 Idle → 下一輪 Dash
     // ════════════════════════════════════════════════════════════════
-    public class WrathExplodeState : WrathBossState
+    public class WrathStayAtVertexState : WrathBossState
     {
-        public override WrathBossStateType StateType => WrathBossStateType.Explode;
+        public override WrathBossStateType StateType => WrathBossStateType.StayAtVertex;
 
-        private bool _animDone;
+        private const float AttackFallbackDuration = 1.5f;
 
-        public WrathExplodeState(WrathBossController b, WrathBossStateMachine m) : base(b, m) { }
+        private float _elapsed;
+        private float _firstAttackAt;
+        private float _secondAttackAt;
+        private bool _doSecondAttack;
+        private bool _firstAttackFired;
+        private bool _secondAttackFired;
+        private bool _isAttacking;
+        private float _attackTimer;
+
+        public WrathStayAtVertexState(WrathBossController b, WrathBossStateMachine m) : base(b, m) { }
 
         public override void Enter()
         {
-            _animDone = false;
-            Trigger("Explode");
-            Boss.OnExplodeAnimEnd += HandleAnimEnd;
-        }
+            _elapsed = 0f;
+            _firstAttackAt = Random.Range(3f, 4f);
+            _secondAttackAt = Random.Range(7f, 8f);
+            _doSecondAttack = Random.value > 0.5f;
+            _firstAttackFired = false;
+            _secondAttackFired = false;
+            _isAttacking = false;
 
-        public override void Update(float dt)
-        {
-            if (Boss.IsDead) { ForceGo(WrathBossStateType.Dead); return; }
-            if (!_animDone) return;
-
-            // 判斷這個定點的畫是否已被改寫
-            if (Boss.CurrentPointPaintingModified)
-                Go(WrathBossStateType.WaitAtPainting);
+            if (!Boss.CurrentPointPaintingModified)
+                Trigger("Explode"); // Animation Event 負責開關 ExplosionHitbox
             else
-                Go(WrathBossStateType.Idle); // 繼續下一段衝刺
-        }
-
-        public override void Exit() => Boss.OnExplodeAnimEnd -= HandleAnimEnd;
-
-        private void HandleAnimEnd() => _animDone = true;
-    }
-
-    // ════════════════════════════════════════════════════════════════
-    //  WaitAtPaintingState  停在改寫過的畫前（玩家攻擊窗口）
-    // ════════════════════════════════════════════════════════════════
-    public class WrathWaitAtPaintingState : WrathBossState
-    {
-        public override WrathBossStateType StateType => WrathBossStateType.WaitAtPainting;
-
-        private float _timer;
-
-        public WrathWaitAtPaintingState(WrathBossController b, WrathBossStateMachine m) : base(b, m) { }
-
-        public override void Enter()
-        {
-            _timer = Boss.WaitAtPaintingDuration;
-            Trigger("Wait");
-            Debug.Log($"[Wrath] 停在改寫的畫前，{_timer}s 攻擊窗口。");
+                Trigger("Wait");
         }
 
         public override void Update(float dt)
         {
             if (Boss.IsDead) { ForceGo(WrathBossStateType.Dead); return; }
 
-            _timer -= dt;
-            if (_timer <= 0f)
+            _elapsed += dt;
+
+            if (_isAttacking)
+            {
+                _attackTimer += dt;
+                if (_attackTimer >= AttackFallbackDuration)
+                    OnAttackComplete();
+                return;
+            }
+
+            if (!_firstAttackFired && _elapsed >= _firstAttackAt)
+            {
+                _firstAttackFired = true;
+                FireAttack();
+                return;
+            }
+
+            if (_doSecondAttack && !_secondAttackFired && _elapsed >= _secondAttackAt)
+            {
+                _secondAttackFired = true;
+                FireAttack();
+                return;
+            }
+
+            if (_elapsed >= Boss.StayAtVertexDuration)
                 Go(WrathBossStateType.Idle);
         }
+
+        private void FireAttack()
+        {
+            _isAttacking = true;
+            _attackTimer = 0f;
+
+            var attackType = Boss.DecideAttack();
+            if (attackType == WrathBossStateType.Idle)
+                attackType = WrathBossStateType.Attack1;
+
+            string triggerName = attackType switch
+            {
+                WrathBossStateType.Attack1 => "Attack1",
+                WrathBossStateType.Attack2 => "Attack2",
+                _ => "Attack3",
+            };
+
+            Trigger(triggerName);
+            Boss.OnAttackAnimEnd += OnAttackComplete;
+        }
+
+        private void OnAttackComplete()
+        {
+            if (!_isAttacking) return;
+            Boss.OnAttackAnimEnd -= OnAttackComplete;
+            _isAttacking = false;
+            _attackTimer = 0f;
+            Trigger("Wait");
+        }
+
+        public override void Exit()
+        {
+            // 安全清理：若在出招中途被強制切走，確保事件不殘留
+            Boss.OnAttackAnimEnd -= OnAttackComplete;
+        }
     }
 
     // ════════════════════════════════════════════════════════════════
-    //  AttackState  三種攻擊共用
+    //  AttackState  三種攻擊共用（目前主要由 IdleState 的 DecideAttack 路徑觸發）
     // ════════════════════════════════════════════════════════════════
     public class WrathAttackState : WrathBossState
     {
+        private const float AttackFallbackDuration = 1.5f;
+
         private readonly WrathBossStateType _type;
         private bool _animDone;
+        private float _timer;
 
         public override WrathBossStateType StateType => _type;
 
@@ -179,6 +235,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _animDone = false;
+            _timer = 0f;
             string triggerName = _type switch
             {
                 WrathBossStateType.Attack1 => "Attack1",
@@ -192,7 +249,9 @@ namespace PilgrimOfSin.StateMachine
         public override void Update(float dt)
         {
             if (Boss.IsDead) { ForceGo(WrathBossStateType.Dead); return; }
-            if (_animDone) Go(WrathBossStateType.Idle);
+            _timer += dt;
+            if (_animDone || _timer >= AttackFallbackDuration)
+                Go(WrathBossStateType.Idle);
         }
 
         public override void Exit() => Boss.OnAttackAnimEnd -= HandleAnimEnd;

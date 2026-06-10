@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ namespace PilgrimOfSin.StateMachine
     /// Boss「嗔」主控制器。
     /// 負責：
     ///   - 組裝並驅動 WrathBossStateMachine
-    ///   - 管理五芒星軌跡（5個定點，依序衝刺）
+    ///   - 管理五芒星軌跡（5 個定點，依序衝刺）
     ///   - 追蹤各定點的畫是否已被玩家改寫
     ///   - 持有所有 Inspector 可調數值
     /// </summary>
@@ -18,10 +18,10 @@ namespace PilgrimOfSin.StateMachine
         // ── References ───────────────────────────────────────────────
         [Header("References")]
         [SerializeField] private Transform _player;
-        [SerializeField] private Collider _dashHitbox;       // 衝撞碰撞體
-        [SerializeField] private Collider _explosionHitbox;  // 爆炸碰撞體
+        [SerializeField] private Collider _dashHitbox;
+        [SerializeField] private Collider _explosionHitbox;
 
-        /// <summary>五芒星的5個定點，依順序設定（Inspector拖入）。</summary>
+        /// <summary>五芒星的 5 個定點，依順序設定（Inspector 拖入）。</summary>
         [SerializeField] private Transform[] _pentagramPoints = new Transform[5];
 
         /// <summary>各定點對應的畫物件。</summary>
@@ -38,8 +38,8 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _attack1Damage = 800f;
         [SerializeField] private float _attack2Damage = 1300f;
         [SerializeField] private float _attack3Damage = 1000f;
-        [SerializeField] private float _dashDamage = 400f;   // 衝撞傷害
-        [SerializeField] private float _explosionDamage = 600f;  // 爆炸傷害
+        [SerializeField] private float _dashDamage = 400f;
+        [SerializeField] private float _explosionDamage = 600f;
 
         [Header("Attack Range")]
         [SerializeField] private float _attack1Range = 3f;
@@ -49,11 +49,24 @@ namespace PilgrimOfSin.StateMachine
         // ── 五芒星衝刺數值 ────────────────────────────────────────────
         [Header("Dash")]
         [SerializeField] private float _dashSpeed = 18f;
-        [SerializeField] private float _dashArriveThreshold = 0.3f; // 到達判定距離
+        [SerializeField] private float _dashArriveThreshold = 0.3f;
 
-        // ── 畫的等待窗口 ──────────────────────────────────────────────
-        [Header("Painting Wait")]
-        [SerializeField] public float WaitAtPaintingDuration = 10f; // Inspector 可調
+        // ── 頂點停留窗口 ──────────────────────────────────────────────
+        [Header("Stay At Vertex")]
+        [SerializeField] public float StayAtVertexDuration = 10f; // Inspector 可調
+
+        // ── 路徑殘留傷害 ──────────────────────────────────────────────
+        [Header("Path Damage")]
+        [SerializeField] private GameObject _pathDamagePrefab;
+        [SerializeField] private float _pathSpawnInterval = 1f; // 每移動多少距離生成一個
+
+        // ── 傷害減免（未改任何畫時） ──────────────────────────────────
+        [Header("Damage Reduction (No Paintings Modified)")]
+        [SerializeField] private float _noModifyDamageMultiplier = 0.1f; // 降低 90%，Inspector 可調
+
+        // ── 玩家防禦增益（改第一幅畫後觸發） ─────────────────────────
+        [Header("Player Defense Bonus")]
+        [SerializeField] private float _playerDefenseBonusMultiplier = 0.8f; // 降低 20%，Inspector 可調
 
         // ── Stagger（選配） ───────────────────────────────────────────
         [Header("Stagger (Optional)")]
@@ -95,12 +108,15 @@ namespace PilgrimOfSin.StateMachine
         private Transform _currentTarget;
         private int _currentPointIndex = -1;
 
-        // 五芒星走法順序（0→2→4→1→3→0 依五芒星連線）
+        // 五芒星走法：0→2→4→1→3→0（對應設計文件 1→3→5→2→4→1）
         private static readonly int[] PentagramOrder = { 0, 2, 4, 1, 3 };
-        private int _pentagramStep = 0;
+        private int _pentagramStep = 4; // 初始為 Length-1，使第一次 +1 後從 index 0 開始
 
-        // 至少改寫一幅畫才能受傷
         private bool _canTakeDamage = false;
+        private int _modifiedPaintingCount = 0;
+        private float _pathSpawnDistAcc = 0f;
+
+        public WrathBossStateType CurrentState => _fsm?.CurrentType ?? WrathBossStateType.Idle;
 
         // ════════════════════════════════════════════════════════════
         //  Unity 生命周期
@@ -115,11 +131,18 @@ namespace PilgrimOfSin.StateMachine
             if (_explosionHitbox) _explosionHitbox.enabled = false;
 
             BuildFSM();
+
+            // 移動由程式碼直接設定 position，不需要物理模擬
+            var rb = GetComponent<Rigidbody>();
+            if (rb != null) rb.isKinematic = true;
+
+            // 五芒星頂點解除父層，保持世界座標固定，不隨 Boss 移動
+            foreach (var pt in _pentagramPoints)
+                if (pt != null) pt.SetParent(null, true);
         }
 
         private void Start()
         {
-            // 訂閱所有畫的改寫事件
             foreach (var p in _paintings)
                 if (p != null) p.OnModified += HandlePaintingModified;
         }
@@ -143,15 +166,14 @@ namespace PilgrimOfSin.StateMachine
 
             var states = new Dictionary<WrathBossStateType, WrathBossState>
             {
-                { WrathBossStateType.Idle,           new WrathIdleState(this, _fsm)                              },
-                { WrathBossStateType.Dash,           new WrathDashState(this, _fsm)                              },
-                { WrathBossStateType.Explode,        new WrathExplodeState(this, _fsm)                           },
-                { WrathBossStateType.WaitAtPainting, new WrathWaitAtPaintingState(this, _fsm)                    },
-                { WrathBossStateType.Attack1,        new WrathAttackState(this, _fsm, WrathBossStateType.Attack1)},
-                { WrathBossStateType.Attack2,        new WrathAttackState(this, _fsm, WrathBossStateType.Attack2)},
-                { WrathBossStateType.Attack3,        new WrathAttackState(this, _fsm, WrathBossStateType.Attack3)},
-                { WrathBossStateType.Stagger,        new WrathStaggerState(this, _fsm)                           },
-                { WrathBossStateType.Dead,           new WrathDeadState(this, _fsm)                              },
+                { WrathBossStateType.Idle,         new WrathIdleState(this, _fsm)                               },
+                { WrathBossStateType.Dash,         new WrathDashState(this, _fsm)                               },
+                { WrathBossStateType.StayAtVertex, new WrathStayAtVertexState(this, _fsm)                       },
+                { WrathBossStateType.Attack1,      new WrathAttackState(this, _fsm, WrathBossStateType.Attack1)  },
+                { WrathBossStateType.Attack2,      new WrathAttackState(this, _fsm, WrathBossStateType.Attack2)  },
+                { WrathBossStateType.Attack3,      new WrathAttackState(this, _fsm, WrathBossStateType.Attack3)  },
+                { WrathBossStateType.Stagger,      new WrathStaggerState(this, _fsm)                             },
+                { WrathBossStateType.Dead,         new WrathDeadState(this, _fsm)                                },
             };
 
             _fsm.Init(states, WrathBossStateType.Idle);
@@ -161,7 +183,7 @@ namespace PilgrimOfSin.StateMachine
         //  五芒星衝刺
         // ════════════════════════════════════════════════════════════
 
-        /// <summary>DashState.Enter 呼叫，設定下一個目標點。</summary>
+        /// <summary>DashState.Enter 呼叫，設定下一個目標點並重置路徑計數器。</summary>
         public void StartDashToNextTarget()
         {
             _pentagramStep = (_pentagramStep + 1) % PentagramOrder.Length;
@@ -170,16 +192,27 @@ namespace PilgrimOfSin.StateMachine
             if (_currentPointIndex < _pentagramPoints.Length)
                 _currentTarget = _pentagramPoints[_currentPointIndex];
 
+            _pathSpawnDistAcc = 0f;
             Debug.Log($"[Wrath] 衝向第 {_currentPointIndex} 點");
         }
 
-        /// <summary>DashState.FixedUpdate 呼叫，推進位置。</summary>
+        /// <summary>DashState.FixedUpdate 呼叫，推進位置並沿路生成路徑殘留傷害。</summary>
         public void MoveDash(float dt)
         {
             if (_currentTarget == null) return;
             Vector3 dir = (_currentTarget.position - transform.position).normalized;
             dir.y = 0f;
-            transform.position += dir * _dashSpeed * dt;
+            Vector3 movement = dir * _dashSpeed * dt;
+
+            transform.position += movement;
+
+            _pathSpawnDistAcc += movement.magnitude;
+            if (_pathSpawnDistAcc >= _pathSpawnInterval && _pathDamagePrefab != null)
+            {
+                _pathSpawnDistAcc = 0f;
+                Instantiate(_pathDamagePrefab, transform.position, Quaternion.identity);
+            }
+
             if (dir != Vector3.zero)
                 transform.rotation = Quaternion.Slerp(transform.rotation,
                                                        Quaternion.LookRotation(dir), 20f * dt);
@@ -203,7 +236,7 @@ namespace PilgrimOfSin.StateMachine
             if (dist <= _attack1Range) return WrathBossStateType.Attack1;
             if (dist <= _attack2Range) return WrathBossStateType.Attack2;
             if (dist <= _attack3Range) return WrathBossStateType.Attack3;
-            return WrathBossStateType.Idle; // 太遠就等待
+            return WrathBossStateType.Idle;
         }
 
         public float GetAttackDamage(WrathBossStateType type)
@@ -222,9 +255,23 @@ namespace PilgrimOfSin.StateMachine
 
         private void HandlePaintingModified()
         {
-            // 至少一幅畫被改寫後，Boss 才可受傷
+            _modifiedPaintingCount++;
             _canTakeDamage = true;
-            Debug.Log("[Wrath] 畫已被改寫，Boss 現在可受傷。");
+
+            // 每改一幅畫：Boss 立刻扣除 5% HP
+            CurrentHp = Mathf.Max(0f, CurrentHp - _maxHp * 0.05f);
+            Debug.Log($"[Wrath] 第 {_modifiedPaintingCount} 幅畫改寫，Boss 扣除 5% HP，剩餘 HP {CurrentHp}");
+
+            // 改第一幅畫：觸發玩家防禦增益
+            if (_modifiedPaintingCount == 1)
+            {
+                var player = _player?.GetComponent<PlayerController>();
+                player?.ApplyDefenseBonus(_playerDefenseBonusMultiplier);
+                Debug.Log("[Wrath] 玩家獲得防禦增益。");
+            }
+
+            if (CurrentHp <= 0f)
+                _fsm.Force(WrathBossStateType.Dead);
         }
 
         // ════════════════════════════════════════════════════════════
@@ -233,14 +280,9 @@ namespace PilgrimOfSin.StateMachine
 
         public void TakeDamage(float amount)
         {
-            if (!_canTakeDamage)
-            {
-                Debug.Log("[Wrath] 尚未改寫任何畫，傷害無效。");
-                return;
-            }
-
-            CurrentHp = Mathf.Max(0f, CurrentHp - amount);
-            Debug.Log($"[Wrath] 受傷 {amount}，剩餘 HP {CurrentHp}");
+            float actualAmount = _canTakeDamage ? amount : amount * _noModifyDamageMultiplier;
+            CurrentHp = Mathf.Max(0f, CurrentHp - actualAmount);
+            Debug.Log($"[Wrath] 受傷 {actualAmount}，剩餘 HP {CurrentHp}");
 
             if (CurrentHp <= 0f)
             {
@@ -254,7 +296,6 @@ namespace PilgrimOfSin.StateMachine
 
         public void OnDeath()
         {
-            // TODO: 觸發通關演出
             Debug.Log("[Wrath] Boss 死亡，通關。");
             BossResultPortal.Instance?.OnBossDefeated();
         }

@@ -1,0 +1,55 @@
+{
+  "ExportTimestamp": "2026-06-10 10:24:56",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "WrathBossScene",
+    "nodeCount": 2,
+    "maxDepth": 1
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "WrathBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 2,
+        "maxDepth": 1
+      },
+      "roots": [
+        {
+          "name": "Player",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "MeshFilter",
+            "MeshRenderer",
+            "BoxCollider",
+            "PlayerInput",
+            "Rigidbody",
+            "Animator",
+            "PlayerInputReader",
+            "PlayerController",
+            "PlayerCombat"
+          ],
+          "siblingIndex": 9,
+          "tag": "Player",
+          "layer": 0,
+          "children": [
+            {
+              "name": "AttackHitBox",
+              "isActive": true,
+              "components": [
+                "Transform",
+                "SphereCollider",
+                "PlayerAttackHitbox"
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
