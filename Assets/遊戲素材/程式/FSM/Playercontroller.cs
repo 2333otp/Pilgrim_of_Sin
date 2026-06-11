@@ -272,7 +272,6 @@ namespace PilgrimOfSin.StateMachine
         {
             if (Combat != null)
                 Combat.CurrentWeaponIndex = PendingWeaponIndex;
-            Debug.Log($"[Player] 切換至武器 {PendingWeaponIndex}");
             OnWeaponSwitched?.Invoke(PendingWeaponIndex);
         }
 
