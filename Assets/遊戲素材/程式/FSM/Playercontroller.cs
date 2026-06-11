@@ -86,6 +86,9 @@ namespace PilgrimOfSin.StateMachine
         public event Action OnSpecialSkillAnimationEnd;
         public event Action OnWeaponSwitchAnimationEnd;
 
+        // ── UI 事件 ──────────────────────────────────────────────────
+        public event Action<int> OnWeaponSwitched;
+
         // ── 狀態機 ───────────────────────────────────────────────────
         private PlayerStateMachine _stateMachine;
 
@@ -260,6 +263,7 @@ namespace PilgrimOfSin.StateMachine
             if (Combat != null)
                 Combat.CurrentWeaponIndex = PendingWeaponIndex;
             Debug.Log($"[Player] 切換至武器 {PendingWeaponIndex}");
+            OnWeaponSwitched?.Invoke(PendingWeaponIndex);
         }
 
         public void OnDeath()
