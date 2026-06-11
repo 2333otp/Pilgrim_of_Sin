@@ -593,6 +593,10 @@ namespace PilgrimOfSin.StateMachine
             if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
 
+            // 動畫進行中可更新目標武器，動畫結束後套用最後一次輸入
+            if (!_animDone && Input.WeaponSwitchPressed)
+                Player.BufferWeaponSwitch(Input.WeaponSwitchIndex);
+
             if (!_animDone)
             {
                 _timer -= dt;

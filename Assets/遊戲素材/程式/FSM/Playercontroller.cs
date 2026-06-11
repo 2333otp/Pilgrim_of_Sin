@@ -258,6 +258,16 @@ namespace PilgrimOfSin.StateMachine
             _stateMachine.RequestTransition(PlayerStateType.WeaponSwitch);
         }
 
+        /// <summary>
+        /// 切換動畫進行中更新待切換目標，不觸發新動畫。
+        /// 動畫結束時 ApplyWeaponSwitch 會套用最後一次按的武器。
+        /// </summary>
+        public void BufferWeaponSwitch(int index)
+        {
+            if (Combat != null && Combat.CurrentWeaponIndex == index) return;
+            PendingWeaponIndex = index;
+        }
+
         public void ApplyWeaponSwitch()
         {
             if (Combat != null)
