@@ -1,0 +1,414 @@
+{
+  "ExportTimestamp": "2026-06-30 15:08:39",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "FoolishBossScene",
+    "nodeCount": 43,
+    "maxDepth": 2
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "FoolishBossScene",
+      "stats": {
+        "rootCount": 17,
+        "nodeCount": 43,
+        "maxDepth": 2
+      },
+      "roots": [
+        {
+          "name": "Main Camera",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 0,
+          "tag": "MainCamera",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "地板",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 2,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "FoolishBoss",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 3,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "EvilZone",
+          "isActive": false,
+          "components": [],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "SafeZone_North",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 5,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "SafeZone_South",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 6,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "SafeZone_East",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 7,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "SafeZone_West",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 8,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Player",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 9,
+          "tag": "Player",
+          "layer": 0,
+          "children": [
+            {
+              "name": "AttackHitBox",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "BossResultPortal",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 10,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "PauseCanvas",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 5,
+          "children": [
+            {
+              "name": "PausePanel",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 5,
+              "children": [
+                {
+                  "name": "ReturnHubButton",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": []
+                },
+                {
+                  "name": "ReturnMainMenuButton",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": []
+                },
+                {
+                  "name": "ResumeButton",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "EventSystem",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 12,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "SceneTransitionManager",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 13,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "CameraManager",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 14,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Muir_WhiteModel",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 15,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "Muir_bag_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_body_low_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_cloth_belt_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_cloth_pants_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_cloth_shirt_01_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_cloth_shirt_02_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 5,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_cloth_shirt_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 6,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_cloth_shoes_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 7,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_eyebrow_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 8,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_eyes_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 9,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_hair_bangs_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 10,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_hair_main_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 11,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_hair_tail_HairStrand_geo",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 12,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_mouth_grp",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 13,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Muir_teeth_down_geo",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_teeth_up_geo",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_tongue_geo",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "WeaponHUD",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 16,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "WeaponIcon_1",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "WeaponIcon_2",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "WeaponIcon_3",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "WeaponIcon_4",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

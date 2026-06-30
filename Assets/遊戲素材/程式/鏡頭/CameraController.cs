@@ -21,7 +21,6 @@ namespace PilgrimOfSin.StateMachine
         [Header("Camera Position")]
         [SerializeField] private float _distance = 5f;    // 玩家後方距離
         [SerializeField] private float _height = 2f;    // 玩家上方高度
-        [SerializeField] private float _followSpeed = 10f;   // 跟隨速度（Damping）
 
         [Header("Mouse Rotation")]
         [SerializeField] private float _mouseSensitivityX = 3f;
@@ -108,9 +107,10 @@ namespace PilgrimOfSin.StateMachine
             float targetYaw = Mathf.Atan2(toEnemy.x, toEnemy.z) * Mathf.Rad2Deg;
             float targetPitch = 15f; // 鎖定時固定俯角
 
-            // 平滑插值
-            _yaw = Mathf.LerpAngle(_yaw, targetYaw, Time.deltaTime * _lockOnSpeed);
-            _pitch = Mathf.LerpAngle(_pitch, targetPitch, Time.deltaTime * _lockOnSpeed);
+            // 幀率無關的指數平滑
+            float t = 1f - Mathf.Exp(-_lockOnSpeed * Time.deltaTime);
+            _yaw   = Mathf.LerpAngle(_yaw,   targetYaw,   t);
+            _pitch = Mathf.LerpAngle(_pitch, targetPitch, t);
 
             ApplyCameraTransform(_yaw, _pitch);
         }
@@ -126,11 +126,8 @@ namespace PilgrimOfSin.StateMachine
             Vector3 targetPos = lookAtPoint - rotation * Vector3.forward * _distance
                                   + Vector3.up * _height * 0.5f;
 
-            // 平滑跟隨
-            _camera.transform.position = Vector3.Lerp(
-                _camera.transform.position, targetPos, Time.deltaTime * _followSpeed);
-
-            // 看向玩家上半身
+            // 直接跟隨（零延遲）：玩家位置已由 Rigidbody Interpolation 平滑，不需要鏡頭二次緩動
+            _camera.transform.position = targetPos;
             _camera.transform.LookAt(lookAtPoint);
         }
 

@@ -55,6 +55,7 @@ namespace PilgrimOfSin.StateMachine
         public float StunDuration => _stunDuration;
 
         public float CurrentHp { get; private set; }
+        public float MaxHp => _maxHp;
         public bool IsDead => CurrentHp <= 0f;
         public bool IsGrounded { get; private set; }
         public bool IsFalling { get; private set; }
@@ -92,6 +93,10 @@ namespace PilgrimOfSin.StateMachine
         // ── 狀態機 ───────────────────────────────────────────────────
         private PlayerStateMachine _stateMachine;
 
+        // ── 鏡頭方向快取（Update 更新，FixedUpdate 使用）────────────
+        private Vector3 _cachedCamForward = Vector3.forward;
+        private Vector3 _cachedCamRight   = Vector3.right;
+
         // ────────────────────────────────────────────────────────────
         //  Unity 生命周期
         // ────────────────────────────────────────────────────────────
@@ -122,6 +127,7 @@ namespace PilgrimOfSin.StateMachine
 
             if (Time.timeScale == 0f) return;
 
+            CacheCameraDirections();
             UpdateTimers(Time.deltaTime);
             UpdateGroundCheck();
         }
@@ -168,8 +174,10 @@ namespace PilgrimOfSin.StateMachine
             Vector3 dir = GetCameraRelativeDirection(input);
             Rb.MovePosition(Rb.position + dir * speed * Time.fixedDeltaTime);
             if (dir != Vector3.zero)
-                transform.rotation = Quaternion.Slerp(transform.rotation,
-                                                       Quaternion.LookRotation(dir), 10f * Time.fixedDeltaTime);
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dir);
+                Rb.MoveRotation(Quaternion.Slerp(Rb.rotation, targetRot, 10f * Time.fixedDeltaTime));
+            }
         }
 
         public void MoveAerial(Vector2 input)
@@ -189,16 +197,18 @@ namespace PilgrimOfSin.StateMachine
             Rb.AddForce(dir * _rollForce, ForceMode.Impulse);
         }
 
+        private void CacheCameraDirections()
+        {
+            Transform cam = Camera.main?.transform;
+            if (cam == null) return;
+            _cachedCamForward = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
+            _cachedCamRight   = Vector3.ProjectOnPlane(cam.right,   Vector3.up).normalized;
+        }
+
         private Vector3 GetCameraRelativeDirection(Vector2 input)
         {
             if (input.sqrMagnitude < 0.01f) return Vector3.zero;
-
-            // 直接用 Main Camera 的方向，不是 CameraManager
-            Transform cam = Camera.main.transform;
-            Vector3 camForward = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
-            Vector3 camRight = Vector3.ProjectOnPlane(cam.right, Vector3.up).normalized;
-
-            return (camForward * input.y + camRight * input.x).normalized;
+            return (_cachedCamForward * input.y + _cachedCamRight * input.x).normalized;
         }
 
         // ────────────────────────────────────────────────────────────

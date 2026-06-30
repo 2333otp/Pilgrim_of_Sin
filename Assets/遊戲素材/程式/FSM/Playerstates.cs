@@ -693,7 +693,14 @@ namespace PilgrimOfSin.StateMachine
             // timeScale = 0，用 unscaled delta time 偵測輸入
             // 繼續遊戲可由 Esc 鍵或 PauseMenuUI 的「繼續遊戲」按鈕觸發
             if (Input.PausePressed)
+            {
+                // 若子面板或玩家狀態頁開著，讓 PauseMenuUI 關閉上一層，不恢復遊戲
+                if (PilgrimOfSin.PauseMenuUI.Instance != null &&
+                    PilgrimOfSin.PauseMenuUI.Instance.ConsumeEscIfSubPanelOpen())
+                    return;
+
                 RequestTransition(_resumeState);
+            }
         }
 
         public override void Exit()
