@@ -35,6 +35,9 @@ namespace PilgrimOfSin
 
         private void Start()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
+
             Sprite[] pool = SceneTransitionManager.LastBossType switch
             {
                 SceneTransitionManager.BossType.Greed   => _greedImages,

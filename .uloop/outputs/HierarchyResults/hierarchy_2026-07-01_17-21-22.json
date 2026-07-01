@@ -1,0 +1,103 @@
+{
+  "ExportTimestamp": "2026-07-01 17:21:22",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 6,
+    "maxDepth": 1
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 6,
+        "maxDepth": 1
+      },
+      "roots": [
+        {
+          "name": "WeaponHUD",
+          "isActive": true,
+          "components": [
+            "RectTransform",
+            "Canvas",
+            "CanvasScaler",
+            "GraphicRaycaster",
+            "WeaponHUDUI",
+            "LockOnMarkerUI"
+          ],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "WeaponIcon_1",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "WeaponIcon_2",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "WeaponIcon_3",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "WeaponIcon_4",
+              "isActive": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "LockOnMarker",
+              "isActive": false,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

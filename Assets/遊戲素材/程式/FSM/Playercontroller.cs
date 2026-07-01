@@ -199,6 +199,15 @@ namespace PilgrimOfSin.StateMachine
 
         private void CacheCameraDirections()
         {
+            // 鎖定時用玩家→Boss方向作為前方，避免攝影機 LookAt 改變造成移動方向抖動
+            if (_cameraController != null && _cameraController.IsLockedOn && _cameraController.LockTarget != null)
+            {
+                Vector3 toBoss = _cameraController.LockTarget.position - transform.position;
+                _cachedCamForward = Vector3.ProjectOnPlane(toBoss, Vector3.up).normalized;
+                _cachedCamRight   = Vector3.Cross(Vector3.up, _cachedCamForward).normalized;
+                return;
+            }
+
             Transform cam = Camera.main?.transform;
             if (cam == null) return;
             _cachedCamForward = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;

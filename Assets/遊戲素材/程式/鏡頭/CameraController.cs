@@ -31,7 +31,7 @@ namespace PilgrimOfSin.StateMachine
         [Header("Lock-On Settings")]
         [SerializeField] private float _lockOnRange = 20f;
         [SerializeField] private LayerMask _enemyLayer = ~0;
-        [SerializeField] private float _lockOnSpeed = 8f;  // 鎖定時鏡頭轉向速度
+        [SerializeField] private float _lockOnLookAtHeight = 2.5f;  // 鎖定時瞄準敵人的高度（從腳底算起）
 
         // ── 公開狀態 ─────────────────────────────────────────────────
         public bool IsLockedOn { get; private set; }
@@ -65,6 +65,11 @@ namespace PilgrimOfSin.StateMachine
         private void Update()
         {
             if (_player == null) return;
+            if (Time.timeScale == 0f) return;
+
+            // 遊戲執行中每幀強制維持游標鎖定（ESC 選單開啟時 timeScale=0 故不執行此段）
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
 
             if (_lockOnCooldown > 0f) _lockOnCooldown -= Time.deltaTime;
             if (_switchCooldown > 0f) _switchCooldown -= Time.deltaTime;
@@ -78,6 +83,7 @@ namespace PilgrimOfSin.StateMachine
         private void LateUpdate()
         {
             if (_player == null || _camera == null) return;
+            if (Time.timeScale == 0f) return;
 
             if (IsLockedOn && LockTarget != null)
                 UpdateLockOnCamera();
@@ -102,15 +108,12 @@ namespace PilgrimOfSin.StateMachine
 
         private void UpdateLockOnCamera()
         {
-            // 計算玩家→敵人方向的 yaw/pitch
+            // 直接設定精確角度（不 Lerp）：
+            // Lerp 會讓 _yaw 每幀持續追趕玩家→Boss 的變化角度，
+            // 造成鏡頭軌道位置每幀微量偏移，玩家在畫面上就會抖動。
             Vector3 toEnemy = LockTarget.position - _player.position;
-            float targetYaw = Mathf.Atan2(toEnemy.x, toEnemy.z) * Mathf.Rad2Deg;
-            float targetPitch = 15f; // 鎖定時固定俯角
-
-            // 幀率無關的指數平滑
-            float t = 1f - Mathf.Exp(-_lockOnSpeed * Time.deltaTime);
-            _yaw   = Mathf.LerpAngle(_yaw,   targetYaw,   t);
-            _pitch = Mathf.LerpAngle(_pitch, targetPitch, t);
+            _yaw   = Mathf.Atan2(toEnemy.x, toEnemy.z) * Mathf.Rad2Deg;
+            _pitch = 15f;
 
             ApplyCameraTransform(_yaw, _pitch);
         }
@@ -121,13 +124,16 @@ namespace PilgrimOfSin.StateMachine
         {
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
-            // 鏡頭目標位置：玩家後方 + 上方偏移
-            Vector3 lookAtPoint = _player.position + Vector3.up * (_height * 0.5f);
-            Vector3 targetPos = lookAtPoint - rotation * Vector3.forward * _distance
+            Vector3 playerMid = _player.position + Vector3.up * (_height * 0.5f);
+            Vector3 targetPos = playerMid - rotation * Vector3.forward * _distance
                                   + Vector3.up * _height * 0.5f;
 
-            // 直接跟隨（零延遲）：玩家位置已由 Rigidbody Interpolation 平滑，不需要鏡頭二次緩動
             _camera.transform.position = targetPos;
+
+            // 鎖定時看向 Boss 胸前（_lockOnLookAtHeight 控制高度）；非鎖定時看向玩家
+            Vector3 lookAtPoint = (IsLockedOn && LockTarget != null)
+                ? LockTarget.position + Vector3.up * _lockOnLookAtHeight
+                : playerMid;
             _camera.transform.LookAt(lookAtPoint);
         }
 

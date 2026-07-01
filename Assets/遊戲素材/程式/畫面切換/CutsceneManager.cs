@@ -19,6 +19,9 @@ namespace PilgrimOfSin
 
         private void Start()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
+
             _fadeCanvasGroup.alpha = 1f;
             StartCoroutine(FadeIn());
 

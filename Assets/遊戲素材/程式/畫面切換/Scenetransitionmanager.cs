@@ -64,6 +64,12 @@ namespace PilgrimOfSin
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             Debug.Log($"SceneTransitionManager OnSceneLoaded {scene.name}");
+
+            // 主畫面需要游標，其餘場景全部鎖定
+            bool needsCursor = scene.name == MAIN_SCENE;
+            Cursor.lockState = needsCursor ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible   = needsCursor;
+
             // MainScene 不淡入，畫面保持全黑等玩家按按鈕
             if (scene.name == MAIN_SCENE)
             {

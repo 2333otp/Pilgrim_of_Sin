@@ -9,6 +9,9 @@ namespace PilgrimOfSin
 
         private void Start()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible   = true;
+
             // 移除舊的 Inspector 綁定（避免重複呼叫）
             _startGameButton.onClick.RemoveAllListeners();
 
