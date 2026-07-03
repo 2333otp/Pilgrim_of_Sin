@@ -55,6 +55,7 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 公開屬性 ──────────────────────────────────────────────────
         public float CurrentHp { get; private set; }
+        public float MaxHp => _maxHp;
         public bool IsDead => CurrentHp <= 0f;
         public float IdleDuration => _idleDuration;
         public float Attack1Range => _attack1Range;
@@ -67,6 +68,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 天秤相位 ──────────────────────────────────────────────────
         public ScalePhase CurrentPhase { get; private set; } = ScalePhase.StatueHeavy;
         public bool IsInBalanceWindow => _balanceWindowActive;
+        public GreedBossStateType CurrentStateType => _fsm?.CurrentType ?? GreedBossStateType.Idle;
 
         // ── 動畫事件 ──────────────────────────────────────────────────
         public event Action OnAttackAnimEnd;
@@ -102,8 +104,6 @@ namespace PilgrimOfSin.StateMachine
 
             if (_spawner == null)
                 Debug.LogError("[Greed] ❌ _spawner 未設定！錢袋無法生成。");
-
-            Debug.Log($"[Greed] ✅ 初始化完成 — Phase={CurrentPhase}，HP={CurrentHp}，玩家距離={DistanceToPlayer:F1}");
 
             _spawner?.SpawnCycle();
         }
@@ -159,8 +159,6 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>天秤重量變化時由 ScaleObject 呼叫。</summary>
         private void HandleScaleWeightChanged(float rightWeight)
         {
-            Debug.Log($"[Greed] 天秤重量更新：右側={rightWeight:F1}，Balanced={_scale.IsBalanced()}，RightHeavy={_scale.IsRightHeavy()}");
-
             if (CurrentPhase == ScalePhase.Kicked) return;
 
             if (_scale.IsBalanced())
@@ -170,23 +168,16 @@ namespace PilgrimOfSin.StateMachine
                     _balanceWindowActive = true;
                     _balanceWindowTimeRemaining = _balanceWindowDuration;
                     _windowLogTimer = 0f;
-                    Debug.Log($"[Greed] ⚖️ 天秤平衡！10 秒攻擊窗口啟動，玩家傷害 ×{_playerDamageBoostMultiplier}，Boss 靜止。");
-                }
-                else
-                {
-                    Debug.Log($"[Greed] ⚖️ 再次平衡，從剩餘 {_balanceWindowTimeRemaining:F1} 秒繼續倒數。");
                 }
                 CurrentPhase = ScalePhase.Balanced;
             }
             else if (_scale.IsRightHeavy())
             {
                 CurrentPhase = ScalePhase.MoneyBagHeavy;
-                Debug.Log($"[Greed] 💰 錢袋重（右側={rightWeight:F1}），Boss 攻擊 ×{_bossAttackBoostMultiplier}，玩家高減傷。");
             }
             else
             {
                 CurrentPhase = ScalePhase.StatueHeavy;
-                Debug.Log($"[Greed] 🗿 雕像重（右側={rightWeight:F1}），雙方傷害正常，撿更多錢袋！");
             }
         }
 
@@ -196,19 +187,11 @@ namespace PilgrimOfSin.StateMachine
 
             _balanceWindowTimeRemaining -= dt;
 
-            _windowLogTimer -= dt;
-            if (_windowLogTimer <= 0f)
-            {
-                _windowLogTimer = 2f;
-                Debug.Log($"[Greed] ⏱ 攻擊窗口剩餘 {_balanceWindowTimeRemaining:F1} 秒，當前相位={CurrentPhase}");
-            }
-
             if (_balanceWindowTimeRemaining <= 0f)
             {
                 _balanceWindowActive = false;
                 CurrentPhase = ScalePhase.Kicked;
                 _fsm.Force(GreedBossStateType.KickScale);
-                Debug.Log("[Greed] ⚡ 10 秒到，Boss 準備踢翻天秤！");
             }
         }
 
@@ -225,7 +208,6 @@ namespace PilgrimOfSin.StateMachine
             if (!_balanceWindowActive) return;
             _balanceWindowActive = false;
             _balanceWindowTimeRemaining = 0f;
-            Debug.Log("[Greed] ⚡ 天秤被攻擊，攻擊窗口取消，等待下次平衡重新計時。");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -244,8 +226,6 @@ namespace PilgrimOfSin.StateMachine
 
             _scale?.ResetScale();
             _spawner?.SpawnCycle();
-
-            Debug.Log("[Greed] 🔄 新一輪開始！天秤重置，錢袋重新生成，Boss 恢復追擊。");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -262,7 +242,6 @@ namespace PilgrimOfSin.StateMachine
             };
 
             CurrentHp = Mathf.Max(0f, CurrentHp - actualDamage);
-            Debug.Log($"[Greed] 受傷 {actualDamage:F1}（原始 {amount:F1}，相位 {CurrentPhase}），剩餘 HP {CurrentHp:F0}");
 
             if (CurrentHp <= 0f)
             {
@@ -301,7 +280,6 @@ namespace PilgrimOfSin.StateMachine
         {
             _spawner?.ClearAll();
             BossResultPortal.Instance?.OnBossDefeated();
-            Debug.Log("[Greed] Boss 死亡，通關。");
         }
 
         // ════════════════════════════════════════════════════════════

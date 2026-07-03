@@ -100,6 +100,9 @@ namespace PilgrimOfSin
             if (_btnReturnHub != null)
                 _btnReturnHub.gameObject.SetActive(!_isHubScene);
 
+            if (_isHubScene)
+                _weaponHUD?.SetActive(false);
+
             BindSliders();
         }
 
@@ -231,7 +234,8 @@ namespace PilgrimOfSin
             HideAll();
             Time.timeScale = 1f;
             _playerController = null;
-            _weaponHUD?.SetActive(true);
+            if (!_isHubScene)
+                _weaponHUD?.SetActive(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
         }

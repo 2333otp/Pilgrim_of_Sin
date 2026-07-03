@@ -81,7 +81,6 @@ namespace PilgrimOfSin.StateMachine
                 SpawnOne(weights[i], pos, i);
             }
 
-            Debug.Log($"[MoneybagSpawner] 本循環生成 {weights.Count} 個錢袋。");
         }
 
         /// <summary>循環結束時清除所有錢袋（由 GreedBossController.ResetScale 呼叫）。</summary>

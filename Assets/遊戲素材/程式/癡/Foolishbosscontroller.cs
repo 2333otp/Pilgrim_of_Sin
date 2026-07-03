@@ -54,12 +54,14 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 公開屬性 ─────────────────────────────────────────────────
         public float CurrentHp { get; private set; }
+        public float MaxHp => _maxHp;
         public bool IsDead => CurrentHp <= 0f;
         public float IdleDuration => _idleDuration;
         public float Attack1Range => _attack1Range;
         public float Attack2Range => _attack2Range;
         public float Attack3Range => _attack3Range;
         public FoolishPhase CurrentPhase { get; private set; } = FoolishPhase.Evade;
+        public FoolishBossStateType CurrentStateType => _fsm?.CurrentType ?? FoolishBossStateType.Idle;
         public float DistanceToPlayer => _player != null
                                          ? Vector3.Distance(transform.position, _player.position)
                                          : float.MaxValue;

@@ -83,7 +83,6 @@ namespace PilgrimOfSin.StateMachine
             Current = next;
             Current.Enter();
             OnChanged?.Invoke(prev, next.StateType);
-            Debug.Log($"[GreedFSM] {prev} → {next.StateType}");
         }
     }
 }

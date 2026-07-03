@@ -97,10 +97,7 @@ namespace PilgrimOfSin.StateMachine
 
             // Damaged 白名單檢查：只有可被打斷的狀態才允許進入 Damaged
             if (next == PlayerStateType.Damaged && !DamagableStates.Contains(CurrentStateType))
-            {
-                Debug.Log($"[StateMachine] {CurrentStateType} 免疫 Damaged（不在白名單中）。");
                 return false;
-            }
 
             // 優先級檢查（Damaged 本身優先級未定義 → int.MaxValue，走無條件通道）
             int currentPriority = GetPriority(CurrentStateType);
@@ -109,11 +106,7 @@ namespace PilgrimOfSin.StateMachine
             bool allowed = nextPriority <= currentPriority
                            || IsUnconditionalTransition(next);
 
-            if (!allowed)
-            {
-                Debug.Log($"[StateMachine] 拒絕：{CurrentStateType}(p{currentPriority}) → {next}(p{nextPriority})");
-                return false;
-            }
+            if (!allowed) return false;
 
             DoTransition(nextState);
             return true;
@@ -149,8 +142,6 @@ namespace PilgrimOfSin.StateMachine
             CurrentState = nextState;
             CurrentState.Enter();
             OnStateChanged?.Invoke(PreviousStateType, nextState.StateType);
-            if (nextState.StateType != PlayerStateType.Idle && nextState.StateType != PlayerStateType.Walk)
-                Debug.Log($"[StateMachine] {PreviousStateType} → {nextState.StateType}");
         }
 
         private static int GetPriority(PlayerStateType type)

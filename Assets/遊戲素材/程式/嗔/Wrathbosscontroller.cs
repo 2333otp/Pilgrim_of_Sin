@@ -75,6 +75,7 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 公開屬性（各狀態讀取） ────────────────────────────────────
         public float CurrentHp { get; private set; }
+        public float MaxHp => _maxHp;
         public bool IsDead => CurrentHp <= 0f;
         public float IdleDuration => _idleDuration;
 

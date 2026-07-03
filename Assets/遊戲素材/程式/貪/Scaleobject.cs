@@ -64,7 +64,6 @@ namespace PilgrimOfSin.StateMachine
                 bag.TakeDamage(0f);
 
             _bossController?.ResetBalanceWindow();
-            Debug.Log("[Scale] 攻擊命中天秤，所有錢袋打落，攻擊窗口重置。");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -76,7 +75,6 @@ namespace PilgrimOfSin.StateMachine
         {
             _rightWeight = Mathf.Clamp(_rightWeight + weight, 0f, _maxWeight);
             NotifyAndUpdateTilt();
-            Debug.Log($"[Scale] 錢袋放上，右側總重 {_rightWeight:F1}");
         }
 
         /// <summary>錢袋從天秤打落時呼叫，減少右側重量。</summary>
@@ -84,7 +82,6 @@ namespace PilgrimOfSin.StateMachine
         {
             _rightWeight = Mathf.Clamp(_rightWeight - weight, 0f, _maxWeight);
             NotifyAndUpdateTilt();
-            Debug.Log($"[Scale] 錢袋打落，右側總重 {_rightWeight:F1}");
         }
 
         /// <summary>
@@ -96,7 +93,6 @@ namespace PilgrimOfSin.StateMachine
             _rightWeight = 0f;
             _targetTiltAngle = 0f;
             NotifyAndUpdateTilt();
-            Debug.Log("[Scale] 天秤重置。");
         }
 
         // ════════════════════════════════════════════════════════════

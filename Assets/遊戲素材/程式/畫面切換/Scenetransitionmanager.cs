@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
@@ -34,7 +34,6 @@ namespace PilgrimOfSin
         // ── 生命週期 ─────────────────────────────────────────────────────
         private void Awake()
         {
-            // 單例：跨場景保留，重複時銷毀
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -43,7 +42,6 @@ namespace PilgrimOfSin
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // 一開始設為全黑
             if (_fadeCanvasGroup != null)
             {
                 _fadeCanvasGroup.alpha = 1f;
@@ -63,28 +61,22 @@ namespace PilgrimOfSin
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Debug.Log($"SceneTransitionManager OnSceneLoaded {scene.name}");
-
-            // 主畫面需要游標，其餘場景全部鎖定
             bool needsCursor = scene.name == MAIN_SCENE;
             Cursor.lockState = needsCursor ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible   = needsCursor;
 
-            // MainScene 不淡入，畫面保持全黑等玩家按按鈕
             if (scene.name == MAIN_SCENE)
             {
-                _isTransitioning = false; // ← 這行是關鍵修正！
+                _isTransitioning = false;
                 return;
             }
 
-            // CutsceneScene 也不淡入，由 CutsceneManager 自己控制淡入
             if (scene.name == CUTSCENE_SCENE)
             {
-                _isTransitioning = false; // ← 同樣需要重置！
+                _isTransitioning = false;
                 return;
             }
 
-            // ImageCutsceneScene 不淡入，由 ImageCutsceneManager 自己控制淡入
             if (scene.name == IMAGE_CUTSCENE_SCENE)
             {
                 _isTransitioning = false;
@@ -92,7 +84,6 @@ namespace PilgrimOfSin
                 return;
             }
 
-            // 其他場景：淡入
             StartCoroutine(FadeIn());
         }
 
@@ -102,8 +93,6 @@ namespace PilgrimOfSin
         public void LoadCutscene()
         {
             if (_isTransitioning) return;
-
-            Debug.Log("[SceneTransition] 進入過場動畫");
             StartCoroutine(TransitionRoutine(CUTSCENE_SCENE));
         }
 
@@ -111,7 +100,6 @@ namespace PilgrimOfSin
         public void LoadImageCutscene()
         {
             if (_isTransitioning) return;
-            Debug.Log($"[SceneTransition] 進入過場圖片場景，Boss={LastBossType}");
             StartCoroutine(TransitionRoutine(IMAGE_CUTSCENE_SCENE));
         }
 
@@ -119,8 +107,6 @@ namespace PilgrimOfSin
         public void LoadHubScene()
         {
             if (_isTransitioning) return;
-
-            Debug.Log("[SceneTransition] 進入小木屋");
             StartCoroutine(TransitionRoutine(HUB_SCENE));
         }
 
@@ -128,28 +114,21 @@ namespace PilgrimOfSin
         public void ReturnToMainMenu()
         {
             if (_isTransitioning) return;
-
-            Debug.Log("[SceneTransition] 返回主選單");
             StartCoroutine(TransitionRoutine(MAIN_SCENE));
         }
 
         /// <summary>從小木屋進入 Boss 場景。</summary>
         public void LoadBossScene(BossType bossType)
         {
-            Debug.Log($"[SceneTransition] LoadBossScene: {bossType} (Transitioning={_isTransitioning})");
             if (_isTransitioning) return;
-
-            Debug.Log("[SceneTransition] 開始切換boss房");
             LastBossType = bossType;
             string sceneName = bossType switch
             {
-                BossType.Greed => GREED_SCENE,
-                BossType.Wrath => WRATH_SCENE,
+                BossType.Greed   => GREED_SCENE,
+                BossType.Wrath   => WRATH_SCENE,
                 BossType.Foolish => FOOLISH_SCENE,
-                _ => HUB_SCENE
+                _                => HUB_SCENE
             };
-
-            Debug.Log($"[SceneTransition] 進入 {bossType} 場景：{sceneName}");
             StartCoroutine(TransitionRoutine(sceneName));
         }
 
@@ -157,8 +136,6 @@ namespace PilgrimOfSin
         public void ReturnToHub()
         {
             if (_isTransitioning) return;
-
-            Debug.Log($"[SceneTransition] 回到小木屋");
             StartCoroutine(TransitionRoutine(HUB_SCENE));
         }
 
@@ -166,23 +143,18 @@ namespace PilgrimOfSin
         public void RestartCurrentBoss()
         {
             if (_isTransitioning) return;
-
             string currentScene = SceneManager.GetActiveScene().name;
-            Debug.Log($"[SceneTransition] 重新挑戰：{currentScene}");
             StartCoroutine(TransitionRoutine(currentScene));
         }
 
         // ── 核心：淡出 → 載入 → 淡入 ────────────────────────────────────
         private IEnumerator TransitionRoutine(string targetScene)
         {
-            Debug.Log($"[SceneTransition] 開始切換到 {targetScene}");
             _isTransitioning = true;
 
-            // 若畫面已經是全黑（如 MainScene 開始時），直接淡出不需再等
             if (_fadeCanvasGroup == null || _fadeCanvasGroup.alpha < 1f)
                 yield return StartCoroutine(FadeOut());
 
-            // 載入場景
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);
             asyncLoad.allowSceneActivation = false;
 
@@ -191,8 +163,6 @@ namespace PilgrimOfSin
 
             asyncLoad.allowSceneActivation = true;
             yield return null;
-
-            // _isTransitioning 在 OnSceneLoaded 裡重置（各場景自己決定）
         }
 
         private IEnumerator FadeOut()
@@ -212,7 +182,6 @@ namespace PilgrimOfSin
 
         private IEnumerator FadeIn()
         {
-            Debug.Log("[SceneTransition] 淡入開始");
             if (_fadeCanvasGroup == null) yield break;
 
             float elapsed = 0f;
@@ -225,8 +194,6 @@ namespace PilgrimOfSin
             }
             _fadeCanvasGroup.alpha = 0f;
             _fadeCanvasGroup.blocksRaycasts = false;
-
-            Debug.Log("[SceneTransition] 淡入完成");
             _isTransitioning = false;
         }
 

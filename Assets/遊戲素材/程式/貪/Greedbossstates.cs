@@ -17,7 +17,6 @@ namespace PilgrimOfSin.StateMachine
         {
             _timer = Boss.IdleDuration;
             Trigger("Idle");
-            Debug.Log($"[Idle] 進入待機，等待 {Boss.IdleDuration:F1}s，Phase={Boss.CurrentPhase}，玩家距離={Boss.DistanceToPlayer:F1}");
         }
 
         public override void Update(float dt)
@@ -29,10 +28,10 @@ namespace PilgrimOfSin.StateMachine
             if (_timer > 0f) return;
 
             float dist = Boss.DistanceToPlayer;
-            if (dist <= Boss.Attack1Range)      { Debug.Log($"[Idle→Attack1] dist={dist:F1}"); Go(GreedBossStateType.Attack1); }
-            else if (dist <= Boss.Attack2Range) { Debug.Log($"[Idle→Attack2] dist={dist:F1}"); Go(GreedBossStateType.Attack2); }
-            else if (dist <= Boss.Attack3Range) { Debug.Log($"[Idle→Attack3] dist={dist:F1}"); Go(GreedBossStateType.Attack3); }
-            else                                { Debug.Log($"[Idle→Move] dist={dist:F1}");    Go(GreedBossStateType.Move); }
+            if (dist <= Boss.Attack1Range)           Go(GreedBossStateType.Attack1);
+            else if (dist <= Boss.Attack2Range)      Go(GreedBossStateType.Attack2);
+            else if (dist <= Boss.Attack3Range)      Go(GreedBossStateType.Attack3);
+            else                                     Go(GreedBossStateType.Move);
         }
     }
 
@@ -48,13 +47,12 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             Trigger("Move");
-            Debug.Log($"[Move] 開始追擊，玩家距離={Boss.DistanceToPlayer:F1}，Phase={Boss.CurrentPhase}");
         }
 
         public override void FixedUpdate(float dt)
         {
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
-            if (Boss.IsInBalanceWindow) { Debug.Log("[Move] 攻擊窗口啟動，Boss 停止追擊"); Go(GreedBossStateType.Idle); return; }
+            if (Boss.IsInBalanceWindow) { Go(GreedBossStateType.Idle); return; }
 
             Boss.MoveTowardPlayer(dt);
 
@@ -93,7 +91,6 @@ namespace PilgrimOfSin.StateMachine
             };
             Trigger(triggerName);
             Boss.OnAttackAnimEnd += HandleAnimEnd;
-            Debug.Log($"[{_type}] 發動攻擊，玩家距離={Boss.DistanceToPlayer:F1}");
         }
 
         public override void Update(float dt)
@@ -128,7 +125,6 @@ namespace PilgrimOfSin.StateMachine
             _fallbackTimer = 0f;
             Trigger("KickScale");
             Boss.OnKickScaleAnimEnd += HandleAnimEnd;
-            Debug.Log("[KickScale] ⚡ Boss 踢翻天秤！AOE 傷害範圍啟動。");
         }
 
         public override void Update(float dt)
@@ -188,7 +184,6 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Enter()
         {
-            Debug.Log("[Dead] 💀 Boss 死亡，觸發過場。");
             Trigger("Dead");
             Boss.OnDeath();
         }

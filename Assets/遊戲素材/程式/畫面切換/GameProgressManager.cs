@@ -107,7 +107,6 @@ namespace PilgrimOfSin
         public void Save()
         {
             File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
-            Debug.Log($"[GameProgress] 已儲存至 {SavePath}");
         }
 
         private void Load()
@@ -117,7 +116,6 @@ namespace PilgrimOfSin
             {
                 _data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
                 ApplyAllVolumes();
-                Debug.Log("[GameProgress] 存檔載入成功");
             }
             catch
             {

@@ -47,6 +47,7 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _stunDuration = 0.4f;
         [SerializeField] private float _specialCd = 5f;
         [SerializeField] private float _weaponSwitchCd = 1.5f;
+        [SerializeField] private bool _enableWeaponSwitch = true;
 
         [Header("Ground Check")]
         [SerializeField] private float _groundCheckDistance = 0.6f; // 依角色高度調整
@@ -60,6 +61,8 @@ namespace PilgrimOfSin.StateMachine
         public bool IsGrounded { get; private set; }
         public bool IsFalling { get; private set; }
         public bool CanUseSpecial => _specialCdTimer <= 0f;
+        public bool EnableWeaponSwitch => _enableWeaponSwitch;
+        public PlayerStateType CurrentStateType => _stateMachine.CurrentStateType;
 
         // 武器切換
         public int PendingWeaponIndex { get; private set; }
@@ -271,6 +274,7 @@ namespace PilgrimOfSin.StateMachine
 
         public void RequestWeaponSwitch(int index)
         {
+            if (!_enableWeaponSwitch) return;
             if (_weaponSwitchCdTimer > 0f) return;          // CD 未到
             if (Combat != null && Combat.CurrentWeaponIndex == index) return; // 已是當前武器
             PendingWeaponIndex = index;

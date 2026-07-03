@@ -133,8 +133,6 @@ namespace PilgrimOfSin.StateMachine
             transform.localPosition = new Vector3(offset, 0f, 0f);
 
             _scale?.AddMoneybagWeight(Weight);
-
-            Debug.Log($"[Moneybag] 撿起，重量 {Weight:F1}，放上天秤右側 slot {_slotIndex}。");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -193,8 +191,6 @@ namespace PilgrimOfSin.StateMachine
 
             if (_interactPromptUI) _interactPromptUI.SetActive(false);
             _playerNearby = false;
-
-            Debug.Log($"[Moneybag] 被打落，從 {_flyStart} 飛到 {_flyEnd}。");
         }
 
         private bool IsNearOtherBag(Vector3 candidate)

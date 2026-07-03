@@ -39,7 +39,6 @@ namespace PilgrimOfSin
         /// </summary>
         public void OnBossDefeated()
         {
-            Debug.Log("[BossResult] Boss 被擊敗！準備返回小木屋...");
             StartCoroutine(WinRoutine());
         }
 
@@ -48,7 +47,6 @@ namespace PilgrimOfSin
         /// </summary>
         public void OnPlayerDefeated()
         {
-            Debug.Log("[BossResult] 玩家死亡！");
             StartCoroutine(LoseRoutine());
         }
 
