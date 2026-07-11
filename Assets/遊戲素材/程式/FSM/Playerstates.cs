@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace PilgrimOfSin.StateMachine
 {
@@ -71,6 +72,13 @@ namespace PilgrimOfSin.StateMachine
         {
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
+
+            // 從空中落地才需要跳躍冷卻，避免落地瞬間又立刻連跳
+            if (Machine.PreviousStateType == PlayerStateType.Jump
+                || Machine.PreviousStateType == PlayerStateType.Fall)
+            {
+                Player.StartJumpCooldown();
+            }
         }
 
         public override void Update(float dt)
@@ -89,7 +97,7 @@ namespace PilgrimOfSin.StateMachine
                 return;
             }
             // 跳躍
-            if (Input.JumpPressed) { RequestTransition(PlayerStateType.Jump); return; }
+            if (Input.JumpPressed && Player.CanJump) { RequestTransition(PlayerStateType.Jump); return; }
             // 翻滾
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
             // 攻擊
@@ -127,7 +135,7 @@ namespace PilgrimOfSin.StateMachine
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
             if (Input.WeaponSwitchPressed) { Player.RequestWeaponSwitch(Input.WeaponSwitchIndex); return; }
-            if (Input.JumpPressed) { RequestTransition(PlayerStateType.Jump); return; }
+            if (Input.JumpPressed && Player.CanJump) { RequestTransition(PlayerStateType.Jump); return; }
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
             if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
@@ -172,7 +180,7 @@ namespace PilgrimOfSin.StateMachine
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
             if (Input.WeaponSwitchPressed) { Player.RequestWeaponSwitch(Input.WeaponSwitchIndex); return; }
-            if (Input.JumpPressed) { RequestTransition(PlayerStateType.Jump); return; }
+            if (Input.JumpPressed && Player.CanJump) { RequestTransition(PlayerStateType.Jump); return; }
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
             if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
@@ -690,11 +698,13 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            // timeScale = 0，用 unscaled delta time 偵測輸入
-            // 繼續遊戲可由 Esc 鍵或 PauseMenuUI 的「繼續遊戲」按鈕觸發
-            if (Input.PausePressed)
+            // 游標解鎖後 Game View 可能失焦，PlayerInput 不再送 OnPause()
+            // 因此直接讀取 Keyboard.current 作為備援，確保 ESC 在任何情況下都能恢復
+            bool escPressed = Input.PausePressed
+                              || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
+
+            if (escPressed)
             {
-                // 若子面板或玩家狀態頁開著，讓 PauseMenuUI 關閉上一層，不恢復遊戲
                 if (PilgrimOfSin.PauseMenuUI.Instance != null &&
                     PilgrimOfSin.PauseMenuUI.Instance.ConsumeEscIfSubPanelOpen())
                     return;
@@ -705,7 +715,10 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Exit()
         {
-            // 隱藏暫停 UI
+            // 直接重置時間與游標，不依賴 PauseMenuUI 是否存在
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             PilgrimOfSin.PauseMenuUI.Instance?.Hide();
         }
 

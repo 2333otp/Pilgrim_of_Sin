@@ -33,6 +33,7 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _walkSpeed = 4f;
         [SerializeField] private float _sprintSpeed = 7f;
         [SerializeField] private float _jumpForce = 8f;
+        [SerializeField] private float _jumpCooldown = 0.12f; // 落地後至少要等這麼久才能再次跳躍，避免連跳
         [SerializeField] private float _rollForce = 6f;
         [SerializeField] private float _rollDuration = 0.5f;
         [SerializeField] private float _aerialControl = 0.6f;
@@ -61,6 +62,7 @@ namespace PilgrimOfSin.StateMachine
         public bool IsGrounded { get; private set; }
         public bool IsFalling { get; private set; }
         public bool CanUseSpecial => _specialCdTimer <= 0f;
+        public bool CanJump => _jumpCooldownTimer <= 0f;
         public bool EnableWeaponSwitch => _enableWeaponSwitch;
         public PlayerStateType CurrentStateType => _stateMachine.CurrentStateType;
 
@@ -73,6 +75,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 內部計時器 ───────────────────────────────────────────────
         private float _specialCdTimer;
         private float _weaponSwitchCdTimer;
+        private float _jumpCooldownTimer;
 
         // 無敵來源分開管理，避免善區免疫與翻滾/特殊招式無敵幀互相覆蓋
         // 只有兩個都是 false 才真正可以受傷
@@ -271,6 +274,7 @@ namespace PilgrimOfSin.StateMachine
 
         public void StartSpecialSkillCooldown() => _specialCdTimer = _specialCd;
         public void StartWeaponSwitchCooldown() => _weaponSwitchCdTimer = _weaponSwitchCd;
+        public void StartJumpCooldown() => _jumpCooldownTimer = _jumpCooldown;
 
         public void RequestWeaponSwitch(int index)
         {
@@ -331,6 +335,7 @@ namespace PilgrimOfSin.StateMachine
         {
             if (_specialCdTimer > 0f) _specialCdTimer -= dt;
             if (_weaponSwitchCdTimer > 0f) _weaponSwitchCdTimer -= dt;
+            if (_jumpCooldownTimer > 0f) _jumpCooldownTimer -= dt;
         }
 
         private void UpdateGroundCheck()
