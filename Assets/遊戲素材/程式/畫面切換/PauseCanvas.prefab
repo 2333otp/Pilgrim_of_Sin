@@ -2527,7 +2527,6 @@ MonoBehaviour:
   _hpBar: {fileID: 321990157798181174}
   _hpText: {fileID: 5754471995774624740}
   _defeatedBossesText: {fileID: 8812531919311582925}
-  _btnBackpack: {fileID: 3446484772521634242}
   _btnWeaponInfo: {fileID: 8653810498540612451}
   _btnMemories: {fileID: 7784704213009818598}
   _btnCharData: {fileID: 5419721642395027878}

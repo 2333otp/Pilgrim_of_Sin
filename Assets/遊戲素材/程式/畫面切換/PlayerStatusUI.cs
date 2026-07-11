@@ -21,7 +21,6 @@ namespace PilgrimOfSin
         [SerializeField] private Text _defeatedBossesText;
 
         [Header("Placeholder 按鈕（點了沒反應，供視覺呈現）")]
-        [SerializeField] private Button _btnBackpack;
         [SerializeField] private Button _btnWeaponInfo;
         [SerializeField] private Button _btnMemories;
         [SerializeField] private Button _btnCharData;

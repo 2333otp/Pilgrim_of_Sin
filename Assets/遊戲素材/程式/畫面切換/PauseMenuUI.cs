@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -80,6 +81,10 @@ namespace PilgrimOfSin
         [Tooltip("武器欄根物件，暫停時自動隱藏，恢復時顯示")]
         [SerializeField] private GameObject _weaponHUD;
 
+        // ── 存檔通知 ───────────────────────────────────────────────────
+        [Header("存檔通知面板（含 CanvasGroup）")]
+        [SerializeField] private GameObject _saveNotificationPanel;
+
         // ── 場景設定 ───────────────────────────────────────────────────
         [Header("場景設定")]
         [Tooltip("Hub 場景勾選此項，「回小木屋」按鈕會自動隱藏")]
@@ -89,6 +94,7 @@ namespace PilgrimOfSin
         private StateMachine.PlayerController _playerController;
         private GameObject _currentSubPanel;
         private Button _hoveredButton;
+        private Coroutine _saveNotificationCoroutine;
 
         // ── Awake ──────────────────────────────────────────────────────
 
@@ -232,6 +238,12 @@ namespace PilgrimOfSin
         /// <summary>隱藏所有面板，恢復 timeScale。</summary>
         public void Hide()
         {
+            if (_saveNotificationCoroutine != null)
+            {
+                StopCoroutine(_saveNotificationCoroutine);
+                _saveNotificationCoroutine = null;
+                _saveNotificationPanel?.SetActive(false);
+            }
             HideAll();
             Time.timeScale = 1f;
             _playerController = null;
@@ -315,6 +327,44 @@ namespace PilgrimOfSin
         private void OnSaveClicked()
         {
             GameProgressManager.Instance?.Save();
+            if (_saveNotificationPanel != null)
+            {
+                if (_saveNotificationCoroutine != null) StopCoroutine(_saveNotificationCoroutine);
+                _saveNotificationCoroutine = StartCoroutine(SaveNotificationRoutine());
+            }
+        }
+
+        private IEnumerator SaveNotificationRoutine()
+        {
+            var cg = _saveNotificationPanel.GetComponent<CanvasGroup>();
+            if (cg == null) yield break;
+
+            _saveNotificationPanel.SetActive(true);
+
+            // 淡入 0.3s
+            float elapsed = 0f;
+            while (elapsed < 0.3f)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                cg.alpha = Mathf.Clamp01(elapsed / 0.3f);
+                yield return null;
+            }
+            cg.alpha = 1f;
+
+            // 停留 1.2s
+            yield return new WaitForSecondsRealtime(1.2f);
+
+            // 淡出 0.5s
+            elapsed = 0f;
+            while (elapsed < 0.5f)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                cg.alpha = Mathf.Clamp01(1f - elapsed / 0.5f);
+                yield return null;
+            }
+            cg.alpha = 0f;
+            _saveNotificationPanel.SetActive(false);
+            _saveNotificationCoroutine = null;
         }
 
         private void OnResumeClicked()
