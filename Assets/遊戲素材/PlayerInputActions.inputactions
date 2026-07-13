@@ -149,6 +149,69 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CameraRotate",
+                    "type": "Value",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000001",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MenuUp",
+                    "type": "Button",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000002",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MenuDown",
+                    "type": "Button",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000003",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MenuConfirm",
+                    "type": "Button",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000004",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MenuBack",
+                    "type": "Button",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000005",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "VolumeUp",
+                    "type": "Button",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000006",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "VolumeDown",
+                    "type": "Button",
+                    "id": "c1a2e3f4-0000-0001-0000-000000000007",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -253,8 +316,8 @@
                 },
                 {
                     "name": "",
-                    "id": "2fee3435-17a9-4e06-95a5-93f6ba935251",
-                    "path": "<Gamepad>/buttonEast",
+                    "id": "83fd2fc1-d3b9-4466-b790-4c6a7ada4395",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -264,8 +327,8 @@
                 },
                 {
                     "name": "",
-                    "id": "83fd2fc1-d3b9-4466-b790-4c6a7ada4395",
-                    "path": "<Keyboard>/leftShift",
+                    "id": "2fee3435-17a9-4e06-95a5-93f6ba935251",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -286,8 +349,8 @@
                 },
                 {
                     "name": "",
-                    "id": "5a552159-2d38-4509-a28d-18c99cd4ab26",
-                    "path": "<Gamepad>/buttonWest",
+                    "id": "ab36e759-7e9e-4d80-8329-c01a8d123361",
+                    "path": "<Keyboard>/j",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -297,8 +360,8 @@
                 },
                 {
                     "name": "",
-                    "id": "ab36e759-7e9e-4d80-8329-c01a8d123361",
-                    "path": "<Keyboard>/j",
+                    "id": "5a552159-2d38-4509-a28d-18c99cd4ab26",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -319,8 +382,8 @@
                 },
                 {
                     "name": "",
-                    "id": "2a0ab86d-cc4c-40b8-8ede-bfca36a81528",
-                    "path": "<Gamepad>/buttonNorth",
+                    "id": "8cd07e69-f485-428c-a9f1-097c4bd9d17d",
+                    "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -330,8 +393,8 @@
                 },
                 {
                     "name": "",
-                    "id": "8cd07e69-f485-428c-a9f1-097c4bd9d17d",
-                    "path": "<Keyboard>/i",
+                    "id": "2a0ab86d-cc4c-40b8-8ede-bfca36a81528",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -408,7 +471,7 @@
                 {
                     "name": "",
                     "id": "340d3080-5fad-4e57-baa8-07f9a5cbff0b",
-                    "path": "<Gamepad>/dpad/right",
+                    "path": "<Gamepad>/dpad/left",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -452,7 +515,7 @@
                 {
                     "name": "",
                     "id": "c28d4148-4d52-4268-a002-4cd86284929b",
-                    "path": "<Gamepad>/dpad/left",
+                    "path": "<Gamepad>/dpad/right",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -518,7 +581,7 @@
                 {
                     "name": "",
                     "id": "6c5999f1-c1c2-4b7a-8136-31cd096561e1",
-                    "path": "<Gamepad>/rightStickPress",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -550,6 +613,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000010",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResetCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "6f57b659-2e73-4cce-a976-2b6aca6d30f6",
                     "path": "<Keyboard>/x",
                     "interactions": "",
@@ -562,11 +636,110 @@
                 {
                     "name": "",
                     "id": "5beb8041-b300-4d62-b47f-f04658e46378",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000001",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000002",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000003",
+                    "path": "<Gamepad>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000004",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000005",
+                    "path": "<Gamepad>/leftStick/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000006",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuConfirm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000007",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuBack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000008",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VolumeUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000009",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VolumeDown",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -92,9 +92,15 @@ namespace PilgrimOfSin
 
         // ── 內部狀態 ───────────────────────────────────────────────────
         private StateMachine.PlayerController _playerController;
+        private StateMachine.PlayerInputReader _inputReader;
         private GameObject _currentSubPanel;
         private Button _hoveredButton;
         private Coroutine _saveNotificationCoroutine;
+
+        // 手把導航：追蹤當前選中的按鈕索引
+        private Button[] _navButtons;
+        private int _navIndex = -1;
+        private float _navCooldown;
 
         // ── Awake ──────────────────────────────────────────────────────
 
@@ -124,6 +130,10 @@ namespace PilgrimOfSin
             bool escVisible    = _escPanel != null    && _escPanel.activeSelf;
             bool statusVisible = _playerStatusPanel != null && _playerStatusPanel.activeSelf;
             if (!escVisible && !statusVisible) return;
+
+            if (_navCooldown > 0f) _navCooldown -= Time.unscaledDeltaTime;
+
+            HandleGamepadMenu();
 
             Vector2 pos = Mouse.current.position.ReadValue();
             UpdateHover(pos);
@@ -158,6 +168,128 @@ namespace PilgrimOfSin
                 TryClick(_btnReturnHub,    pos, OnReturnHubClicked);
                 TryClick(_btnMainMenu,     pos, OnReturnMainMenuClicked);
             }
+        }
+
+        // ── 手把選單導航 ───────────────────────────────────────────────
+
+        private void HandleGamepadMenu()
+        {
+            if (_inputReader == null) return;
+
+            // ── 返回（○）────────────────────────────────────────────
+            if (_inputReader.MenuBackPressed)
+            {
+                bool consumed = ConsumeEscIfSubPanelOpen();
+                if (!consumed) _playerController?.ResumeFromPause();
+                return;
+            }
+
+            // ── 音量調整（方向鍵左右，音量子面板時生效）─────────────
+            if (_currentSubPanel == _volumeSubPanel)
+            {
+                if (_inputReader.VolumeUpPressed)
+                    AdjustSlider(_masterSlider, 0.05f);
+                if (_inputReader.VolumeDownPressed)
+                    AdjustSlider(_masterSlider, -0.05f);
+            }
+
+            // ── 上下導航 ─────────────────────────────────────────────
+            if (_navCooldown > 0f) return;
+            if (_navButtons == null || _navButtons.Length == 0) return;
+
+            if (_inputReader.MenuUpPressed)
+            {
+                Navigate(-1);
+                _navCooldown = 0.18f;
+            }
+            else if (_inputReader.MenuDownPressed)
+            {
+                Navigate(1);
+                _navCooldown = 0.18f;
+            }
+
+            // ── 確認（△）────────────────────────────────────────────
+            if (_inputReader.MenuConfirmPressed && _navIndex >= 0 && _navIndex < _navButtons.Length)
+            {
+                var btn = _navButtons[_navIndex];
+                if (btn != null && btn.gameObject.activeInHierarchy && btn.interactable)
+                    ExecuteButtonAction(btn);
+            }
+        }
+
+        private void Navigate(int dir)
+        {
+            if (_navButtons == null || _navButtons.Length == 0) return;
+            int start = _navIndex < 0 ? 0 : _navIndex;
+            int idx   = start;
+            for (int i = 0; i < _navButtons.Length; i++)
+            {
+                idx = (idx + dir + _navButtons.Length) % _navButtons.Length;
+                var btn = _navButtons[idx];
+                if (btn != null && btn.gameObject.activeInHierarchy && btn.interactable)
+                {
+                    SetNavSelect(idx);
+                    return;
+                }
+            }
+        }
+
+        private void SetNavSelect(int idx)
+        {
+            ApplyButtonColor(_hoveredButton, false);
+            _navIndex    = idx;
+            _hoveredButton = _navButtons[idx];
+            ApplyButtonColor(_hoveredButton, true);
+        }
+
+        private void RefreshNavButtons()
+        {
+            _navIndex = -1;
+            _hoveredButton = null;
+
+            bool statusVisible = _playerStatusPanel != null && _playerStatusPanel.activeSelf;
+            if (statusVisible)
+            {
+                _navButtons = new Button[] { _btnReturnFromStatus };
+                return;
+            }
+
+            if (_currentSubPanel != null && _currentSubPanel.activeSelf)
+            {
+                if      (_currentSubPanel == _volumeSubPanel)   _navButtons = new Button[] { _volumeBackBtn };
+                else if (_currentSubPanel == _controlsSubPanel) _navButtons = new Button[] { _controlsBackBtn };
+                else if (_currentSubPanel == _creditsSubPanel)  _navButtons = new Button[] { _creditsBackBtn };
+                else                                             _navButtons = new Button[0];
+                return;
+            }
+
+            _navButtons = new Button[]
+            {
+                _btnPlayerStatus, _btnSave, _btnVolume, _btnControls,
+                _btnCredits, _btnResume, _btnReturnHub, _btnMainMenu
+            };
+        }
+
+        private void ExecuteButtonAction(Button btn)
+        {
+            if      (btn == _btnPlayerStatus)    OpenPlayerStatus();
+            else if (btn == _btnSave)            OnSaveClicked();
+            else if (btn == _btnVolume)          OpenSubPanel(_volumeSubPanel);
+            else if (btn == _btnControls)        OpenSubPanel(_controlsSubPanel);
+            else if (btn == _btnCredits)         OpenSubPanel(_creditsSubPanel);
+            else if (btn == _btnResume)          OnResumeClicked();
+            else if (btn == _btnReturnHub)       OnReturnHubClicked();
+            else if (btn == _btnMainMenu)        OnReturnMainMenuClicked();
+            else if (btn == _volumeBackBtn)      CloseSubPanel();
+            else if (btn == _controlsBackBtn)    CloseSubPanel();
+            else if (btn == _creditsBackBtn)     CloseSubPanel();
+            else if (btn == _btnReturnFromStatus) ClosePlayerStatus();
+        }
+
+        private void AdjustSlider(Slider slider, float delta)
+        {
+            if (slider == null) return;
+            slider.value = Mathf.Clamp01(slider.value + delta);
         }
 
         private void TryClick(Button btn, Vector2 screenPos, System.Action callback)
@@ -225,6 +357,7 @@ namespace PilgrimOfSin
         public void Show(StateMachine.PlayerController player)
         {
             _playerController = player;
+            _inputReader = player?.InputReader;
             _escPanel?.SetActive(true);
             ShowButtonGroup();
             SyncSliderValues();
@@ -233,6 +366,7 @@ namespace PilgrimOfSin
             Time.timeScale   = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible   = true;
+            RefreshNavButtons();
         }
 
         /// <summary>隱藏所有面板，恢復 timeScale。</summary>
@@ -282,6 +416,7 @@ namespace PilgrimOfSin
             if (_bgImage     != null) _bgImage.SetActive(false);
             _currentSubPanel = subPanel;
             subPanel.SetActive(true);
+            RefreshNavButtons();
         }
 
         private void CloseSubPanel()
@@ -289,6 +424,7 @@ namespace PilgrimOfSin
             _currentSubPanel?.SetActive(false);
             _currentSubPanel = null;
             ShowButtonGroup();
+            RefreshNavButtons();
         }
 
         private void OpenPlayerStatus()
@@ -296,6 +432,7 @@ namespace PilgrimOfSin
             _escPanel?.SetActive(false);
             _playerStatusPanel?.SetActive(true);
             _playerStatusUI?.Refresh(_playerController);
+            RefreshNavButtons();
         }
 
         private void ClosePlayerStatus()
@@ -303,6 +440,7 @@ namespace PilgrimOfSin
             _playerStatusPanel?.SetActive(false);
             _escPanel?.SetActive(true);
             ShowButtonGroup();
+            RefreshNavButtons();
         }
 
         private void ShowButtonGroup()

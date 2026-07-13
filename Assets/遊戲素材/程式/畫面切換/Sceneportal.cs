@@ -18,8 +18,9 @@ namespace PilgrimOfSin
         {
             if (!_playerInRange) return;
 
-            // 新版 Input System：直接讀鍵盤 X 鍵（互動鍵）
-            if (Keyboard.current.xKey.wasPressedThisFrame)
+            bool interactPressed = (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
+                                || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame);
+            if (interactPressed)
             {
                 SceneTransitionManager.Instance?.LoadBossScene(_bossType);
             }

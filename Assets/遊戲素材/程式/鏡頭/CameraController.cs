@@ -28,6 +28,10 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _minPitch = -20f;     // 仰角下限
         [SerializeField] private float _maxPitch = 60f;     // 仰角上限
 
+        [Header("Gamepad Rotation")]
+        [SerializeField] private float _stickSensitivityX = 150f;
+        [SerializeField] private float _stickSensitivityY = 100f;
+
         [Header("Lock-On Settings")]
         [SerializeField] private float _lockOnRange = 20f;
         [SerializeField] private LayerMask _enemyLayer = ~0;
@@ -95,10 +99,13 @@ namespace PilgrimOfSin.StateMachine
 
         private void UpdateFreeCamera()
         {
-            // 讀取滑鼠輸入旋轉
             var mouseDelta = Mouse.current?.delta.ReadValue() ?? Vector2.zero;
-            _yaw += mouseDelta.x * _mouseSensitivityX;
-            _pitch -= mouseDelta.y * _mouseSensitivityY;
+            var stickDelta = _input != null ? _input.CameraRotateInput : Vector2.zero;
+
+            _yaw   += mouseDelta.x * _mouseSensitivityX
+                    + stickDelta.x * _stickSensitivityX * Time.deltaTime;
+            _pitch -= mouseDelta.y * _mouseSensitivityY
+                    + stickDelta.y * _stickSensitivityY * Time.deltaTime;
             _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
 
             ApplyCameraTransform(_yaw, _pitch);

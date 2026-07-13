@@ -112,7 +112,9 @@ namespace PilgrimOfSin.StateMachine
         private void CheckPickupInput()
         {
             if (!_playerNearby) return;
-            if (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
+            bool interactPressed = (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
+                                || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame);
+            if (interactPressed)
                 PickUp();
         }
 

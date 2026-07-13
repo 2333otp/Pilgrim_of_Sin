@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace PilgrimOfSin.StateMachine
@@ -28,9 +28,20 @@ namespace PilgrimOfSin.StateMachine
         // ── 系統 ─────────────────────────────────────────────────────
         public bool PausePressed { get; private set; }
         public bool LockOnPressed { get; private set; }
-        public bool LockOnSwitchPressed { get; private set; }   // 鎖定切換（P 鍵）
-        public bool ResetCameraPressed { get; private set; }   // 鏡頭重置（R 鍵）
+        public bool LockOnSwitchPressed { get; private set; }
+        public bool ResetCameraPressed { get; private set; }
         public bool InteractPressed { get; private set; }
+
+        // ── 鏡頭（右搖桿，持續值） ───────────────────────────────────
+        public Vector2 CameraRotateInput { get; private set; }
+
+        // ── 選單導航 ─────────────────────────────────────────────────
+        public bool MenuUpPressed { get; private set; }
+        public bool MenuDownPressed { get; private set; }
+        public bool MenuConfirmPressed { get; private set; }
+        public bool MenuBackPressed { get; private set; }
+        public bool VolumeUpPressed { get; private set; }
+        public bool VolumeDownPressed { get; private set; }
 
         // ── 每幀結束清除一次性按鍵 ───────────────────────────────────
         private void LateUpdate()
@@ -46,6 +57,12 @@ namespace PilgrimOfSin.StateMachine
             LockOnSwitchPressed = false;
             ResetCameraPressed = false;
             InteractPressed = false;
+            MenuUpPressed = false;
+            MenuDownPressed = false;
+            MenuConfirmPressed = false;
+            MenuBackPressed = false;
+            VolumeUpPressed = false;
+            VolumeDownPressed = false;
         }
 
         // ── Send Messages 回呼（PlayerInput 自動呼叫） ───────────────
@@ -101,5 +118,26 @@ namespace PilgrimOfSin.StateMachine
 
         private void OnInteract(InputValue value)
         { if (value.isPressed) InteractPressed = true; }
+
+        private void OnCameraRotate(InputValue value)
+            => CameraRotateInput = value.Get<Vector2>();
+
+        private void OnMenuUp(InputValue value)
+        { if (value.isPressed) MenuUpPressed = true; }
+
+        private void OnMenuDown(InputValue value)
+        { if (value.isPressed) MenuDownPressed = true; }
+
+        private void OnMenuConfirm(InputValue value)
+        { if (value.isPressed) MenuConfirmPressed = true; }
+
+        private void OnMenuBack(InputValue value)
+        { if (value.isPressed) MenuBackPressed = true; }
+
+        private void OnVolumeUp(InputValue value)
+        { if (value.isPressed) VolumeUpPressed = true; }
+
+        private void OnVolumeDown(InputValue value)
+        { if (value.isPressed) VolumeDownPressed = true; }
     }
 }

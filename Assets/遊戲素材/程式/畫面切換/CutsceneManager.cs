@@ -33,8 +33,10 @@ namespace PilgrimOfSin
         {
             if (_isTransitioning) return;
 
-            if (Keyboard.current.escapeKey.wasPressedThisFrame ||
-                Keyboard.current.backspaceKey.wasPressedThisFrame)
+            bool skipPressed = (Keyboard.current != null && (Keyboard.current.escapeKey.wasPressedThisFrame ||
+                                                              Keyboard.current.backspaceKey.wasPressedThisFrame))
+                            || (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame);
+            if (skipPressed)
             {
                 Skip();
             }
