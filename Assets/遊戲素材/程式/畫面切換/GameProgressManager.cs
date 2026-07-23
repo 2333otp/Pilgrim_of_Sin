@@ -22,6 +22,13 @@ namespace PilgrimOfSin
         private SaveData _data = new SaveData();
         private string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
 
+        /// <summary>
+        /// 是否已有存檔（供主選單「繼續進度」按鈕判斷可用狀態）。
+        /// 靜態方法：MainScene 尚未實例化 GameProgressManager 前也能呼叫。
+        /// </summary>
+        public static bool SaveFileExists()
+            => File.Exists(Path.Combine(Application.persistentDataPath, "save.json"));
+
         // ── 生命週期 ─────────────────────────────────────────────────
 
         private void Awake()

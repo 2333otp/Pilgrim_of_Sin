@@ -57,6 +57,12 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>設定 Animator Bool 參數。</summary>
         protected void SetAnimBool(string paramName, bool value)
             => Anim.SetBool(paramName, value);
+
+        /// <summary>
+        /// ESC 暫停偵測：PlayerInput.PausePressed 或 Keyboard 直讀（Game View 失焦時備援）。
+        /// </summary>
+        protected bool ShouldPause()
+            => Input.PausePressed || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -83,9 +89,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            // 暫停（最高優先）
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
-            // 死亡檢查
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             // 特殊招式（優先1）
             if (Input.SpecialPressed && Player.CanUseSpecial)
@@ -130,7 +134,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -175,7 +179,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -216,7 +220,7 @@ namespace PilgrimOfSin.StateMachine
         {
             _airTime += dt;
 
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -247,7 +251,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -282,7 +286,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             // 只有特殊招式可打斷（優先1 < 3）
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -327,7 +331,7 @@ namespace PilgrimOfSin.StateMachine
         {
             Player.ComboBuffer.Tick(dt);
 
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -407,7 +411,7 @@ namespace PilgrimOfSin.StateMachine
         {
             Player.ComboBuffer.Tick(dt);
 
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -480,7 +484,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             if (Input.SpecialPressed && Player.CanUseSpecial)
             { RequestTransition(PlayerStateType.SpecialSkill); return; }
@@ -533,7 +537,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
 
             _timer += dt;
@@ -598,7 +602,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; }
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
 
             // 動畫進行中可更新目標武器，動畫結束後套用最後一次輸入
@@ -644,7 +648,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Update(float dt)
         {
-            if (Input.PausePressed) { RequestTransition(PlayerStateType.Paused); return; } 
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; } 
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
             _stunTimer += dt;
             if (_stunTimer >= Player.StunDuration)
@@ -684,6 +688,15 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Enter()
         {
+            // 保險：若 PauseCanvas 因場景編輯疏失被存成 inactive，
+            // Awake() 就不會執行、Instance 會是 null。這裡主動找出來喚醒它，
+            // 避免每次都要手動去場景檔案修正。
+            if (PilgrimOfSin.PauseMenuUI.Instance == null)
+            {
+                var menu = UnityEngine.Object.FindFirstObjectByType<PilgrimOfSin.PauseMenuUI>(FindObjectsInactive.Include);
+                if (menu != null) menu.gameObject.SetActive(true);
+            }
+
             // Machine.PreviousStateType 是進入 Paused 之前的狀態
             // 過濾掉不適合恢復的狀態（Damaged / Dead / Paused 本身）
             // → 這些情況一律回 Idle

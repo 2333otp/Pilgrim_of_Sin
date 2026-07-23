@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace PilgrimOfSin
 {
     public class MainMenuUI : MonoBehaviour
     {
-        [SerializeField] private Button _startGameButton;
+        [SerializeField] private Button _startGameButton;   // 開啟新遊戲
+        [SerializeField] private Button _continueButton;    // 繼續進度
+        [SerializeField] private Button _quitButton;         // 結束遊戲
 
         private void Start()
         {
@@ -18,8 +20,31 @@ namespace PilgrimOfSin
             // 動態綁定：透過 singleton 取得，不依賴 Inspector 跨場景引用
             _startGameButton.onClick.AddListener(() =>
             {
-                SceneTransitionManager.Instance.LoadHubScene();
+                SceneTransitionManager.Instance.LoadCutscene();
             });
+
+            bool hasSave = GameProgressManager.SaveFileExists();
+            _continueButton.gameObject.SetActive(hasSave);
+            if (hasSave)
+            {
+                _continueButton.onClick.RemoveAllListeners();
+                _continueButton.onClick.AddListener(() =>
+                {
+                    SceneTransitionManager.Instance.LoadHubScene();
+                });
+            }
+
+            _quitButton.onClick.RemoveAllListeners();
+            _quitButton.onClick.AddListener(QuitGame);
+        }
+
+        private void QuitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

@@ -39,6 +39,7 @@ namespace PilgrimOfSin
         /// </summary>
         public void OnBossDefeated()
         {
+            PauseMenuUI.Instance?.NotifyBossDefeated();
             StartCoroutine(WinRoutine());
         }
 

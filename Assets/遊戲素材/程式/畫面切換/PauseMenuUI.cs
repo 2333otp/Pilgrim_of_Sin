@@ -10,9 +10,10 @@ namespace PilgrimOfSin
     /// 掛在各場景的 PauseCanvas 物件上。
     ///
     /// 【面板層次】
-    ///   Layer 0 — ESC選單_Panel（8 個按鈕）
-    ///   Layer 1 — 子面板（音量 / 操作說明 / 製作團隊），覆蓋在按鈕列上方
-    ///   Layer 2 — 玩家狀態_Panel，取代 ESC選單_Panel
+    ///   Layer 0 — ESC選單_Panel（6 個按鈕）
+    ///   Layer 1 — 設置選項子面板（音量設置 / 操作說明 / 製作團隊 選項）
+    ///   Layer 2 — 音量 / 操作說明 / 製作團隊 / 確認框子面板
+    ///   Layer 3 — 玩家狀態_Panel，取代 ESC選單_Panel
     ///
     /// 【點擊偵測】
     ///   使用 Update() + RectTransformUtility 手動偵測（New Input System + timeScale=0 相容）
@@ -39,13 +40,11 @@ namespace PilgrimOfSin
         [SerializeField] private GameObject _titleText;
         [SerializeField] private GameObject _bgImage;
 
-        // ── ESC 選單 8 顆按鈕 ──────────────────────────────────────────
+        // ── ESC 選單 6 顆按鈕 ──────────────────────────────────────────
         [Header("ESC 選單 - 按鈕")]
         [SerializeField] private Button _btnPlayerStatus;
         [SerializeField] private Button _btnSave;
-        [SerializeField] private Button _btnVolume;
-        [SerializeField] private Button _btnControls;
-        [SerializeField] private Button _btnCredits;
+        [SerializeField] private Button _btnSettings;      // 取代音量/操作說明/製作團隊
         [SerializeField] private Button _btnResume;
         [SerializeField] private Button _btnReturnHub;     // Hub 場景自動隱藏
         [SerializeField] private Button _btnMainMenu;
@@ -61,15 +60,14 @@ namespace PilgrimOfSin
         [SerializeField] private Slider _masterSlider;
         [SerializeField] private Slider _musicSlider;
         [SerializeField] private Slider _sfxSlider;
-        [SerializeField] private Button _volumeBackBtn;
 
-        // ── 操作說明子面板元件 ─────────────────────────────────────────
-        [Header("操作說明子面板")]
-        [SerializeField] private Button _controlsBackBtn;
-
-        // ── 製作團隊子面板元件 ─────────────────────────────────────────
-        [Header("製作團隊子面板")]
-        [SerializeField] private Button _creditsBackBtn;
+        // ── 設置選項子面板 ─────────────────────────────────────────────
+        [Header("設置選項子面板（含 3 顆入口按鈕 + 返回）")]
+        [SerializeField] private GameObject _settingsSubPanel;
+        [SerializeField] private Button _btnSettingsVolume;
+        [SerializeField] private Button _btnSettingsControls;
+        [SerializeField] private Button _btnSettingsCredits;
+        [SerializeField] private Button _settingsBackBtn;
 
         // ── 玩家狀態面板 ───────────────────────────────────────────────
         [Header("玩家狀態面板")]
@@ -85,15 +83,30 @@ namespace PilgrimOfSin
         [Header("存檔通知面板（含 CanvasGroup）")]
         [SerializeField] private GameObject _saveNotificationPanel;
 
+        // ── 確認對話框 - 返回小木屋 ────────────────────────────────────
+        [Header("確認對話框 - 返回小木屋（Boss 場景用）")]
+        [SerializeField] private GameObject _returnHubConfirmPanel;
+        [SerializeField] private Button _btnConfirmHub;      // 是
+        [SerializeField] private Button _btnCancelHub;       // 返回遊戲
+
+        // ── 確認對話框 - 返回主選單 ────────────────────────────────────
+        [Header("確認對話框 - 返回主選單")]
+        [SerializeField] private GameObject _returnMainMenuConfirmPanel;
+        [SerializeField] private Button _btnConfirmMainMenu; // 是
+        [SerializeField] private Button _btnCancelMainMenu;  // 返回遊戲
+
         // ── 場景設定 ───────────────────────────────────────────────────
         [Header("場景設定")]
         [Tooltip("Hub 場景勾選此項，「回小木屋」按鈕會自動隱藏")]
         [SerializeField] private bool _isHubScene = false;
+        [Tooltip("Boss 場景勾選此項，離開前彈出「尚未破關」確認框")]
+        [SerializeField] private bool _isBossScene = false;
 
         // ── 內部狀態 ───────────────────────────────────────────────────
         private StateMachine.PlayerController _playerController;
         private StateMachine.PlayerInputReader _inputReader;
         private GameObject _currentSubPanel;
+        private GameObject _previousSubPanel; // 記錄從哪個子面板跳來的，ESC 回退用
         private Button _hoveredButton;
         private Coroutine _saveNotificationCoroutine;
 
@@ -101,6 +114,14 @@ namespace PilgrimOfSin
         private Button[] _navButtons;
         private int _navIndex = -1;
         private float _navCooldown;
+
+        // 存檔提示框顯示期間鎖定所有輸入
+        private bool _isSaving;
+
+        // 本場景是否已手動存過檔
+        private bool _hasSaved;
+        // 本場景 Boss 是否已被擊敗（由 BossResultPortal 通知）
+        private bool _bossDefeatedThisSession;
 
         // ── Awake ──────────────────────────────────────────────────────
 
@@ -121,6 +142,11 @@ namespace PilgrimOfSin
         private void OnDestroy()
         {
             UnbindSliders();
+
+            // 安全機制：若選單開著（timeScale=0）時場景被卸載或 Play Mode 被中止，
+            // Hide()／ExecuteReturnHub()／ExecuteReturnMainMenu() 都不會執行，
+            // timeScale 會永久卡在 0。此處強制恢復，避免殘留到下一次 Play。
+            Time.timeScale = 1f;
         }
 
         // ── Update：手動滑鼠點擊偵測（相容 New Input System + timeScale=0）──
@@ -130,6 +156,7 @@ namespace PilgrimOfSin
             bool escVisible    = _escPanel != null    && _escPanel.activeSelf;
             bool statusVisible = _playerStatusPanel != null && _playerStatusPanel.activeSelf;
             if (!escVisible && !statusVisible) return;
+            if (_isSaving) return;
 
             if (_navCooldown > 0f) _navCooldown -= Time.unscaledDeltaTime;
 
@@ -147,12 +174,26 @@ namespace PilgrimOfSin
                 return;
             }
 
-            // ── 子面板：只偵測對應返回按鈕 ───────────────────────────
+            // ── 子面板：只偵測對應按鈕 ────────────────────────────────
             if (_currentSubPanel != null && _currentSubPanel.activeSelf)
             {
-                if      (_currentSubPanel == _volumeSubPanel)   TryClick(_volumeBackBtn,   pos, CloseSubPanel);
-                else if (_currentSubPanel == _controlsSubPanel) TryClick(_controlsBackBtn, pos, CloseSubPanel);
-                else if (_currentSubPanel == _creditsSubPanel)  TryClick(_creditsBackBtn,  pos, CloseSubPanel);
+                if (_currentSubPanel == _settingsSubPanel)
+                {
+                    TryClick(_btnSettingsVolume,   pos, () => OpenSubPanel(_volumeSubPanel,   _settingsSubPanel));
+                    TryClick(_btnSettingsControls, pos, () => OpenSubPanel(_controlsSubPanel, _settingsSubPanel));
+                    TryClick(_btnSettingsCredits,  pos, () => OpenSubPanel(_creditsSubPanel,  _settingsSubPanel));
+                    TryClick(_settingsBackBtn,     pos, CloseSubPanel);
+                }
+                else if (_currentSubPanel == _returnHubConfirmPanel)
+                {
+                    TryClick(_btnConfirmHub, pos, ExecuteReturnHub);
+                    TryClick(_btnCancelHub,  pos, CloseSubPanel);
+                }
+                else if (_currentSubPanel == _returnMainMenuConfirmPanel)
+                {
+                    TryClick(_btnConfirmMainMenu, pos, ExecuteReturnMainMenu);
+                    TryClick(_btnCancelMainMenu,  pos, CloseSubPanel);
+                }
                 return;
             }
 
@@ -161,9 +202,7 @@ namespace PilgrimOfSin
             {
                 TryClick(_btnPlayerStatus, pos, OpenPlayerStatus);
                 TryClick(_btnSave,         pos, OnSaveClicked);
-                TryClick(_btnVolume,       pos, () => OpenSubPanel(_volumeSubPanel));
-                TryClick(_btnControls,     pos, () => OpenSubPanel(_controlsSubPanel));
-                TryClick(_btnCredits,      pos, () => OpenSubPanel(_creditsSubPanel));
+                TryClick(_btnSettings,     pos, () => OpenSubPanel(_settingsSubPanel));
                 TryClick(_btnResume,       pos, OnResumeClicked);
                 TryClick(_btnReturnHub,    pos, OnReturnHubClicked);
                 TryClick(_btnMainMenu,     pos, OnReturnMainMenuClicked);
@@ -256,34 +295,40 @@ namespace PilgrimOfSin
 
             if (_currentSubPanel != null && _currentSubPanel.activeSelf)
             {
-                if      (_currentSubPanel == _volumeSubPanel)   _navButtons = new Button[] { _volumeBackBtn };
-                else if (_currentSubPanel == _controlsSubPanel) _navButtons = new Button[] { _controlsBackBtn };
-                else if (_currentSubPanel == _creditsSubPanel)  _navButtons = new Button[] { _creditsBackBtn };
-                else                                             _navButtons = new Button[0];
+                if      (_currentSubPanel == _settingsSubPanel)          _navButtons = new Button[] { _btnSettingsVolume, _btnSettingsControls, _btnSettingsCredits, _settingsBackBtn };
+                else if (_currentSubPanel == _volumeSubPanel)            _navButtons = new Button[0];
+                else if (_currentSubPanel == _controlsSubPanel)          _navButtons = new Button[0];
+                else if (_currentSubPanel == _creditsSubPanel)           _navButtons = new Button[0];
+                else if (_currentSubPanel == _returnHubConfirmPanel)     _navButtons = new Button[] { _btnConfirmHub, _btnCancelHub };
+                else if (_currentSubPanel == _returnMainMenuConfirmPanel) _navButtons = new Button[] { _btnConfirmMainMenu, _btnCancelMainMenu };
+                else                                                      _navButtons = new Button[0];
                 return;
             }
 
             _navButtons = new Button[]
             {
-                _btnPlayerStatus, _btnSave, _btnVolume, _btnControls,
-                _btnCredits, _btnResume, _btnReturnHub, _btnMainMenu
+                _btnPlayerStatus, _btnSave, _btnSettings,
+                _btnResume, _btnReturnHub, _btnMainMenu
             };
         }
 
         private void ExecuteButtonAction(Button btn)
         {
-            if      (btn == _btnPlayerStatus)    OpenPlayerStatus();
-            else if (btn == _btnSave)            OnSaveClicked();
-            else if (btn == _btnVolume)          OpenSubPanel(_volumeSubPanel);
-            else if (btn == _btnControls)        OpenSubPanel(_controlsSubPanel);
-            else if (btn == _btnCredits)         OpenSubPanel(_creditsSubPanel);
-            else if (btn == _btnResume)          OnResumeClicked();
-            else if (btn == _btnReturnHub)       OnReturnHubClicked();
-            else if (btn == _btnMainMenu)        OnReturnMainMenuClicked();
-            else if (btn == _volumeBackBtn)      CloseSubPanel();
-            else if (btn == _controlsBackBtn)    CloseSubPanel();
-            else if (btn == _creditsBackBtn)     CloseSubPanel();
-            else if (btn == _btnReturnFromStatus) ClosePlayerStatus();
+            if      (btn == _btnPlayerStatus)     OpenPlayerStatus();
+            else if (btn == _btnSave)             OnSaveClicked();
+            else if (btn == _btnSettings)         OpenSubPanel(_settingsSubPanel);
+            else if (btn == _btnResume)           OnResumeClicked();
+            else if (btn == _btnReturnHub)        OnReturnHubClicked();
+            else if (btn == _btnMainMenu)         OnReturnMainMenuClicked();
+            else if (btn == _btnSettingsVolume)   OpenSubPanel(_volumeSubPanel,   _settingsSubPanel);
+            else if (btn == _btnSettingsControls) OpenSubPanel(_controlsSubPanel, _settingsSubPanel);
+            else if (btn == _btnSettingsCredits)  OpenSubPanel(_creditsSubPanel,  _settingsSubPanel);
+            else if (btn == _settingsBackBtn)      CloseSubPanel();
+            else if (btn == _btnConfirmHub)        ExecuteReturnHub();
+            else if (btn == _btnCancelHub)         CloseSubPanel();
+            else if (btn == _btnConfirmMainMenu)   ExecuteReturnMainMenu();
+            else if (btn == _btnCancelMainMenu)    CloseSubPanel();
+            else if (btn == _btnReturnFromStatus)  ClosePlayerStatus();
         }
 
         private void AdjustSlider(Slider slider, float delta)
@@ -319,16 +364,36 @@ namespace PilgrimOfSin
 
             if (_currentSubPanel != null && _currentSubPanel.activeSelf)
             {
-                if (_currentSubPanel == _volumeSubPanel)   return IsOver(_volumeBackBtn,   pos) ? _volumeBackBtn   : null;
-                if (_currentSubPanel == _controlsSubPanel) return IsOver(_controlsBackBtn, pos) ? _controlsBackBtn : null;
-                if (_currentSubPanel == _creditsSubPanel)  return IsOver(_creditsBackBtn,  pos) ? _creditsBackBtn  : null;
+                if (_currentSubPanel == _settingsSubPanel)
+                {
+                    if (IsOver(_btnSettingsVolume,   pos)) return _btnSettingsVolume;
+                    if (IsOver(_btnSettingsControls, pos)) return _btnSettingsControls;
+                    if (IsOver(_btnSettingsCredits,  pos)) return _btnSettingsCredits;
+                    if (IsOver(_settingsBackBtn,     pos)) return _settingsBackBtn;
+                    return null;
+                }
+                if (_currentSubPanel == _volumeSubPanel)   return null;
+                if (_currentSubPanel == _controlsSubPanel) return null;
+                if (_currentSubPanel == _creditsSubPanel)  return null;
+                if (_currentSubPanel == _returnHubConfirmPanel)
+                {
+                    if (IsOver(_btnConfirmHub, pos)) return _btnConfirmHub;
+                    if (IsOver(_btnCancelHub,  pos)) return _btnCancelHub;
+                    return null;
+                }
+                if (_currentSubPanel == _returnMainMenuConfirmPanel)
+                {
+                    if (IsOver(_btnConfirmMainMenu, pos)) return _btnConfirmMainMenu;
+                    if (IsOver(_btnCancelMainMenu,  pos)) return _btnCancelMainMenu;
+                    return null;
+                }
                 return null;
             }
 
             if (_buttonGroup != null && _buttonGroup.activeSelf)
             {
-                Button[] candidates = { _btnPlayerStatus, _btnSave, _btnVolume, _btnControls,
-                                        _btnCredits, _btnResume, _btnReturnHub, _btnMainMenu };
+                Button[] candidates = { _btnPlayerStatus, _btnSave, _btnSettings,
+                                        _btnResume, _btnReturnHub, _btnMainMenu };
                 foreach (var btn in candidates)
                     if (IsOver(btn, pos)) return btn;
             }
@@ -358,7 +423,7 @@ namespace PilgrimOfSin
         {
             _playerController = player;
             _inputReader = player?.InputReader;
-            _escPanel?.SetActive(true);
+            if (_escPanel != null) _escPanel.SetActive(true);
             ShowButtonGroup();
             SyncSliderValues();
             if (_weaponHUD != null)
@@ -376,7 +441,8 @@ namespace PilgrimOfSin
             {
                 StopCoroutine(_saveNotificationCoroutine);
                 _saveNotificationCoroutine = null;
-                _saveNotificationPanel?.SetActive(false);
+                if (_saveNotificationPanel != null) _saveNotificationPanel.SetActive(false);
+                _isSaving = false;
             }
             HideAll();
             Time.timeScale = 1f;
@@ -408,12 +474,23 @@ namespace PilgrimOfSin
 
         // ── 導航邏輯 ───────────────────────────────────────────────────
 
-        private void OpenSubPanel(GameObject subPanel)
+        private void OpenSubPanel(GameObject subPanel, GameObject fromPanel = null)
         {
             if (subPanel == null) return;
-            if (_buttonGroup != null) _buttonGroup.SetActive(false);
-            if (_titleText   != null) _titleText.SetActive(false);
-            if (_bgImage     != null) _bgImage.SetActive(false);
+            if (fromPanel != null)
+            {
+                // 從子面板進入下一層（如：設置選項 → 音量）：隱藏上一層，記錄返回點
+                fromPanel.SetActive(false);
+                _previousSubPanel = fromPanel;
+            }
+            else
+            {
+                // 從主按鈕列進入第一層：隱藏按鈕群組
+                if (_buttonGroup != null) _buttonGroup.SetActive(false);
+                if (_titleText   != null) _titleText.SetActive(false);
+                if (_bgImage     != null) _bgImage.SetActive(false);
+                _previousSubPanel = null;
+            }
             _currentSubPanel = subPanel;
             subPanel.SetActive(true);
             RefreshNavButtons();
@@ -423,22 +500,33 @@ namespace PilgrimOfSin
         {
             _currentSubPanel?.SetActive(false);
             _currentSubPanel = null;
-            ShowButtonGroup();
+
+            if (_previousSubPanel != null)
+            {
+                // 回到上一層子面板（如：音量面板 → 設置選項面板）
+                _currentSubPanel  = _previousSubPanel;
+                _previousSubPanel = null;
+                _currentSubPanel.SetActive(true);
+            }
+            else
+            {
+                ShowButtonGroup();
+            }
             RefreshNavButtons();
         }
 
         private void OpenPlayerStatus()
         {
-            _escPanel?.SetActive(false);
-            _playerStatusPanel?.SetActive(true);
+            if (_escPanel          != null) _escPanel.SetActive(false);
+            if (_playerStatusPanel != null) _playerStatusPanel.SetActive(true);
             _playerStatusUI?.Refresh(_playerController);
             RefreshNavButtons();
         }
 
         private void ClosePlayerStatus()
         {
-            _playerStatusPanel?.SetActive(false);
-            _escPanel?.SetActive(true);
+            if (_playerStatusPanel != null) _playerStatusPanel.SetActive(false);
+            if (_escPanel          != null) _escPanel.SetActive(true);
             ShowButtonGroup();
             RefreshNavButtons();
         }
@@ -448,16 +536,21 @@ namespace PilgrimOfSin
             if (_buttonGroup != null) _buttonGroup.SetActive(true);
             if (_titleText  != null) _titleText.SetActive(true);
             if (_bgImage    != null) _bgImage.SetActive(true);
+            if (_settingsSubPanel != null) _settingsSubPanel.SetActive(false);
             if (_volumeSubPanel   != null) _volumeSubPanel.SetActive(false);
             if (_controlsSubPanel != null) _controlsSubPanel.SetActive(false);
             if (_creditsSubPanel  != null) _creditsSubPanel.SetActive(false);
-            _currentSubPanel = null;
+            _currentSubPanel  = null;
+            _previousSubPanel = null;
         }
 
         private void HideAll()
         {
-            _escPanel?.SetActive(false);
-            _playerStatusPanel?.SetActive(false);
+            if (_escPanel                  != null) _escPanel.SetActive(false);
+            if (_playerStatusPanel         != null) _playerStatusPanel.SetActive(false);
+            if (_settingsSubPanel          != null) _settingsSubPanel.SetActive(false);
+            if (_returnHubConfirmPanel     != null) _returnHubConfirmPanel.SetActive(false);
+            if (_returnMainMenuConfirmPanel != null) _returnMainMenuConfirmPanel.SetActive(false);
         }
 
         // ── 按鈕事件 ───────────────────────────────────────────────────
@@ -465,6 +558,7 @@ namespace PilgrimOfSin
         private void OnSaveClicked()
         {
             GameProgressManager.Instance?.Save();
+            _hasSaved = true;
             if (_saveNotificationPanel != null)
             {
                 if (_saveNotificationCoroutine != null) StopCoroutine(_saveNotificationCoroutine);
@@ -477,6 +571,7 @@ namespace PilgrimOfSin
             var cg = _saveNotificationPanel.GetComponent<CanvasGroup>();
             if (cg == null) yield break;
 
+            _isSaving = true;
             _saveNotificationPanel.SetActive(true);
 
             // 淡入 0.3s
@@ -503,6 +598,7 @@ namespace PilgrimOfSin
             cg.alpha = 0f;
             _saveNotificationPanel.SetActive(false);
             _saveNotificationCoroutine = null;
+            _isSaving = false;
         }
 
         private void OnResumeClicked()
@@ -512,6 +608,14 @@ namespace PilgrimOfSin
 
         private void OnReturnHubClicked()
         {
+            if (_isBossScene && !_bossDefeatedThisSession)
+                OpenSubPanel(_returnHubConfirmPanel);
+            else
+                ExecuteReturnHub();
+        }
+
+        private void ExecuteReturnHub()
+        {
             Time.timeScale = 1f;
             HideAll();
             _playerController?.ForceExitPause();
@@ -520,11 +624,22 @@ namespace PilgrimOfSin
 
         private void OnReturnMainMenuClicked()
         {
+            if (!_hasSaved)
+                OpenSubPanel(_returnMainMenuConfirmPanel);
+            else
+                ExecuteReturnMainMenu();
+        }
+
+        private void ExecuteReturnMainMenu()
+        {
             Time.timeScale = 1f;
             HideAll();
             _playerController?.ForceExitPause();
             SceneTransitionManager.Instance?.ReturnToMainMenu();
         }
+
+        /// <summary>Boss 擊敗時由 BossResultPortal 呼叫，解除「尚未破關」確認框。</summary>
+        public void NotifyBossDefeated() => _bossDefeatedThisSession = true;
 
         // ── 音量同步 ───────────────────────────────────────────────────
 

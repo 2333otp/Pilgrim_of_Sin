@@ -1,0 +1,1606 @@
+{
+  "ExportTimestamp": "2026-07-20 23:28:41",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 117,
+    "maxDepth": 9
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 117,
+        "maxDepth": 9
+      },
+      "componentsLut": [
+        "RectTransform",
+        "Canvas",
+        "CanvasScaler",
+        "GraphicRaycaster",
+        "PauseMenuUI",
+        "CanvasRenderer",
+        "Image",
+        "VerticalLayoutGroup",
+        "Button",
+        "LayoutElement",
+        "Text",
+        "HorizontalLayoutGroup",
+        "Slider",
+        "TextMeshProUGUI",
+        "PlayerStatusUI"
+      ],
+      "roots": [
+        {
+          "name": "PauseCanvas",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "siblingIndex": 12,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "ESC選單_Panel",
+              "isActive": false,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "半透明黑底圖",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "底圖",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "ButtonGroup",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Btn_查看玩家狀態",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_保存遊玩進度",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_音量設置調整",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_操作說明",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_製作團隊",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_繼續遊戲",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_回小木屋",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 6,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_回主選單",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 7,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Volume_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Content",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        7
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Title",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10,
+                            9
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "主音量_Row",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            11,
+                            9
+                          ],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Label",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10,
+                                9
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            },
+                            {
+                              "name": "Slider_Container",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                9
+                              ],
+                              "siblingIndex": 1,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": [
+                                {
+                                  "name": "主音量_Slider",
+                                  "isActive": true,
+                                  "componentsIdx": [
+                                    0,
+                                    12
+                                  ],
+                                  "siblingIndex": 0,
+                                  "tag": "Untagged",
+                                  "layer": 0,
+                                  "children": [
+                                    {
+                                      "name": "Background",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0,
+                                        5,
+                                        6
+                                      ],
+                                      "siblingIndex": 0,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": []
+                                    },
+                                    {
+                                      "name": "Fill Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 1,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Fill",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5,
+                                            6
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "name": "Handle Slide Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 2,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Handle",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": [
+                                            {
+                                              "name": "Shadow",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 0,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Rim",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 1,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Face",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 2,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Highlight",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 3,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "BGM_Row",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            11,
+                            9
+                          ],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Label",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10,
+                                9
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            },
+                            {
+                              "name": "Slider_Container",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                9
+                              ],
+                              "siblingIndex": 1,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": [
+                                {
+                                  "name": "音樂_Slider",
+                                  "isActive": true,
+                                  "componentsIdx": [
+                                    0,
+                                    12
+                                  ],
+                                  "siblingIndex": 0,
+                                  "tag": "Untagged",
+                                  "layer": 0,
+                                  "children": [
+                                    {
+                                      "name": "Background",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0,
+                                        5,
+                                        6
+                                      ],
+                                      "siblingIndex": 0,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": []
+                                    },
+                                    {
+                                      "name": "Fill Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 1,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Fill",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5,
+                                            6
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "name": "Handle Slide Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 2,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Handle",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": [
+                                            {
+                                              "name": "Shadow",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 0,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Rim",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 1,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Face",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 2,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Highlight",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 3,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "音效_Row",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            11,
+                            9
+                          ],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Label",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10,
+                                9
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            },
+                            {
+                              "name": "Slider_Container",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                9
+                              ],
+                              "siblingIndex": 1,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": [
+                                {
+                                  "name": "音效_Slider",
+                                  "isActive": true,
+                                  "componentsIdx": [
+                                    0,
+                                    12
+                                  ],
+                                  "siblingIndex": 0,
+                                  "tag": "Untagged",
+                                  "layer": 0,
+                                  "children": [
+                                    {
+                                      "name": "Background",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0,
+                                        5,
+                                        6
+                                      ],
+                                      "siblingIndex": 0,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": []
+                                    },
+                                    {
+                                      "name": "Fill Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 1,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Fill",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5,
+                                            6
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "name": "Handle Slide Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 2,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Handle",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": [
+                                            {
+                                              "name": "Shadow",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 0,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Rim",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 1,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Face",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 2,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Highlight",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 3,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "角色語音_Row ",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            11,
+                            9
+                          ],
+                          "siblingIndex": 4,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Label",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10,
+                                9
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            },
+                            {
+                              "name": "Slider_Container",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                9
+                              ],
+                              "siblingIndex": 1,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": [
+                                {
+                                  "name": "音效_Slider",
+                                  "isActive": true,
+                                  "componentsIdx": [
+                                    0,
+                                    12
+                                  ],
+                                  "siblingIndex": 0,
+                                  "tag": "Untagged",
+                                  "layer": 0,
+                                  "children": [
+                                    {
+                                      "name": "Background",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0,
+                                        5,
+                                        6
+                                      ],
+                                      "siblingIndex": 0,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": []
+                                    },
+                                    {
+                                      "name": "Fill Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 1,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Fill",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5,
+                                            6
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "name": "Handle Slide Area",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 2,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "Handle",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0,
+                                            5
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": [
+                                            {
+                                              "name": "Shadow",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 0,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Rim",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 1,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Face",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 2,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            },
+                                            {
+                                              "name": "Highlight",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0,
+                                                5,
+                                                6
+                                              ],
+                                              "siblingIndex": 3,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Controls_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "操作說明圖",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "Btn_返回",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Credits_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Credits_Text",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        10
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "Btn_返回",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6,
+                        8,
+                        9
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            10
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "標題_心路行者",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    13
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "PlayerStatus_Panel",
+              "isActive": false,
+              "componentsIdx": [
+                0,
+                14
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "玩家狀態_底圖",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "角色立繪",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "InfoArea",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "HP_Bar",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        12
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Background",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            6
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "Fill Area",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0
+                          ],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Fill",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                6
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Handle Slide Area",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0
+                          ],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Handle",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                6
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "HP_Text",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        10
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "DefeatedBosses_Text",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        10
+                      ],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "StatusButtonGroup",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        7
+                      ],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Btn_返回ESC選單",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            6,
+                            8,
+                            9
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Text (Legacy)",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Btn_武器介紹",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            6,
+                            8,
+                            9
+                          ],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Text (Legacy)",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Btn_過往記憶",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            6,
+                            8,
+                            9
+                          ],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Text (Legacy)",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "Btn_角色資料",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            5,
+                            6,
+                            8,
+                            9
+                          ],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "Text (Legacy)",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0,
+                                5,
+                                10
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "邊框",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        5,
+                        6
+                      ],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "ReturnMainMenu_ConfirmPanel",
+              "isActive": false,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "黑底",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "對話框",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Btn_確認",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6,
+                    8
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Btn_取消",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6,
+                    8
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "ReturnHub_ConfirmPanel",
+              "isActive": false,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "黑底",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "對話框",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Btn_確認",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6,
+                    8
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Btn_取消",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    5,
+                    6,
+                    8
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
