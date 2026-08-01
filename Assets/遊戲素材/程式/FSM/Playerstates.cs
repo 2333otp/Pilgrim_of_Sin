@@ -58,6 +58,10 @@ namespace PilgrimOfSin.StateMachine
         protected void SetAnimBool(string paramName, bool value)
             => Anim.SetBool(paramName, value);
 
+        /// <summary>直接以狀態名稱切換 Animator（不經過 Transition 條件，適合依武器等資料切換待機姿勢）。</summary>
+        protected void CrossFadeAnimation(string stateName, float duration = 0.15f)
+            => Anim.CrossFade(stateName, duration);
+
         /// <summary>
         /// ESC 暫停偵測：PlayerInput.PausePressed 或 Keyboard 直讀（Game View 失焦時備援）。
         /// </summary>
@@ -74,10 +78,24 @@ namespace PilgrimOfSin.StateMachine
 
         public IdleState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
+        // 依 Combat.CurrentWeaponIndex（1~4）對應到 Animator 裡的待機狀態名稱
+        private static readonly string[] IdleStateNames =
+        {
+            null,              // 0：未使用
+            "Idle_Pencil",     // 武器1 鉛筆
+            "Idle_Brush",      // 武器2 水彩筆
+            "Idle_PaintKnife", // 武器3 畫刀
+            "Idle_Palette",    // 武器4 調色盤
+        };
+
         public override void Enter()
         {
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
+
+            int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            if (weaponIndex >= 1 && weaponIndex < IdleStateNames.Length)
+                CrossFadeAnimation(IdleStateNames[weaponIndex]);
 
             // 從空中落地才需要跳躍冷卻，避免落地瞬間又立刻連跳
             if (Machine.PreviousStateType == PlayerStateType.Jump
