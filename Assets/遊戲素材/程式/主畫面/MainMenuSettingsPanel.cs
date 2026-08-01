@@ -42,12 +42,14 @@ namespace PilgrimOfSin
             HideAll();
         }
 
-        // ── ESC 鍵／手把返回鍵返回（比照 ESC 暫停選單邏輯）─────────────────
+        // ── ESC 鍵／手把返回鍵（南鍵、R2）返回（比照 ESC 暫停選單邏輯）─────
 
         private void Update()
         {
             bool keyboardBack = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
-            bool gamepadBack  = Gamepad.current  != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+            bool gamepadBack  = Gamepad.current  != null &&
+                                 (Gamepad.current.buttonSouth.wasPressedThisFrame ||
+                                  Gamepad.current.rightTrigger.wasPressedThisFrame);
             if (!keyboardBack && !gamepadBack)
                 return;
 
