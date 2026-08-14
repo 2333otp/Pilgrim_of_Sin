@@ -2,11 +2,20 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace PilgrimOfSin.StateMachine
 {
     public class FSMDebugOverlay : MonoBehaviour
     {
+        // 只在這些戰鬥場景自動建立，其餘場景（HubScene、MainScene 等）預設不顯示
+        private static readonly string[] AllowedScenes =
+        {
+            "GreedBossScene",
+            "WrathBossScene",
+            "FoolishBossScene",
+        };
+
         private const float PanelWidth  = 240f;
         private const float CacheInterval = 1.5f;
 
@@ -35,6 +44,7 @@ namespace PilgrimOfSin.StateMachine
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void AutoCreate()
         {
+            if (System.Array.IndexOf(AllowedScenes, SceneManager.GetActiveScene().name) < 0) return;
             if (FindAnyObjectByType<FSMDebugOverlay>() != null) return;
             var go = new GameObject("[FSM Debug Overlay]");
             DontDestroyOnLoad(go);
@@ -50,6 +60,19 @@ namespace PilgrimOfSin.StateMachine
                 return;
             }
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        // 離開白名單場景（例如打完 Boss 回到 HubScene）時自我銷毀
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (System.Array.IndexOf(AllowedScenes, scene.name) < 0)
+                Destroy(gameObject);
         }
 
         // ── Update ───────────────────────────────────────────────────

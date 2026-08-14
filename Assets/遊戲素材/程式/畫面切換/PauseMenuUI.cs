@@ -74,6 +74,20 @@ namespace PilgrimOfSin
         [SerializeField] private PlayerStatusUI _playerStatusUI;
         [SerializeField] private Button _btnReturnFromStatus;
 
+        // ── 玩家狀態 - 分頁（武器介紹／過往記憶／角色資料／背包）────────
+        [Header("玩家狀態 - 分頁按鈕")]
+        [SerializeField] private GameObject _statusButtonGroup;
+        [SerializeField] private Button _btnStatusWeaponInfo;
+        [SerializeField] private Button _btnStatusMemories;
+        [SerializeField] private Button _btnStatusCharData;
+        [SerializeField] private Button _btnStatusBackpack;
+
+        [Header("玩家狀態 - 分頁內容（初始隱藏，與按鈕群組互斥）")]
+        [SerializeField] private GameObject _weaponInfoContent;
+        [SerializeField] private GameObject _memoriesContent;
+        [SerializeField] private GameObject _charDataContent;
+        [SerializeField] private GameObject _backpackContent;
+
         // ── 遊戲中 HUD ─────────────────────────────────────────────────
         [Header("遊戲中 HUD（暫停時隱藏）")]
         [Tooltip("武器欄根物件，暫停時自動隱藏，恢復時顯示")]
@@ -107,6 +121,7 @@ namespace PilgrimOfSin
         private StateMachine.PlayerInputReader _inputReader;
         private GameObject _currentSubPanel;
         private GameObject _previousSubPanel; // 記錄從哪個子面板跳來的，ESC 回退用
+        private GameObject _currentStatusTab; // 玩家狀態目前開啟的分頁內容（null = 分頁列表）
         private Button _hoveredButton;
         private Coroutine _saveNotificationCoroutine;
 
@@ -137,6 +152,11 @@ namespace PilgrimOfSin
                 _weaponHUD.SetActive(false);
 
             BindSliders();
+
+            _btnStatusWeaponInfo?.onClick.AddListener(() => OpenStatusTab(_weaponInfoContent));
+            _btnStatusMemories?.onClick.AddListener(() => OpenStatusTab(_memoriesContent));
+            _btnStatusCharData?.onClick.AddListener(() => OpenStatusTab(_charDataContent));
+            _btnStatusBackpack?.onClick.AddListener(() => OpenStatusTab(_backpackContent));
         }
 
         private void OnDestroy()
@@ -167,10 +187,15 @@ namespace PilgrimOfSin
 
             if (!Mouse.current.leftButton.wasPressedThisFrame) return;
 
-            // ── 玩家狀態頁：只偵測「返回ESC選單」─────────────────────
+            // ── 玩家狀態頁：分頁列表 or 分頁內容（內容自身按鈕走標準 onClick）──
             if (statusVisible)
             {
-                TryClick(_btnReturnFromStatus, pos, ClosePlayerStatus);
+                if (_currentStatusTab != null) return;
+                TryClick(_btnReturnFromStatus,   pos, ClosePlayerStatus);
+                TryClick(_btnStatusWeaponInfo,   pos, () => OpenStatusTab(_weaponInfoContent));
+                TryClick(_btnStatusMemories,     pos, () => OpenStatusTab(_memoriesContent));
+                TryClick(_btnStatusCharData,     pos, () => OpenStatusTab(_charDataContent));
+                TryClick(_btnStatusBackpack,     pos, () => OpenStatusTab(_backpackContent));
                 return;
             }
 
@@ -289,7 +314,9 @@ namespace PilgrimOfSin
             bool statusVisible = _playerStatusPanel != null && _playerStatusPanel.activeSelf;
             if (statusVisible)
             {
-                _navButtons = new Button[] { _btnReturnFromStatus };
+                _navButtons = _currentStatusTab != null
+                    ? new Button[0] // 分頁內容自己處理翻頁（如 MemoryPageBook 的手把 L1/R1）
+                    : new Button[] { _btnStatusWeaponInfo, _btnStatusMemories, _btnStatusCharData, _btnStatusBackpack, _btnReturnFromStatus };
                 return;
             }
 
@@ -329,6 +356,10 @@ namespace PilgrimOfSin
             else if (btn == _btnConfirmMainMenu)   ExecuteReturnMainMenu();
             else if (btn == _btnCancelMainMenu)    CloseSubPanel();
             else if (btn == _btnReturnFromStatus)  ClosePlayerStatus();
+            else if (btn == _btnStatusWeaponInfo)  OpenStatusTab(_weaponInfoContent);
+            else if (btn == _btnStatusMemories)    OpenStatusTab(_memoriesContent);
+            else if (btn == _btnStatusCharData)    OpenStatusTab(_charDataContent);
+            else if (btn == _btnStatusBackpack)    OpenStatusTab(_backpackContent);
         }
 
         private void AdjustSlider(Slider slider, float delta)
@@ -360,7 +391,15 @@ namespace PilgrimOfSin
         private Button GetHoveredButton(Vector2 pos)
         {
             if (_playerStatusPanel != null && _playerStatusPanel.activeSelf)
-                return IsOver(_btnReturnFromStatus, pos) ? _btnReturnFromStatus : null;
+            {
+                if (_currentStatusTab != null) return null;
+                if (IsOver(_btnReturnFromStatus,   pos)) return _btnReturnFromStatus;
+                if (IsOver(_btnStatusWeaponInfo,   pos)) return _btnStatusWeaponInfo;
+                if (IsOver(_btnStatusMemories,     pos)) return _btnStatusMemories;
+                if (IsOver(_btnStatusCharData,     pos)) return _btnStatusCharData;
+                if (IsOver(_btnStatusBackpack,     pos)) return _btnStatusBackpack;
+                return null;
+            }
 
             if (_currentSubPanel != null && _currentSubPanel.activeSelf)
             {
@@ -459,6 +498,11 @@ namespace PilgrimOfSin
         /// </summary>
         public bool ConsumeEscIfSubPanelOpen()
         {
+            if (_currentStatusTab != null)
+            {
+                CloseStatusTab();
+                return true;
+            }
             if (_playerStatusPanel != null && _playerStatusPanel.activeSelf)
             {
                 ClosePlayerStatus();
@@ -519,6 +563,7 @@ namespace PilgrimOfSin
         {
             if (_escPanel          != null) _escPanel.SetActive(false);
             if (_playerStatusPanel != null) _playerStatusPanel.SetActive(true);
+            CloseStatusTab();
             _playerStatusUI?.Refresh(_playerController);
             RefreshNavButtons();
         }
@@ -527,7 +572,30 @@ namespace PilgrimOfSin
         {
             if (_playerStatusPanel != null) _playerStatusPanel.SetActive(false);
             if (_escPanel          != null) _escPanel.SetActive(true);
+            CloseStatusTab();
             ShowButtonGroup();
+            RefreshNavButtons();
+        }
+
+        private void OpenStatusTab(GameObject content)
+        {
+            if (content == null) return;
+            _statusButtonGroup?.SetActive(false);
+            content.transform.SetAsLastSibling();
+            content.SetActive(true);
+            _currentStatusTab = content;
+            RefreshNavButtons();
+        }
+
+        private void CloseStatusTab()
+        {
+            // 不依賴 _currentStatusTab 追蹤，強制關閉全部分頁內容，避免任何殘留的啟用狀態造成誤開
+            _weaponInfoContent?.SetActive(false);
+            _memoriesContent?.SetActive(false);
+            _charDataContent?.SetActive(false);
+            _backpackContent?.SetActive(false);
+            _currentStatusTab = null;
+            _statusButtonGroup?.SetActive(true);
             RefreshNavButtons();
         }
 
