@@ -447,12 +447,15 @@ namespace PilgrimOfSin
                 btn.GetComponent<RectTransform>(), screenPos, null);
         }
 
+        private const float SelectedButtonScale = 1.08f;
+
         private void ApplyButtonColor(Button btn, bool highlighted)
         {
             if (btn == null || btn.targetGraphic == null) return;
             var colors = btn.colors;
             Color target = highlighted ? colors.highlightedColor : colors.normalColor;
             btn.targetGraphic.CrossFadeColor(target, colors.fadeDuration, true, true);
+            btn.transform.localScale = highlighted ? Vector3.one * SelectedButtonScale : Vector3.one;
         }
 
         // ── 公開 API（由 PausedState 呼叫）────────────────────────────
