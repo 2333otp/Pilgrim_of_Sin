@@ -31,5 +31,13 @@ namespace PilgrimOfSin
         {
             transform.localScale = Vector3.one;
         }
+
+        // 面板被切換隱藏時（例如按 ESC 從設置選單返回主選單），
+        // OnPointerExit / OnDeselect 不會被觸發，縮放狀態會卡住。
+        // OnDisable 保證按鈕不管因為什麼原因被停用，縮放都會強制復原。
+        private void OnDisable()
+        {
+            transform.localScale = Vector3.one;
+        }
     }
 }

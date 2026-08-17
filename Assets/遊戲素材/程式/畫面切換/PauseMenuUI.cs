@@ -67,7 +67,6 @@ namespace PilgrimOfSin
         [SerializeField] private Button _btnSettingsVolume;
         [SerializeField] private Button _btnSettingsControls;
         [SerializeField] private Button _btnSettingsCredits;
-        [SerializeField] private Button _settingsBackBtn;
 
         // ── 玩家狀態面板 ───────────────────────────────────────────────
         [Header("玩家狀態面板")]
@@ -207,7 +206,6 @@ namespace PilgrimOfSin
                     TryClick(_btnSettingsVolume,   pos, () => OpenSubPanel(_volumeSubPanel,   _settingsSubPanel));
                     TryClick(_btnSettingsControls, pos, () => OpenSubPanel(_controlsSubPanel, _settingsSubPanel));
                     TryClick(_btnSettingsCredits,  pos, () => OpenSubPanel(_creditsSubPanel,  _settingsSubPanel));
-                    TryClick(_settingsBackBtn,     pos, CloseSubPanel);
                 }
                 else if (_currentSubPanel == _returnHubConfirmPanel)
                 {
@@ -308,6 +306,9 @@ namespace PilgrimOfSin
 
         private void RefreshNavButtons()
         {
+            // 切換面板前，先把目前反白中的按鈕實際復原，
+            // 不然只清掉追蹤變數、按鈕視覺上會卡在反白狀態（因為之後沒人記得要關它）。
+            ApplyButtonColor(_hoveredButton, false);
             _navIndex = -1;
             _hoveredButton = null;
 
@@ -322,7 +323,7 @@ namespace PilgrimOfSin
 
             if (_currentSubPanel != null && _currentSubPanel.activeSelf)
             {
-                if      (_currentSubPanel == _settingsSubPanel)          _navButtons = new Button[] { _btnSettingsVolume, _btnSettingsControls, _btnSettingsCredits, _settingsBackBtn };
+                if      (_currentSubPanel == _settingsSubPanel)          _navButtons = new Button[] { _btnSettingsVolume, _btnSettingsControls, _btnSettingsCredits };
                 else if (_currentSubPanel == _volumeSubPanel)            _navButtons = new Button[0];
                 else if (_currentSubPanel == _controlsSubPanel)          _navButtons = new Button[0];
                 else if (_currentSubPanel == _creditsSubPanel)           _navButtons = new Button[0];
@@ -350,7 +351,6 @@ namespace PilgrimOfSin
             else if (btn == _btnSettingsVolume)   OpenSubPanel(_volumeSubPanel,   _settingsSubPanel);
             else if (btn == _btnSettingsControls) OpenSubPanel(_controlsSubPanel, _settingsSubPanel);
             else if (btn == _btnSettingsCredits)  OpenSubPanel(_creditsSubPanel,  _settingsSubPanel);
-            else if (btn == _settingsBackBtn)      CloseSubPanel();
             else if (btn == _btnConfirmHub)        ExecuteReturnHub();
             else if (btn == _btnCancelHub)         CloseSubPanel();
             else if (btn == _btnConfirmMainMenu)   ExecuteReturnMainMenu();
@@ -408,7 +408,6 @@ namespace PilgrimOfSin
                     if (IsOver(_btnSettingsVolume,   pos)) return _btnSettingsVolume;
                     if (IsOver(_btnSettingsControls, pos)) return _btnSettingsControls;
                     if (IsOver(_btnSettingsCredits,  pos)) return _btnSettingsCredits;
-                    if (IsOver(_settingsBackBtn,     pos)) return _settingsBackBtn;
                     return null;
                 }
                 if (_currentSubPanel == _volumeSubPanel)   return null;
@@ -454,7 +453,10 @@ namespace PilgrimOfSin
             if (btn == null || btn.targetGraphic == null) return;
             var colors = btn.colors;
             Color target = highlighted ? colors.highlightedColor : colors.normalColor;
-            btn.targetGraphic.CrossFadeColor(target, colors.fadeDuration, true, true);
+            // 直接賦值而非 CrossFadeColor：漸變動畫需要物件保持啟用才能跑完，
+            // 但這裡的按鈕常常在反白後立刻被 SetActive(false)（切換子面板），
+            // 漸變會卡在半途不生效，導致按鈕之後重新顯示時顏色卡在舊狀態。
+            btn.targetGraphic.color = target;
             btn.transform.localScale = highlighted ? Vector3.one * SelectedButtonScale : Vector3.one;
         }
 
