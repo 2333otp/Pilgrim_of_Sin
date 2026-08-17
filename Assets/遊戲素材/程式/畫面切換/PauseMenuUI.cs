@@ -60,6 +60,7 @@ namespace PilgrimOfSin
         [SerializeField] private Slider _masterSlider;
         [SerializeField] private Slider _musicSlider;
         [SerializeField] private Slider _sfxSlider;
+        [SerializeField] private Slider _voiceSlider;
 
         // ── 設置選項子面板 ─────────────────────────────────────────────
         [Header("設置選項子面板（含 3 顆入口按鈕 + 返回）")]
@@ -128,6 +129,11 @@ namespace PilgrimOfSin
         private Button[] _navButtons;
         private int _navIndex = -1;
         private float _navCooldown;
+
+        // 手把導航：音量子面板另外追蹤目前選到第幾條滑桿（滑桿不是按鈕，不能共用 _navButtons）
+        private Slider[] _volumeSliders;
+        private int _volumeSliderIndex;
+        private Slider _hoveredVolumeSlider;
 
         // 存檔提示框顯示期間鎖定所有輸入
         private bool _isSaving;
@@ -234,6 +240,42 @@ namespace PilgrimOfSin
 
         // ── 手把選單導航 ───────────────────────────────────────────────
 
+        private void HandleVolumeSubPanelInput()
+        {
+            if (_volumeSliders == null)
+                _volumeSliders = new Slider[] { _masterSlider, _musicSlider, _sfxSlider, _voiceSlider };
+
+            if (_navCooldown <= 0f)
+            {
+                if (_inputReader.MenuUpPressed)
+                {
+                    MoveVolumeSelection(-1);
+                    _navCooldown = 0.18f;
+                }
+                else if (_inputReader.MenuDownPressed)
+                {
+                    MoveVolumeSelection(1);
+                    _navCooldown = 0.18f;
+                }
+            }
+
+            int idx = Mathf.Clamp(_volumeSliderIndex, 0, _volumeSliders.Length - 1);
+            Slider current = _volumeSliders[idx];
+            if (_inputReader.VolumeUpPressed)
+                AdjustSlider(current, 0.05f);
+            if (_inputReader.VolumeDownPressed)
+                AdjustSlider(current, -0.05f);
+        }
+
+        private void MoveVolumeSelection(int dir)
+        {
+            if (_volumeSliders == null || _volumeSliders.Length == 0) return;
+            ApplyButtonColor(_hoveredVolumeSlider, false);
+            _volumeSliderIndex   = (_volumeSliderIndex + dir + _volumeSliders.Length) % _volumeSliders.Length;
+            _hoveredVolumeSlider = _volumeSliders[_volumeSliderIndex];
+            ApplyButtonColor(_hoveredVolumeSlider, true);
+        }
+
         private void HandleGamepadMenu()
         {
             if (_inputReader == null) return;
@@ -246,13 +288,11 @@ namespace PilgrimOfSin
                 return;
             }
 
-            // ── 音量調整（方向鍵左右，音量子面板時生效）─────────────
+            // ── 音量子面板：上下切換滑桿、左右調整目前選到的那條 ──────
             if (_currentSubPanel == _volumeSubPanel)
             {
-                if (_inputReader.VolumeUpPressed)
-                    AdjustSlider(_masterSlider, 0.05f);
-                if (_inputReader.VolumeDownPressed)
-                    AdjustSlider(_masterSlider, -0.05f);
+                HandleVolumeSubPanelInput();
+                return;
             }
 
             // ── 上下導航 ─────────────────────────────────────────────
@@ -282,11 +322,18 @@ namespace PilgrimOfSin
         private void Navigate(int dir)
         {
             if (_navButtons == null || _navButtons.Length == 0) return;
-            int start = _navIndex < 0 ? 0 : _navIndex;
-            int idx   = start;
+
+            // 全新狀態（還沒選過任何東西，_navIndex = -1）時，
+            // 往下應該直接選第一顆、往上應該直接選最後一顆，
+            // 不能沿用「先移動一格再檢查」的邏輯，否則往下第一下會跳過第一顆。
+            bool isFresh = _navIndex < 0;
+            int idx = isFresh ? (dir > 0 ? 0 : _navButtons.Length - 1) : _navIndex;
+
             for (int i = 0; i < _navButtons.Length; i++)
             {
-                idx = (idx + dir + _navButtons.Length) % _navButtons.Length;
+                if (!(isFresh && i == 0))
+                    idx = (idx + dir + _navButtons.Length) % _navButtons.Length;
+
                 var btn = _navButtons[idx];
                 if (btn != null && btn.gameObject.activeInHierarchy && btn.interactable)
                 {
@@ -296,21 +343,33 @@ namespace PilgrimOfSin
             }
         }
 
-        private void SetNavSelect(int idx)
+        private void SetNavSelect(int idx) => SetHovered(_navButtons[idx]);
+
+        /// <summary>
+        /// 唯一能改變「目前反白的按鈕」的地方，滑鼠 hover 跟手把上下導航都要走這裡。
+        /// 過去滑鼠 hover（UpdateHover）只改畫面反白、不會同步 _navIndex，
+        /// 手把按確認鍵卻是看 _navIndex 執行——兩邊各自獨立更新，只要滑鼠停在
+        /// 手把上次選到的不同顆按鈕上，畫面反白跟實際執行的按鈕就會對不上。
+        /// 統一經過這裡後，_navIndex 永遠跟著畫面上實際反白的按鈕走，不會再有落差。
+        /// </summary>
+        private void SetHovered(Button btn)
         {
+            if (btn == _hoveredButton) return;
             ApplyButtonColor(_hoveredButton, false);
-            _navIndex    = idx;
-            _hoveredButton = _navButtons[idx];
+            _hoveredButton = btn;
             ApplyButtonColor(_hoveredButton, true);
+            _navIndex = (_navButtons != null && btn != null) ? System.Array.IndexOf(_navButtons, btn) : -1;
         }
 
         private void RefreshNavButtons()
         {
-            // 切換面板前，先把目前反白中的按鈕實際復原，
-            // 不然只清掉追蹤變數、按鈕視覺上會卡在反白狀態（因為之後沒人記得要關它）。
-            ApplyButtonColor(_hoveredButton, false);
-            _navIndex = -1;
-            _hoveredButton = null;
+            // 切換面板前，先把目前反白中的按鈕/滑桿實際復原，
+            // 不然只清掉追蹤變數、視覺上會卡在反白狀態（因為之後沒人記得要關它）。
+            SetHovered(null);
+
+            ApplyButtonColor(_hoveredVolumeSlider, false);
+            _volumeSliderIndex   = 0;
+            _hoveredVolumeSlider = null;
 
             bool statusVisible = _playerStatusPanel != null && _playerStatusPanel.activeSelf;
             if (statusVisible)
@@ -380,12 +439,7 @@ namespace PilgrimOfSin
 
         private void UpdateHover(Vector2 pos)
         {
-            Button newHover = GetHoveredButton(pos);
-            if (newHover == _hoveredButton) return;
-
-            ApplyButtonColor(_hoveredButton, false);
-            ApplyButtonColor(newHover, true);
-            _hoveredButton = newHover;
+            SetHovered(GetHoveredButton(pos));
         }
 
         private Button GetHoveredButton(Vector2 pos)
@@ -448,7 +502,9 @@ namespace PilgrimOfSin
 
         private const float SelectedButtonScale = 1.08f;
 
-        private void ApplyButtonColor(Button btn, bool highlighted)
+        // 參數用 Selectable 而不是 Button，這樣 Slider（音量子面板的滑桿）
+        // 也能共用同一套反白/縮放邏輯，不用另外寫一份。
+        private void ApplyButtonColor(Selectable btn, bool highlighted)
         {
             if (btn == null || btn.targetGraphic == null) return;
             var colors = btn.colors;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace PilgrimOfSin
 {
@@ -36,6 +37,12 @@ namespace PilgrimOfSin
 
             _quitButton.onClick.RemoveAllListeners();
             _quitButton.onClick.AddListener(QuitGame);
+
+            // 手把/鍵盤導航需要一個初始選取目標才能上下移動，
+            // 沒有預先選取的話玩家按方向鍵完全沒反應。
+            // 有存檔優先選「繼續進度」，沒有就選「開啟新遊戲」。
+            Button initialSelection = hasSave ? _continueButton : _startGameButton;
+            EventSystem.current?.SetSelectedGameObject(initialSelection.gameObject);
         }
 
         private void QuitGame()

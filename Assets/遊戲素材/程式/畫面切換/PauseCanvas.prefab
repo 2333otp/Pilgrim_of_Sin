@@ -3872,6 +3872,7 @@ MonoBehaviour:
   _masterSlider: {fileID: 5278398415915934371}
   _musicSlider: {fileID: 6007451350392658814}
   _sfxSlider: {fileID: 3573761741513834}
+  _voiceSlider: {fileID: 1348228663287410040}
   _settingsSubPanel: {fileID: 92221867329867118}
   _btnSettingsVolume: {fileID: 2510210910980504377}
   _btnSettingsControls: {fileID: 5025749844246091142}
