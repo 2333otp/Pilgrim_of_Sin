@@ -33,6 +33,8 @@ namespace PilgrimOfSin
         [SerializeField] private Slider _masterSlider;
         [SerializeField] private Slider _musicSlider;
         [SerializeField] private Slider _sfxSlider;
+        [Tooltip("角色語音系統尚未開發，此滑桿目前只是視覺佔位，不會實際調整任何音量，也不會存檔。手把仍可切換到這一條以維持跟 ESC 選單一致的行為。")]
+        [SerializeField] private Slider _voiceSlider;
 
         private const float SelectedButtonScale = 1.08f;
         private const float NavRepeatDelay = 0.18f;
@@ -193,7 +195,7 @@ namespace PilgrimOfSin
         private void HandleVolumeSubPanelNav()
         {
             if (_volumeSliders == null)
-                _volumeSliders = new[] { _masterSlider, _musicSlider, _sfxSlider };
+                _volumeSliders = new[] { _masterSlider, _musicSlider, _sfxSlider, _voiceSlider };
 
             if (Gamepad.current == null) return;
 
