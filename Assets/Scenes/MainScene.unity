@@ -1145,6 +1145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.MainMenuUI
   _startGameButton: {fileID: 1004797152}
   _continueButton: {fileID: 199266517}
+  _settingsButton: {fileID: 546510392}
   _quitButton: {fileID: 1564660137}
 --- !u!1 &253454533
 GameObject:

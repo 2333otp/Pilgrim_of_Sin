@@ -42,6 +42,8 @@ namespace PilgrimOfSin.StateMachine
         public bool MenuBackPressed { get; private set; }
         public bool VolumeUpPressed { get; private set; }
         public bool VolumeDownPressed { get; private set; }
+        public bool MenuPageLeftPressed { get; private set; }
+        public bool MenuPageRightPressed { get; private set; }
 
         // ── 每幀結束清除一次性按鍵 ───────────────────────────────────
         private void LateUpdate()
@@ -63,6 +65,8 @@ namespace PilgrimOfSin.StateMachine
             MenuBackPressed = false;
             VolumeUpPressed = false;
             VolumeDownPressed = false;
+            MenuPageLeftPressed = false;
+            MenuPageRightPressed = false;
         }
 
         // ── Send Messages 回呼（PlayerInput 自動呼叫） ───────────────
@@ -139,5 +143,11 @@ namespace PilgrimOfSin.StateMachine
 
         private void OnVolumeDown(InputValue value)
         { if (value.isPressed) VolumeDownPressed = true; }
+
+        private void OnMenuPageLeft(InputValue value)
+        { if (value.isPressed) MenuPageLeftPressed = true; }
+
+        private void OnMenuPageRight(InputValue value)
+        { if (value.isPressed) MenuPageRightPressed = true; }
     }
 }

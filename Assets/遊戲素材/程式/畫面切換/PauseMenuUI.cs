@@ -29,6 +29,9 @@ namespace PilgrimOfSin
     {
         public static PauseMenuUI Instance { get; private set; }
 
+        /// <summary>目前暫停中的玩家輸入讀取器，供分頁內容（如 MemoryPageBook）讀取手把翻頁輸入。</summary>
+        public StateMachine.PlayerInputReader InputReader => _inputReader;
+
         // ── 根面板 ─────────────────────────────────────────────────────
         [Header("根面板")]
         [SerializeField] private GameObject _escPanel;
@@ -124,6 +127,7 @@ namespace PilgrimOfSin
         private GameObject _currentStatusTab; // 玩家狀態目前開啟的分頁內容（null = 分頁列表）
         private Button _hoveredButton;
         private Coroutine _saveNotificationCoroutine;
+        private Vector2? _lastMousePos; // 滑鼠沒有實際移動就不重新偵測 hover，避免蓋掉手把剛選好的按鈕
 
         // 手把導航：追蹤當前選中的按鈕索引
         private Button[] _navButtons;
@@ -187,8 +191,22 @@ namespace PilgrimOfSin
 
             HandleGamepadMenu();
 
+            // 滑鼠沒有實際移動時不重新偵測 hover，
+            // 否則手把剛用 Navigate() 選好的按鈕，會在同一影格被這裡的
+            // GetHoveredButton(pos)==null（滑鼠沒指到任何按鈕）立刻蓋掉，
+            // 導致手把上下鍵看起來完全沒反應。
+            // 選單剛開啟那一影格只記錄座標、不做 hover 判定，避免 Mouse.current
+            // 在那個當下讀到還沒穩定的值，跟下一影格的正常讀值對不上而誤判成「有移動」。
             Vector2 pos = Mouse.current.position.ReadValue();
-            UpdateHover(pos);
+            if (_lastMousePos == null)
+            {
+                _lastMousePos = pos;
+            }
+            else if (pos != _lastMousePos.Value)
+            {
+                _lastMousePos = pos;
+                UpdateHover(pos);
+            }
 
             if (!Mouse.current.leftButton.wasPressedThisFrame) return;
 
@@ -523,6 +541,7 @@ namespace PilgrimOfSin
         {
             _playerController = player;
             _inputReader = player?.InputReader;
+            _lastMousePos = null;
             if (_escPanel != null) _escPanel.SetActive(true);
             ShowButtonGroup();
             SyncSliderValues();

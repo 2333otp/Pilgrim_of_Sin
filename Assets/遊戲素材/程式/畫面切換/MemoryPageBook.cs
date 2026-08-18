@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 using TMPro;
 
 namespace PilgrimOfSin
@@ -46,11 +45,15 @@ namespace PilgrimOfSin
 
         private void Update()
         {
-            if (Gamepad.current == null) return;
+            // 走跟 ESC 選單其他手把輸入一樣的 PlayerInputReader 事件旗標，
+            // 不用 Gamepad.current.leftShoulder.wasPressedThisFrame 直接輪詢——
+            // 這頁只在 PauseMenuUI 的玩家狀態分頁底下才會顯示，InputReader 一定拿得到。
+            var reader = PauseMenuUI.Instance != null ? PauseMenuUI.Instance.InputReader : null;
+            if (reader == null) return;
 
-            if (Gamepad.current.leftShoulder.wasPressedThisFrame)
+            if (reader.MenuPageLeftPressed)
                 PrevPage();
-            else if (Gamepad.current.rightShoulder.wasPressedThisFrame)
+            else if (reader.MenuPageRightPressed)
                 NextPage();
         }
 
