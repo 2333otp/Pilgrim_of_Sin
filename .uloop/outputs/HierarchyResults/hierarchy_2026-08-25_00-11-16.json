@@ -1,0 +1,36 @@
+{
+  "ExportTimestamp": "2026-08-25 00:11:16",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "HubScene",
+    "nodeCount": 1,
+    "maxDepth": 0
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "HubScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 1,
+        "maxDepth": 0
+      },
+      "roots": [
+        {
+          "name": "PauseCanvas",
+          "isActive": false,
+          "components": [
+            "RectTransform",
+            "Canvas",
+            "CanvasScaler",
+            "GraphicRaycaster",
+            "PauseMenuUI"
+          ],
+          "siblingIndex": 13,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

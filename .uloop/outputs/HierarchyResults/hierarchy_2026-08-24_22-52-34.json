@@ -1,0 +1,33 @@
+{
+  "ExportTimestamp": "2026-08-24 22:52:34",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "HubScene",
+    "nodeCount": 1,
+    "maxDepth": 0
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "HubScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 1,
+        "maxDepth": 0
+      },
+      "roots": [
+        {
+          "name": "CameraManager",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "CameraController"
+          ],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

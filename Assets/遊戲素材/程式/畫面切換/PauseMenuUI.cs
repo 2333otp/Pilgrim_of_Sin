@@ -313,11 +313,25 @@ namespace PilgrimOfSin
                 return;
             }
 
-            // ── 上下導航 ─────────────────────────────────────────────
+            // ── 上下導航（確認對話框改用左右）───────────────────────────
             if (_navCooldown > 0f) return;
             if (_navButtons == null || _navButtons.Length == 0) return;
 
-            if (_inputReader.MenuUpPressed)
+            bool isConfirmDialog = _currentSubPanel == _returnHubConfirmPanel || _currentSubPanel == _returnMainMenuConfirmPanel;
+            if (isConfirmDialog)
+            {
+                if (_inputReader.MenuPageLeftPressed)
+                {
+                    Navigate(-1);
+                    _navCooldown = 0.18f;
+                }
+                else if (_inputReader.MenuPageRightPressed)
+                {
+                    Navigate(1);
+                    _navCooldown = 0.18f;
+                }
+            }
+            else if (_inputReader.MenuUpPressed)
             {
                 Navigate(-1);
                 _navCooldown = 0.18f;
@@ -532,6 +546,11 @@ namespace PilgrimOfSin
             // 漸變會卡在半途不生效，導致按鈕之後重新顯示時顏色卡在舊狀態。
             btn.targetGraphic.color = target;
             btn.transform.localScale = highlighted ? Vector3.one * SelectedButtonScale : Vector3.one;
+
+            // 確認對話框的「是／返回遊戲」按鈕另外掛了 ConfirmDialogChoice，
+            // 用深色反白列取代色彩變化，這裡順便同步切換。
+            var choice = btn.GetComponent<ConfirmDialogChoice>();
+            if (choice != null) choice.SetSelected(highlighted);
         }
 
         // ── 公開 API（由 PausedState 呼叫）────────────────────────────

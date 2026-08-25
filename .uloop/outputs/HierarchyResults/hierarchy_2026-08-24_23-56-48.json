@@ -1,0 +1,39 @@
+{
+  "ExportTimestamp": "2026-08-24 23:56:48",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "HubScene",
+    "nodeCount": 1,
+    "maxDepth": 0
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "HubScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 1,
+        "maxDepth": 0
+      },
+      "roots": [
+        {
+          "name": "Player",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "BoxCollider",
+            "PlayerInput",
+            "Rigidbody",
+            "Animator",
+            "PlayerInputReader",
+            "PlayerController",
+            "PlayerCombat"
+          ],
+          "siblingIndex": 10,
+          "tag": "Player",
+          "layer": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

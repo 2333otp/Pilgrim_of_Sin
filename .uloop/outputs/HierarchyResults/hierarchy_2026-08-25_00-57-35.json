@@ -1,0 +1,1003 @@
+{
+  "ExportTimestamp": "2026-08-25 00:57:35",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "HubScene",
+    "nodeCount": 72,
+    "maxDepth": 2
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "HubScene",
+      "stats": {
+        "rootCount": 17,
+        "nodeCount": 72,
+        "maxDepth": 2
+      },
+      "componentsLut": [
+        "Transform",
+        "Camera",
+        "AudioListener",
+        "CinemachineBrain",
+        "UniversalAdditionalCameraData",
+        "Light",
+        "UniversalAdditionalLightData",
+        "MeshFilter",
+        "MeshRenderer",
+        "MeshCollider",
+        "BoxCollider",
+        "Rigidbody",
+        "ScenePortal",
+        "PlayerInput",
+        "Animator",
+        "PlayerInputReader",
+        "PlayerController",
+        "PlayerCombat",
+        "SphereCollider",
+        "PlayerAttackHitbox",
+        "CameraController",
+        "HubLevelSelectController",
+        "EventSystem",
+        "InputSystemUIInputModule",
+        "RectTransform",
+        "Canvas",
+        "CanvasScaler",
+        "GraphicRaycaster",
+        "PauseMenuUI",
+        "CanvasRenderer",
+        "Image",
+        "VerticalLayoutGroup",
+        "CreditsPageBook",
+        "TextMeshProUGUI",
+        "PlayerStatusUI",
+        "MemoryPageBook",
+        "CanvasGroup",
+        "ConfirmDialogPanel",
+        "Button",
+        "ConfirmDialogChoice",
+        "GameProgressManager",
+        "Animation"
+      ],
+      "roots": [
+        {
+          "name": "Main Camera",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "siblingIndex": 0,
+          "tag": "MainCamera",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            5,
+            6
+          ],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light_meteringLight",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            5,
+            6
+          ],
+          "siblingIndex": 2,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light_rimLight",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            5,
+            6
+          ],
+          "siblingIndex": 3,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light_mainLight",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            5,
+            6
+          ],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Plane",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            9
+          ],
+          "siblingIndex": 5,
+          "tag": "Untagged",
+          "layer": 3,
+          "children": []
+        },
+        {
+          "name": "Cube",
+          "isActive": false,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            10,
+            11
+          ],
+          "siblingIndex": 6,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Portal_Greed",
+          "isActive": false,
+          "componentsIdx": [
+            0,
+            10,
+            12,
+            7,
+            8
+          ],
+          "siblingIndex": 7,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Portal_Wrath",
+          "isActive": false,
+          "componentsIdx": [
+            0,
+            10,
+            12,
+            7,
+            8
+          ],
+          "siblingIndex": 8,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Portal_Foolish",
+          "isActive": false,
+          "componentsIdx": [
+            0,
+            10,
+            12,
+            7,
+            8
+          ],
+          "siblingIndex": 9,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Player",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            10,
+            13,
+            11,
+            14,
+            15,
+            16,
+            17
+          ],
+          "siblingIndex": 10,
+          "tag": "Player",
+          "layer": 0,
+          "children": [
+            {
+              "name": "AttackHitBox",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                18,
+                19
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Muir_WhiteModel",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Muir_bag_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_body_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_belt_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_pants_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shirt_01_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shirt_02_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shirt_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_cloth_shoes_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_eyebrow_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_eyes_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_hair_bangs_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_hair_main_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 11,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_hair_tail_HairStrand_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7,
+                    8
+                  ],
+                  "siblingIndex": 12,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Muir_mouth_grp",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 13,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "CameraManager",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            20,
+            21
+          ],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "EventSystem",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            22,
+            23
+          ],
+          "siblingIndex": 12,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "PauseCanvas",
+          "isActive": false,
+          "componentsIdx": [
+            24,
+            25,
+            26,
+            27,
+            28
+          ],
+          "siblingIndex": 13,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "ESC選單_Panel",
+              "isActive": false,
+              "componentsIdx": [
+                24
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "半透明黑底圖",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "底圖",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "ButtonGroup",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    31
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Volume_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Controls_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Credits_SubPanel",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30,
+                    32
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "標題_心路行者",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    33
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Settings_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "PlayerStatus_Panel",
+              "isActive": false,
+              "componentsIdx": [
+                24,
+                34
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "玩家狀態_底圖",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "角色立繪",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "InfoArea",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "WeaponInfo_Content",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Memories_Content",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30,
+                    35
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "CharData_Content",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Backpack_Content",
+                  "isActive": false,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "SaveNotification_Panel",
+              "isActive": false,
+              "componentsIdx": [
+                24,
+                36
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "黑底_Image",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "提示圖_Image",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "ReturnMainMenu_ConfirmPanel",
+              "isActive": false,
+              "componentsIdx": [
+                24,
+                37
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "黑底",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "背景",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "MessageText",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    33
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Btn_是",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30,
+                    38,
+                    39
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Btn_返回遊戲",
+                  "isActive": true,
+                  "componentsIdx": [
+                    24,
+                    29,
+                    30,
+                    38,
+                    39
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GameProgressManager",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            40
+          ],
+          "siblingIndex": 14,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "cabin_haveCamera",
+          "isActive": true,
+          "componentsIdx": [
+            0
+          ],
+          "siblingIndex": 15,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "Cabin_geo_grp",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "extWindows_grp",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "LargeHouse_grp",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "mediumHouse_grp",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "SmallHouse_grp",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Camera",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                1,
+                4,
+                41
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "CameraFocusPoints",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "FocusPoint_Wide",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FocusPoint_Greed",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FocusPoint_Foolish",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FocusPoint_Wrath",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "HubSelectCanvas",
+          "isActive": true,
+          "componentsIdx": [
+            24,
+            25,
+            26,
+            27
+          ],
+          "siblingIndex": 16,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "BossName_Text",
+              "isActive": true,
+              "componentsIdx": [
+                24,
+                29,
+                33
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ConfirmHint_Text",
+              "isActive": true,
+              "componentsIdx": [
+                24,
+                29,
+                33
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,468 @@
+{
+  "ExportTimestamp": "2026-08-25 21:44:05",
+  "Context": {
+    "sceneType": "runtime",
+    "sceneName": "Multiple(2): HubScene, DontDestroyOnLoad",
+    "nodeCount": 44,
+    "maxDepth": 3
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "HubScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 44,
+        "maxDepth": 3
+      },
+      "roots": [
+        {
+          "name": "cabin_haveCamera",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 0,
+          "path": "cabin_haveCamera",
+          "children": [
+            {
+              "name": "Cabin_geo_grp",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "cabin_haveCamera/Cabin_geo_grp",
+              "children": [
+                {
+                  "name": "extWindows_grp",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/Cabin_geo_grp/extWindows_grp",
+                  "children": [
+                    {
+                      "name": "extWindows_base_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/extWindows_grp/extWindows_base_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "extWindows_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/extWindows_grp/extWindows_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "extWindows_roof_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/extWindows_grp/extWindows_roof_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "extWindows_strip_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/extWindows_grp/extWindows_strip_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "extWindows_window_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/extWindows_grp/extWindows_window_geo",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "LargeHouse_grp",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp",
+                  "children": [
+                    {
+                      "name": "LargeHouse_chimney_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_chimney_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_chimneyBase_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_chimneyBase_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_strip_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_strip_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_tower_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_tower_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_towerBase_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_towerBase_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_window_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_window_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_window_geo.001",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 6,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_window_geo.001",
+                      "children": []
+                    },
+                    {
+                      "name": "LargeHouse_window_geo.002",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 7,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/LargeHouse_grp/LargeHouse_window_geo.002",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "mediumHouse_grp",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp",
+                  "children": [
+                    {
+                      "name": "MediumHouse_brick_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_brick_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_chimney_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_chimney_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_chimneyBase_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_chimneyBase_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_house_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_house_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_houseBase_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_houseBase_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_strip_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_strip_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_window_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 6,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_window_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "MediumHouse_windowPanel_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 7,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/mediumHouse_grp/MediumHouse_windowPanel_geo",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "SmallHouse_grp",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp",
+                  "children": [
+                    {
+                      "name": "SmallHouse_chimneyBase_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_chimneyBase_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_door_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_door_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_doorBalk_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_doorBalk_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_doorBrick_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_doorBrick_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_doorHandle_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_doorHandle_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_doorway_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_doorway_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_doorwayBase_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 6,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_doorwayBase_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_ladder_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 7,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_ladder_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_lamp_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 8,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_lamp_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_roof_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 9,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_roof_geo",
+                      "children": []
+                    },
+                    {
+                      "name": "SmallHouse_strip_geo",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 10,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "cabin_haveCamera/Cabin_geo_grp/SmallHouse_grp/SmallHouse_strip_geo",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Camera",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "cabin_haveCamera/Camera",
+              "children": []
+            },
+            {
+              "name": "CameraFocusPoints",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "cabin_haveCamera/CameraFocusPoints",
+              "children": [
+                {
+                  "name": "FocusPoint_Wide",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/CameraFocusPoints/FocusPoint_Wide",
+                  "children": []
+                },
+                {
+                  "name": "FocusPoint_Greed",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/CameraFocusPoints/FocusPoint_Greed",
+                  "children": []
+                },
+                {
+                  "name": "FocusPoint_Foolish",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/CameraFocusPoints/FocusPoint_Foolish",
+                  "children": []
+                },
+                {
+                  "name": "FocusPoint_Wrath",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "cabin_haveCamera/CameraFocusPoints/FocusPoint_Wrath",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

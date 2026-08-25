@@ -719,6 +719,28 @@
                 },
                 {
                     "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000011",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-000000000012",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b1a2c3d4-0000-0001-0000-000000000006",
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
@@ -798,6 +820,28 @@
                     "name": "",
                     "id": "b1a2c3d4-0000-0001-0000-00000000000d",
                     "path": "<Gamepad>/leftStick/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuPageRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-00000000000e",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuPageLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1a2c3d4-0000-0001-0000-00000000000f",
+                    "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

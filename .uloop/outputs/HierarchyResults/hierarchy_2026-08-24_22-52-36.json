@@ -1,0 +1,36 @@
+{
+  "ExportTimestamp": "2026-08-24 22:52:36",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "HubScene",
+    "nodeCount": 1,
+    "maxDepth": 0
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "HubScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 1,
+        "maxDepth": 0
+      },
+      "roots": [
+        {
+          "name": "Main Camera",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "Camera",
+            "AudioListener",
+            "CinemachineBrain",
+            "UniversalAdditionalCameraData"
+          ],
+          "siblingIndex": 0,
+          "tag": "MainCamera",
+          "layer": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}
