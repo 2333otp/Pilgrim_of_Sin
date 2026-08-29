@@ -55,7 +55,12 @@ AudioMixerController:
     name: MusicVolume
   - guid: 88bd5cadc6866364c9b9e3ef20ce4383
     name: SFXVolume
-  m_AudioMixerGroupViews: []
+  m_AudioMixerGroupViews:
+  - guids:
+    - c0df0d67ec3a02a44bd6df0886fb8e70
+    - f3ee384032d89dd45b7a008b74372468
+    - 3527a2abc8c14be4485fe02ca796cece
+    name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
 --- !u!243 &24300002
