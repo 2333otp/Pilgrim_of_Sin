@@ -31,7 +31,6 @@ namespace PilgrimOfSin
             if (other.CompareTag("Player"))
             {
                 _playerInRange = true;
-                Debug.Log($"[ScenePortal] 玩家進入 {_bossType} 傳送門範圍");
             }
         }
 
@@ -40,7 +39,6 @@ namespace PilgrimOfSin
             if (other.CompareTag("Player"))
             {
                 _playerInRange = false;
-                Debug.Log($"[ScenePortal] 玩家離開 {_bossType} 傳送門範圍");
             }
         }
     }

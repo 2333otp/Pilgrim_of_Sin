@@ -718,7 +718,6 @@ namespace PilgrimOfSin.StateMachine
             // Machine.PreviousStateType 是進入 Paused 之前的狀態
             // 過濾掉不適合恢復的狀態（Damaged / Dead / Paused 本身）
             // → 這些情況一律回 Idle
-            Debug.Log("[PausedState] Enter 被呼叫！PauseMenuUI = " + PilgrimOfSin.PauseMenuUI.Instance);
             var prev = Machine.PreviousStateType;
             _resumeState = IsSafeResumeState(prev) ? prev : PlayerStateType.Idle;
 

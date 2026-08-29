@@ -133,7 +133,6 @@ namespace PilgrimOfSin.StateMachine
             if (CurrentPhase == FoolishPhase.Evade)
             {
                 _evadeRoundCount++;
-                Debug.Log($"[Foolish] 躲避第 {_evadeRoundCount} 輪結束");
 
                 if (_evadeRoundCount >= _evadeRoundsPerCycle)
                     EnterBattlePhase();
@@ -157,7 +156,6 @@ namespace PilgrimOfSin.StateMachine
 
             // Boss 進入 Idle（躲避階段不攻擊）
             _fsm.Request(FoolishBossStateType.Idle);
-            Debug.Log("[Foolish] 進入躲避階段");
         }
 
         private void StartNextEvadeRound()
@@ -167,7 +165,6 @@ namespace PilgrimOfSin.StateMachine
             _safeZoneActive = !_safeZoneActive;
             SetSafeZonesVisible(_safeZoneActive);
             UpdateEvilZoneSize();
-            Debug.Log($"[Foolish] 躲避第 {_evadeRoundCount + 1} 輪開始，善區={_safeZoneActive}");
         }
 
         private void EnterBattlePhase()
@@ -177,7 +174,6 @@ namespace PilgrimOfSin.StateMachine
 
             // 打Boss階段：善惡區暫停，善區全開
             SetSafeZonesVisible(true);
-            Debug.Log("[Foolish] 進入打Boss階段，10秒");
         }
 
         // ════════════════════════════════════════════════════════════
@@ -205,13 +201,9 @@ namespace PilgrimOfSin.StateMachine
         {
             // 躲避階段 Boss 無敵
             if (CurrentPhase == FoolishPhase.Evade)
-            {
-                Debug.Log("[Foolish] 躲避階段無敵，傷害無效。");
                 return;
-            }
 
             CurrentHp = Mathf.Max(0f, CurrentHp - amount);
-            Debug.Log($"[Foolish] 受傷 {amount}，剩餘 HP {CurrentHp}");
 
             // 每次受傷後更新惡區大小
             UpdateEvilZoneSize();
@@ -251,7 +243,6 @@ namespace PilgrimOfSin.StateMachine
         {
             SetSafeZonesVisible(true);
             if (_evilZone) _evilZone.gameObject.SetActive(false);
-            Debug.Log("[Foolish] Boss 死亡，通關。");
             BossResultPortal.Instance?.OnBossDefeated();
         }
 

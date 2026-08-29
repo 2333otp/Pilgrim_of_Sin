@@ -21,7 +21,6 @@ namespace PilgrimOfSin.StateMachine
             _hasHit = true;
             var player = other.GetComponent<PlayerController>();
             player?.TakeDamage(_damage);
-            Debug.Log($"[ExplosionHitbox] 爆炸命中玩家，傷害 {_damage}");
         }
     }
 }

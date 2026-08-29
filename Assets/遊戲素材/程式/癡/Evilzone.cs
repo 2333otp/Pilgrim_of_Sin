@@ -35,7 +35,6 @@ namespace PilgrimOfSin.StateMachine
             float radius = _maxRadius * Mathf.Clamp01(hpPercent);
             float diameter = radius * 2f;
             transform.localScale = new Vector3(diameter, 1f, diameter);
-            Debug.Log($"[EvilZone] 惡區半徑 = {radius:F1}（HP {hpPercent:P0}）");
         }
 
         private void OnTriggerEnter(Collider other)

@@ -15,7 +15,6 @@ namespace PilgrimOfSin.StateMachine
             if (!other.CompareTag("Player")) return;
             var player = other.GetComponent<PlayerController>();
             player?.TakeDamage(_damage);
-            Debug.Log($"[DashHitbox] 衝撞玩家，傷害 {_damage}");
         }
     }
 }

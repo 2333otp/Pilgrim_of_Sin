@@ -194,7 +194,6 @@ namespace PilgrimOfSin.StateMachine
                 _currentTarget = _pentagramPoints[_currentPointIndex];
 
             _pathSpawnDistAcc = 0f;
-            Debug.Log($"[Wrath] 衝向第 {_currentPointIndex} 點");
         }
 
         /// <summary>DashState.FixedUpdate 呼叫，推進位置並沿路生成路徑殘留傷害。</summary>
@@ -261,14 +260,12 @@ namespace PilgrimOfSin.StateMachine
 
             // 每改一幅畫：Boss 立刻扣除 5% HP
             CurrentHp = Mathf.Max(0f, CurrentHp - _maxHp * 0.05f);
-            Debug.Log($"[Wrath] 第 {_modifiedPaintingCount} 幅畫改寫，Boss 扣除 5% HP，剩餘 HP {CurrentHp}");
 
             // 改第一幅畫：觸發玩家防禦增益
             if (_modifiedPaintingCount == 1)
             {
                 var player = _player?.GetComponent<PlayerController>();
                 player?.ApplyDefenseBonus(_playerDefenseBonusMultiplier);
-                Debug.Log("[Wrath] 玩家獲得防禦增益。");
             }
 
             if (CurrentHp <= 0f)
@@ -283,7 +280,6 @@ namespace PilgrimOfSin.StateMachine
         {
             float actualAmount = _canTakeDamage ? amount : amount * _noModifyDamageMultiplier;
             CurrentHp = Mathf.Max(0f, CurrentHp - actualAmount);
-            Debug.Log($"[Wrath] 受傷 {actualAmount}，剩餘 HP {CurrentHp}");
 
             if (CurrentHp <= 0f)
             {
@@ -297,7 +293,6 @@ namespace PilgrimOfSin.StateMachine
 
         public void OnDeath()
         {
-            Debug.Log("[Wrath] Boss 死亡，通關。");
             BossResultPortal.Instance?.OnBossDefeated();
         }
 

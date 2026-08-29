@@ -28,7 +28,6 @@ namespace PilgrimOfSin.StateMachine
             _hasHit = true;
             var player = other.GetComponent<PlayerController>();
             player?.TakeDamage(_damage);
-            Debug.Log($"[PathDamage] 路徑傷害命中玩家，傷害 {_damage}");
         }
     }
 }

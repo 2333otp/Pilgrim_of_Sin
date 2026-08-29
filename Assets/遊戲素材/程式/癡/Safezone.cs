@@ -13,7 +13,6 @@ namespace PilgrimOfSin.StateMachine
             if (!other.CompareTag("Player")) return;
             var player = other.GetComponent<PlayerController>();
             player?.SetSafeZoneImmune(true);
-            Debug.Log("[SafeZone] 玩家進入善區，免疫惡區傷害。");
         }
 
         private void OnTriggerExit(Collider other)
@@ -21,7 +20,6 @@ namespace PilgrimOfSin.StateMachine
             if (!other.CompareTag("Player")) return;
             var player = other.GetComponent<PlayerController>();
             player?.SetSafeZoneImmune(false);
-            Debug.Log("[SafeZone] 玩家離開善區。");
         }
     }
 }

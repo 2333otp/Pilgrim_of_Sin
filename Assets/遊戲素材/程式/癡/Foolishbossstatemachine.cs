@@ -52,7 +52,6 @@ namespace PilgrimOfSin.StateMachine
             Current = next;
             Current.Enter();
             OnChanged?.Invoke(prev, next.StateType);
-            Debug.Log($"[FoolishFSM] {prev} → {next.StateType}");
         }
     }
 }

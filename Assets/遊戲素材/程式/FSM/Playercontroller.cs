@@ -266,7 +266,6 @@ namespace PilgrimOfSin.StateMachine
         public void ApplyDefenseBonus(float multiplier)
         {
             _incomingDamageMultiplier = Mathf.Clamp01(multiplier);
-            Debug.Log($"[Player] 防禦增益啟動，受傷倍率 {_incomingDamageMultiplier:P0}");
         }
 
         /// <summary>關卡結束或重試時重置防禦倍率。</summary>
@@ -305,7 +304,6 @@ namespace PilgrimOfSin.StateMachine
         public void OnDeath()
         {
             // 死亡後續流程由 DeadState.Enter() 呼叫 BossResultPortal.OnPlayerDefeated() 處理
-            Debug.Log("[Player] 死亡。");
         }
 
         /// <summary>

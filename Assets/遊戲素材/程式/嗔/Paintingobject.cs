@@ -39,7 +39,6 @@ namespace PilgrimOfSin.StateMachine
         {
             if (IsModified) return;
             _currentDurability = Mathf.Max(0f, _currentDurability - amount);
-            Debug.Log($"[Painting] {gameObject.name} 耐久 {_currentDurability}/{_maxDurability}");
 
             if (_currentDurability <= 0f)
                 ModifyPainting();
@@ -52,7 +51,6 @@ namespace PilgrimOfSin.StateMachine
             IsModified = true;
             ApplyVisual(modified: true);
             OnModified?.Invoke();
-            Debug.Log($"[Painting] {gameObject.name} 耐久歸零，改回學徒簽名。");
         }
 
         /// <summary>關卡重試時由外部呼叫，恢復初始狀態（場景 reload 時自動還原，此方法供 Editor 測試用）。</summary>

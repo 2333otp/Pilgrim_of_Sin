@@ -41,8 +41,6 @@ namespace PilgrimOfSin.StateMachine
         {
             comboIndex = EvaluateCombo();
             CurrentComboIndex = comboIndex;
-            if (comboIndex > 0)
-                UnityEngine.Debug.Log($"[ComboBuffer] 觸發 Combo{comboIndex}，輸入序列：{string.Join(",", _inputs)}");
             return comboIndex > 0;
         }
 

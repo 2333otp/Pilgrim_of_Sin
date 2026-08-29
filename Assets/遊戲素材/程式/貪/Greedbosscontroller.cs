@@ -78,7 +78,6 @@ namespace PilgrimOfSin.StateMachine
         private GreedBossStateMachine _fsm;
         private float _balanceWindowTimeRemaining;
         private bool _balanceWindowActive;
-        private float _windowLogTimer;
 
         // ════════════════════════════════════════════════════════════
         //  Unity 生命週期
@@ -167,7 +166,6 @@ namespace PilgrimOfSin.StateMachine
                 {
                     _balanceWindowActive = true;
                     _balanceWindowTimeRemaining = _balanceWindowDuration;
-                    _windowLogTimer = 0f;
                 }
                 CurrentPhase = ScalePhase.Balanced;
             }

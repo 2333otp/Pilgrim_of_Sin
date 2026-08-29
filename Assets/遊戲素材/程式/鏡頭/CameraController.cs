@@ -175,7 +175,6 @@ namespace PilgrimOfSin.StateMachine
             // 重置鏡頭到玩家正後方
             _yaw = _player.eulerAngles.y;
             _pitch = 15f;
-            Debug.Log("[Camera] 鏡頭重置。");
         }
 
         // ── 鎖定邏輯 ─────────────────────────────────────────────────
@@ -184,16 +183,12 @@ namespace PilgrimOfSin.StateMachine
         {
             var enemies = GetEnemiesInRange();
             if (enemies.Count == 0)
-            {
-                Debug.Log("[Camera] 範圍內沒有敵人。");
                 return;
-            }
 
             LockTarget = enemies[0];
             IsLockedOn = true;
             _switchHistory.Clear();
             _switchHistory.Add(LockTarget);
-            Debug.Log($"[Camera] 鎖定：{LockTarget.name}");
         }
 
         private void Unlock()
@@ -201,7 +196,6 @@ namespace PilgrimOfSin.StateMachine
             LockTarget = null;
             IsLockedOn = false;
             _switchHistory.Clear();
-            Debug.Log("[Camera] 解除鎖定。");
         }
 
         private void TrySwitchTarget()
@@ -218,17 +212,13 @@ namespace PilgrimOfSin.StateMachine
 
             _switchHistory.Add(next);
             LockTarget = next;
-            Debug.Log($"[Camera] 切換鎖定：{next.name}");
         }
 
         private void CheckLockTargetAlive()
         {
             if (!IsLockedOn || LockTarget == null) return;
             if (!LockTarget.gameObject.activeInHierarchy)
-            {
-                Debug.Log("[Camera] 鎖定目標消失，嘗試順延。");
                 TrySwitchTarget();
-            }
         }
 
         // ── 輔助 ─────────────────────────────────────────────────────

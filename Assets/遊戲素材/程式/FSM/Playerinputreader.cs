@@ -107,7 +107,6 @@ namespace PilgrimOfSin.StateMachine
 
         private void OnPause(InputValue value)
         {
-            Debug.Log("[InputReader] OnPause 被呼叫！isPressed = " + value.isPressed);
             if (value.isPressed) PausePressed = true;
         }
 

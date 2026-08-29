@@ -89,8 +89,8 @@ namespace PilgrimOfSin.StateMachine
 
             if (_inputLocked || _input == null) return;
 
-            if (_input.MenuDownPressed) SwitchFocus(1);
-            else if (_input.MenuUpPressed) SwitchFocus(-1);
+            if (_input.MenuUpPressed) SwitchFocus(1);
+            else if (_input.MenuDownPressed) SwitchFocus(-1);
             else if (_input.InteractPressed) Confirm();
         }
 
