@@ -8,7 +8,10 @@ namespace PilgrimOfSin.StateMachine
     /// </summary>
     public class ScaleHitbox : MonoBehaviour
     {
-        [SerializeField] private float _damage = 700f; // Inspector 可調
+        [SerializeField] private float _damage = 700f; // Inspector 可調（GreedBossController 會用 _scaleKickDamage 覆寫）
+
+        /// <summary>由 GreedBossController 在踢翻時推入傷害值，統一數值來源。</summary>
+        public void SetDamage(float d) => _damage = d;
 
         private void OnTriggerEnter(Collider other)
         {

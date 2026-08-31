@@ -115,7 +115,7 @@ namespace PilgrimOfSin.StateMachine
 
         private bool _animDone;
         private float _fallbackTimer;
-        private const float FallbackDuration = 3f; // 動畫事件未設定時的備用等待秒數
+        private const float FallbackDuration = 4f; // 天秤 Break 動畫未回報時的備用等待秒數
 
         public GreedKickScaleState(GreedBossController b, GreedBossStateMachine m) : base(b, m) { }
 
@@ -125,6 +125,7 @@ namespace PilgrimOfSin.StateMachine
             _fallbackTimer = 0f;
             Trigger("KickScale");
             Boss.OnKickScaleAnimEnd += HandleAnimEnd;
+            Boss.PlayScaleBreak(); // 天秤播 Break 動畫 + 傷害碰撞體脈衝
         }
 
         public override void Update(float dt)

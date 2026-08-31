@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,11 +14,12 @@ namespace PilgrimOfSin.StateMachine
     ///   - 持有所有 Inspector 可調數值
     /// </summary>
     [RequireComponent(typeof(Animator))]
-    public class GreedBossController : MonoBehaviour, IDamageable
+    public class GreedBossController : MonoBehaviour, IDamageable, IBossHealth
     {
         // ── References ───────────────────────────────────────────────
         [Header("References")]
         [SerializeField] private Transform _player;
+        [SerializeField] private string _displayName = "心魔-貪";   // 血條旁名字（IBossHealth）
         [SerializeField] private ScaleObject _scale;         // 天秤場景物件
         [SerializeField] private Collider _scaleHitbox;   // 天秤踢翻碰撞體
         [SerializeField] private MoneybagSpawner _spawner;       // 錢袋生成器
@@ -46,7 +48,10 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _playerDamageBoostMultiplier = 1.5f; // 平衡時玩家傷害倍率
         [SerializeField] private float _bossAttackBoostMultiplier = 1.5f;   // 錢袋重時 Boss 攻擊倍率
         [SerializeField] private float _heavyBagDamageReduction = 0.15f;    // 錢袋重時玩家傷害乘數（高減傷）
-        [SerializeField] private float _scaleKickDamage = 700f;             // 天秤踢翻傷害
+        [SerializeField] private float _scaleKickDamage = 700f;             // 天秤踢翻傷害（推給 ScaleHitbox）
+        [SerializeField] private float _scaleKickHitboxDelay = 0.35f;       // Break 動畫踢擊幀延遲
+        [SerializeField] private float _scaleKickHitboxDuration = 0.7f;     // 天秤傷害碰撞體開啟時長
+        [SerializeField] private float _introDuration = 0.9f;               // 進場 CtoR 動畫長度，播完才開始戰鬥
 
         // ── Stagger（選配） ───────────────────────────────────────────
         [Header("Stagger (Optional)")]
@@ -57,6 +62,7 @@ namespace PilgrimOfSin.StateMachine
         public float CurrentHp { get; private set; }
         public float MaxHp => _maxHp;
         public bool IsDead => CurrentHp <= 0f;
+        public string DisplayName => _displayName;   // IBossHealth
         public float IdleDuration => _idleDuration;
         public float Attack1Range => _attack1Range;
         public float Attack2Range => _attack2Range;
@@ -78,6 +84,7 @@ namespace PilgrimOfSin.StateMachine
         private GreedBossStateMachine _fsm;
         private float _balanceWindowTimeRemaining;
         private bool _balanceWindowActive;
+        private bool _gameplayStarted;   // 進場動畫播完前為 false，戰鬥/生成/天秤邏輯全部暫緩
 
         // ════════════════════════════════════════════════════════════
         //  Unity 生命週期
@@ -94,7 +101,10 @@ namespace PilgrimOfSin.StateMachine
         private void Start()
         {
             if (_scale != null)
+            {
                 _scale.OnWeightChanged += HandleScaleWeightChanged;
+                _scale.OnBreakComplete += HandleScaleBreakComplete;
+            }
             else
                 Debug.LogError("[Greed] ❌ _scale 未設定！天秤機制無法運作。");
 
@@ -104,6 +114,14 @@ namespace PilgrimOfSin.StateMachine
             if (_spawner == null)
                 Debug.LogError("[Greed] ❌ _spawner 未設定！錢袋無法生成。");
 
+            // 進場：先讓天秤播完 CtoR（停右傾），再開始戰鬥與生成錢袋
+            StartCoroutine(IntroRoutine());
+        }
+
+        private IEnumerator IntroRoutine()
+        {
+            yield return new WaitForSeconds(_introDuration);
+            _gameplayStarted = true;
             _spawner?.SpawnCycle();
         }
 
@@ -111,6 +129,7 @@ namespace PilgrimOfSin.StateMachine
         {
             // 暫停時跳過（坑 #9）
             if (Time.timeScale == 0f) return;
+            if (!_gameplayStarted) return; // 進場動畫期間不跑戰鬥/天秤邏輯
 
             UpdateBalanceWindow(Time.deltaTime);
             _fsm.Update(Time.deltaTime);
@@ -119,13 +138,17 @@ namespace PilgrimOfSin.StateMachine
         private void FixedUpdate()
         {
             if (Time.timeScale == 0f) return;
+            if (!_gameplayStarted) return;
             _fsm.FixedUpdate(Time.fixedDeltaTime);
         }
 
         private void OnDestroy()
         {
             if (_scale != null)
+            {
                 _scale.OnWeightChanged -= HandleScaleWeightChanged;
+                _scale.OnBreakComplete -= HandleScaleBreakComplete;
+            }
         }
 
         // ════════════════════════════════════════════════════════════
@@ -171,10 +194,17 @@ namespace PilgrimOfSin.StateMachine
             }
             else if (_scale.IsRightHeavy())
             {
+                // 超重：取消平衡窗口，天秤只維持傾斜、不自行打翻。
+                // 要玩家主動攻擊天秤才會觸發重製（見 OnScaleHitWhileOverweight）。
+                _balanceWindowActive = false;
+                _balanceWindowTimeRemaining = 0f;
                 CurrentPhase = ScalePhase.MoneyBagHeavy;
             }
             else
             {
+                // 離開平衡回到雕像重，也取消窗口（沒維持平衡就不該倒數）。
+                _balanceWindowActive = false;
+                _balanceWindowTimeRemaining = 0f;
                 CurrentPhase = ScalePhase.StatueHeavy;
             }
         }
@@ -225,6 +255,47 @@ namespace PilgrimOfSin.StateMachine
             _scale?.ResetScale();
             _spawner?.SpawnCycle();
         }
+
+        // ════════════════════════════════════════════════════════════
+        //  超重狀態下玩家攻擊天秤（由 ScaleObject.OnTriggerEnter 呼叫）
+        // ════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 超重（MoneyBagHeavy）時玩家攻擊天秤才會觸發。
+        /// 目前先直接跑循環重製（打落錢袋、重生一批、相位回雕像重、傾斜靠 weight 歸零自然轉回），
+        /// 沒有受擊演出。
+        /// TODO(美術待補)：接「天秤受擊 + 重製」專屬動畫，改成動畫事件驅動 ResetScale()，
+        ///                 不要沿用 Break 打翻動畫。
+        /// </summary>
+        public void OnScaleHitWhileOverweight()
+        {
+            if (CurrentPhase != ScalePhase.MoneyBagHeavy) return;
+            ResetScale();
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  踢翻天秤（由 GreedKickScaleState 呼叫）
+        // ════════════════════════════════════════════════════════════
+
+        /// <summary>KickScaleState 進入時呼叫：天秤播 Break 動畫，並在踢擊幀開啟天秤傷害碰撞體。</summary>
+        public void PlayScaleBreak()
+        {
+            _scale?.PlayBreak();
+            StartCoroutine(ScaleKickHitboxPulse());
+        }
+
+        private IEnumerator ScaleKickHitboxPulse()
+        {
+            if (_scaleHitbox == null) yield break;
+            _scaleHitbox.GetComponent<ScaleHitbox>()?.SetDamage(_scaleKickDamage);
+            yield return new WaitForSeconds(_scaleKickHitboxDelay);
+            _scaleHitbox.enabled = true;
+            yield return new WaitForSeconds(_scaleKickHitboxDuration);
+            _scaleHitbox.enabled = false;
+        }
+
+        /// <summary>天秤 Break 動畫播完 → 當成 KickScale 動畫結束訊號。</summary>
+        private void HandleScaleBreakComplete() => OnKickScaleAnimEnd?.Invoke();
 
         // ════════════════════════════════════════════════════════════
         //  戰鬥介面

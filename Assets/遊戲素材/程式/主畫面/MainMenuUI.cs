@@ -21,7 +21,7 @@ namespace PilgrimOfSin
         [SerializeField] private Button _settingsButton;    // 設置選單（開啟行為由 MainMenuSettingsPanel 綁定）
         [SerializeField] private Button _quitButton;         // 結束遊戲
 
-        private const float SelectedButtonScale = 1.08f;
+        private const float SelectedButtonScale = 1.05f;
         private const float NavRepeatDelay = 0.18f;
 
         private Button[] _navButtons;
@@ -29,6 +29,14 @@ namespace PilgrimOfSin
         private Button _hoveredButton;
         private Vector2? _lastMousePos;
         private float _navCooldown;
+
+        // 進 Play 後短暫忽略滑鼠 hover：Input System 剛啟動時 Mouse.position 會抖動一次，
+        // 會誤觸「移到空白處 → 清掉 Start() 設好的預設選取」，看起來就是選項自己閃一下。
+        private float _mouseGraceTimer = 0.2f;
+
+        // 滑鼠是否已經真的 hover 過某顆按鈕；在那之前，滑鼠經過空白處不清掉預設選取，
+        // 避免預設那顆出現「縮一下又放大」的抖動。
+        private bool _mouseTookOver;
 
         private void Start()
         {
@@ -72,25 +80,38 @@ namespace PilgrimOfSin
         private void Update()
         {
             if (_navCooldown > 0f) _navCooldown -= Time.unscaledDeltaTime;
+            if (_mouseGraceTimer > 0f) _mouseGraceTimer -= Time.unscaledDeltaTime;
 
             HandleGamepadNav();
 
             if (Mouse.current == null) return;
 
-            // 滑鼠沒有實際移動就不重新偵測 hover，避免蓋掉手把剛選好的按鈕
-            // （道理跟 PauseMenuUI 的 hover 修正一致）。
-            // 第一次 Update() 只記錄座標、不做 hover 判定：Mouse.current 在 Start()
-            // 當下可能還沒穩定，若在 Start() 就先讀一次座標來當基準，容易跟這裡
-            // 讀到的值對不上，反而讓 Start() 設好的預設選取在第一影格被蓋掉。
             Vector2 pos = Mouse.current.position.ReadValue();
-            if (_lastMousePos == null)
+
+            // grace 期間只記座標當基準，不做 hover 判定（濾掉剛進 Play 的座標抖動）。
+            if (_mouseGraceTimer > 0f)
             {
                 _lastMousePos = pos;
             }
-            else if (pos != _lastMousePos.Value)
+            else
             {
+                var over = GetHoveredButton(pos);
+                bool moved = _lastMousePos.HasValue && pos != _lastMousePos.Value;
                 _lastMousePos = pos;
-                SetHovered(GetHoveredButton(pos));
+
+                if (over != null)
+                {
+                    // 游標停在某顆按鈕上 → 一律選那顆（不需要移動）。
+                    // SetHovered 內部會自動把上一顆取消，所以永遠只有一顆放大。
+                    _mouseTookOver = true;
+                    SetHovered(over);
+                }
+                else if (moved && _mouseTookOver)
+                {
+                    // 游標移到空白處 → 清掉反白。只有「已經 hover 過按鈕」且「真的有移動」才做，
+                    // 否則會把 Start() 的預設選取誤清掉、造成預設那顆縮放抖動。
+                    SetHovered(null);
+                }
             }
 
             if (!Mouse.current.leftButton.wasPressedThisFrame) return;
