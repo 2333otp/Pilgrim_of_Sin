@@ -302,7 +302,11 @@ namespace PilgrimOfSin
             if (_inputReader.MenuBackPressed)
             {
                 bool consumed = ConsumeEscIfSubPanelOpen();
-                if (!consumed) _playerController?.ResumeFromPause();
+                if (!consumed)
+                {
+                    if (_playerController != null) _playerController.ResumeFromPause();
+                    else _externalResume?.Invoke();
+                }
                 return;
             }
 
@@ -555,11 +559,28 @@ namespace PilgrimOfSin
 
         // ── 公開 API（由 PausedState 呼叫）────────────────────────────
 
+        // 沒有玩家 FSM 的場景（HubScene）用的關閉回呼；有 FSM 時為 null，走 _playerController.ResumeFromPause()
+        private System.Action _externalResume;
+
         /// <summary>顯示 ESC 選單，並同步音量滑桿初始值。</summary>
         public void Show(StateMachine.PlayerController player)
         {
             _playerController = player;
-            _inputReader = player?.InputReader;
+            _externalResume = null;
+            ShowInternal(player?.InputReader);
+        }
+
+        /// <summary>沒有玩家 FSM 的場景（HubScene）用：傳入 InputReader 與關閉回呼直接開啟選單。</summary>
+        public void Show(StateMachine.PlayerInputReader reader, System.Action onResume)
+        {
+            _playerController = null;
+            _externalResume = onResume;
+            ShowInternal(reader);
+        }
+
+        private void ShowInternal(StateMachine.PlayerInputReader reader)
+        {
+            _inputReader = reader;
             _lastMousePos = null;
             if (_escPanel != null) _escPanel.SetActive(true);
             ShowButtonGroup();

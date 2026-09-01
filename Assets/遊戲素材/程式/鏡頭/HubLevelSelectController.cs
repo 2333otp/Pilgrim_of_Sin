@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace PilgrimOfSin.StateMachine
 {
@@ -83,15 +84,60 @@ namespace PilgrimOfSin.StateMachine
             while (_isBlending) yield return null;
         }
 
+        private bool _pauseMenuOpen;
+
         private void Update()
         {
             if (_isBlending) UpdateBlend();
+
+            // ── ESC 暫停選單：Hub 沒有玩家 FSM（沒有 PausedState），這裡自己接 ──
+            bool pausePressed = (_input != null && _input.PausePressed)
+                                || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
+            if (pausePressed)
+            {
+                if (_pauseMenuOpen) ClosePauseMenu();
+                else OpenPauseMenu();
+                return;
+            }
+            if (_pauseMenuOpen) return; // 選單開著時不處理選關輸入
 
             if (_inputLocked || _input == null) return;
 
             if (_input.MenuUpPressed) SwitchFocus(1);
             else if (_input.MenuDownPressed) SwitchFocus(-1);
             else if (_input.InteractPressed) Confirm();
+        }
+
+        // ── ESC 暫停選單（Hub 專用接線）──────────────────────────────
+
+        private void OpenPauseMenu()
+        {
+            var menu = PauseMenuUI.Instance;
+            if (menu == null)
+            {
+                // PauseCanvas 若存成 inactive，Awake 沒跑、Instance 是 null → 主動喚醒
+                var found = FindFirstObjectByType<PauseMenuUI>(FindObjectsInactive.Include);
+                if (found != null)
+                {
+                    found.gameObject.SetActive(true);
+                    menu = PauseMenuUI.Instance;
+                }
+            }
+            if (menu == null) return;
+
+            menu.Show(_input, ClosePauseMenu);
+            _pauseMenuOpen = true;
+        }
+
+        private void ClosePauseMenu()
+        {
+            var menu = PauseMenuUI.Instance;
+            if (menu != null)
+            {
+                if (menu.ConsumeEscIfSubPanelOpen()) return; // 先退子面板，選單不關
+                menu.Hide();
+            }
+            _pauseMenuOpen = false;
         }
 
         private void SwitchFocus(int direction)
