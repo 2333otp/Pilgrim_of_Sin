@@ -101,11 +101,41 @@ namespace PilgrimOfSin.StateMachine
             }
             if (_pauseMenuOpen) return; // 選單開著時不處理選關輸入
 
-            if (_inputLocked || _input == null) return;
+            if (_inputLocked) return;
 
-            if (_input.MenuUpPressed) SwitchFocus(1);
-            else if (_input.MenuDownPressed) SwitchFocus(-1);
-            else if (_input.InteractPressed) Confirm();
+            // 正常走場景內 HubInput 上的 PlayerInputReader（鍵鼠 + 手把都吃）。
+            // 萬一 _input 沒接到，仍用直接讀裝置當後備，確保上下切換與確認鍵可用。
+            bool up = (_input != null && _input.MenuUpPressed) || MenuUpFallback();
+            bool down = (_input != null && _input.MenuDownPressed) || MenuDownFallback();
+            bool confirm = (_input != null && _input.InteractPressed) || ConfirmFallback();
+
+            if (up) SwitchFocus(1);
+            else if (down) SwitchFocus(-1);
+            else if (confirm) Confirm();
+        }
+
+        private static bool MenuUpFallback()
+        {
+            var kb = Keyboard.current;
+            var gp = Gamepad.current;
+            return (kb != null && (kb.upArrowKey.wasPressedThisFrame || kb.wKey.wasPressedThisFrame))
+                   || (gp != null && (gp.dpad.up.wasPressedThisFrame || gp.leftStick.up.wasPressedThisFrame));
+        }
+
+        private static bool MenuDownFallback()
+        {
+            var kb = Keyboard.current;
+            var gp = Gamepad.current;
+            return (kb != null && (kb.downArrowKey.wasPressedThisFrame || kb.sKey.wasPressedThisFrame))
+                   || (gp != null && (gp.dpad.down.wasPressedThisFrame || gp.leftStick.down.wasPressedThisFrame));
+        }
+
+        private static bool ConfirmFallback()
+        {
+            var kb = Keyboard.current;
+            var gp = Gamepad.current;
+            return (kb != null && (kb.xKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame))
+                   || (gp != null && (gp.buttonSouth.wasPressedThisFrame || gp.buttonEast.wasPressedThisFrame));
         }
 
         // ── ESC 暫停選單（Hub 專用接線）──────────────────────────────
