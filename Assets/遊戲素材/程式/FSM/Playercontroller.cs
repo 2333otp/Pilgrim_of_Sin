@@ -34,8 +34,8 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _sprintSpeed = 7f;
         [SerializeField] private float _jumpForce = 8f;
         [SerializeField] private float _jumpCooldown = 0.12f; // 落地後至少要等這麼久才能再次跳躍，避免連跳
-        [SerializeField] private float _rollForce = 6f;
-        [SerializeField] private float _rollDuration = 0.5f;
+        [SerializeField] private float _rollSpeed = 4.2f; // 用 MovePosition 全程等速位移，跟 Move() 同一套邏輯，讓位移速度跟動畫播放時間對齊，不會因為 Impulse+阻力衰減而提早滑到定點
+        [SerializeField] private float _rollDuration = 1.2f; // Roll 動畫實際長度 1.167s，留一點餘裕
         [SerializeField] private float _aerialControl = 0.6f;
 
         public float WalkSpeed => _walkSpeed;
@@ -45,7 +45,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 戰鬥參數 ─────────────────────────────────────────────────
         [Header("Combat")]
         [SerializeField] private float _maxHp = 11000f;
-        [SerializeField] private float _stunDuration = 0.4f;
+        [SerializeField] private float _stunDuration = 1.2f; // Damage_* 動畫實際長度 1.167s，留一點餘裕
         [SerializeField] private float _specialCd = 5f;
         [SerializeField] private float _weaponSwitchCd = 1.5f;
         [SerializeField] private bool _enableWeaponSwitch = true;
@@ -61,10 +61,15 @@ namespace PilgrimOfSin.StateMachine
         public bool IsDead => CurrentHp <= 0f;
         public bool IsGrounded { get; private set; }
         public bool IsFalling { get; private set; }
-        public bool CanUseSpecial => _specialCdTimer <= 0f;
+        // 目前 Animator 只做了 SpecialSkill_Pencil，其他武器（畫筆/畫刀/調色盤）觸發 Trigger 後
+        // 找不到對應的轉場，Animator 會停在原本正在播的動畫（例如跑步）不動，玩家卻已經卡進
+        // SpecialSkillState 動不了、也打不了，表現就是「跑步跑到一半按特殊技能，動畫卡在跑步上」。
+        // 在對應武器的 SpecialSkill 動畫做出來之前，先把非鉛筆武器的特殊技能鎖住，避免踩到這個洞。
+        public bool CanUseSpecial => _specialCdTimer <= 0f
+                                      && (Combat == null || Combat.CurrentWeaponIndex == 1);
         public bool CanJump => _jumpCooldownTimer <= 0f;
         public bool EnableWeaponSwitch => _enableWeaponSwitch;
-        public PlayerStateType CurrentStateType => _stateMachine.CurrentStateType;
+        public PlayerStateType CurrentStateType => _stateMachine?.CurrentStateType ?? PlayerStateType.Idle;
 
         // 武器切換
         public int PendingWeaponIndex { get; private set; }
@@ -118,6 +123,14 @@ namespace PilgrimOfSin.StateMachine
             CurrentHp = _maxHp;
 
             BuildStateMachine();
+
+            // Animator 一開始就要知道目前武器，Idle/攻擊/受擊才能選到正確的分支
+            Animator.SetInteger("WeaponIndex", Combat != null ? Combat.CurrentWeaponIndex : 1);
+
+            // 開啟 Apply Root Motion，交給 OnAnimatorMove 自行決定何時採用——
+            // 大部分狀態（Walk/Sprint/Roll…）都是程式碼算好速度用 Rb.MovePosition 移動，
+            // 這裡開了之後也不會被 Unity 自動套用，因為同物件上有 OnAnimatorMove() 就一定走那邊。
+            Animator.applyRootMotion = true;
         }
 
         public void ForceExitPause()
@@ -128,6 +141,8 @@ namespace PilgrimOfSin.StateMachine
 
         private void Update()
         {
+            EnsureStateMachine();
+
             // timeScale = 0 時只跑狀態機（讓 PausedState 可以偵測輸入恢復）
             _stateMachine.Update(Time.unscaledDeltaTime);
 
@@ -139,7 +154,39 @@ namespace PilgrimOfSin.StateMachine
         }
 
         private void FixedUpdate()
-            => _stateMachine.FixedUpdate(Time.fixedDeltaTime);
+        {
+            EnsureStateMachine();
+            _stateMachine.FixedUpdate(Time.fixedDeltaTime);
+        }
+
+        /// <summary>
+        /// 測試時發現：Play Mode 途中如果剛好觸發腳本重新編譯（Domain Reload），Unity 不會對場景裡
+        /// 已存在的物件重新呼叫 Awake()，但 _stateMachine 這種純 C# 物件（非 MonoBehaviour、沒有被
+        /// 序列化）會被整個清空成 null——Update()/FixedUpdate()/OnAnimatorMove() 因此每幀丟
+        /// NullReferenceException，狀態機再也不會被推進，角色會定格在 reload 當下正在播的動畫
+        /// （例如跑步）上，看起來完全卡死、操作沒有任何反應。這裡偵測到 null 就重建一次自救，
+        /// 代價是重建後會回到 Idle（比永久卡死好得多）。
+        /// </summary>
+        private void EnsureStateMachine()
+        {
+            if (_stateMachine != null) return;
+            Debug.LogWarning("[PlayerController] _stateMachine 是 null（可能是 Play Mode 中途發生了 Domain Reload），重新建立狀態機。");
+            BuildStateMachine();
+        }
+
+        /// <summary>
+        /// HeavyAttack、ComboAttack 採用動畫本身的位移，讓角色停在動畫最後一幀腳下實際站的位置，
+        /// 而不是動畫播完、切回 Idle 時瞬間彈回原本的 root（鉛筆/畫筆的重攻擊跟連段1~4都已經把
+        /// 對應 fbx 的 lockRootPositionXZ 取消勾選，位移是真的 root motion curve，這裡才吃得到）。
+        /// 其他狀態一律不採用——維持既有「全部用程式碼控制位移」的設計，避免跟 Move()/MoveRoll() 打架。
+        /// </summary>
+        private void OnAnimatorMove()
+        {
+            if (_stateMachine == null) return; // 見 EnsureStateMachine() 註解：Domain Reload 後這裡可能還沒被 Update() 救回來
+            var state = _stateMachine.CurrentStateType;
+            if (state == PlayerStateType.HeavyAttack || state == PlayerStateType.ComboAttack)
+                Rb.MovePosition(Rb.position + Animator.deltaPosition);
+        }
 
         // ────────────────────────────────────────────────────────────
         //  狀態機組裝
@@ -184,6 +231,13 @@ namespace PilgrimOfSin.StateMachine
                 Quaternion targetRot = Quaternion.LookRotation(dir);
                 Rb.MoveRotation(Quaternion.Slerp(Rb.rotation, targetRot, 10f * Time.fixedDeltaTime));
             }
+
+            // 角色目前朝向 vs. 移動方向的局部分量，餵給 Animator 的 8 方向混合樹
+            // （角色會轉身面向 dir，所以正常情況下 MoveZ 會很快貼近 1；
+            //  轉身補間期間或鎖定視角時，才會出現左右/後退的分量）
+            Vector3 localDir = transform.InverseTransformDirection(dir);
+            Animator.SetFloat("MoveX", localDir.x);
+            Animator.SetFloat("MoveZ", localDir.z);
         }
 
         public void MoveAerial(Vector2 input)
@@ -195,13 +249,18 @@ namespace PilgrimOfSin.StateMachine
         public void ApplyJumpForce()
             => Rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
 
-        public void ApplyRollForce(Vector2 input)
+        /// <summary>翻滾方向在 Enter() 時鎖定一次，避免滾動途中搖桿方向改變導致軌跡跑掉。</summary>
+        public Vector3 GetRollDirection(Vector2 input)
         {
-            Vector3 dir = input.sqrMagnitude > 0.01f
-                          ? GetCameraRelativeDirection(input)
-                          : transform.forward;
-            Rb.AddForce(dir * _rollForce, ForceMode.Impulse);
+            return input.sqrMagnitude > 0.01f
+                   ? GetCameraRelativeDirection(input)
+                   : transform.forward;
         }
+
+        /// <summary>翻滾全程等速位移（跟 Move() 同樣用 MovePosition），取代舊版 Impulse+阻力衰減——
+        /// 舊作法位移在最初 0.3~0.5 秒就衰減掉大半，導致角色看起來已經滾到定點，但 Roll 動畫其實還在播。</summary>
+        public void MoveRoll(Vector3 dir)
+            => Rb.MovePosition(Rb.position + dir * _rollSpeed * Time.fixedDeltaTime);
 
         private void CacheCameraDirections()
         {
@@ -298,6 +357,7 @@ namespace PilgrimOfSin.StateMachine
         {
             if (Combat != null)
                 Combat.CurrentWeaponIndex = PendingWeaponIndex;
+            Animator.SetInteger("WeaponIndex", PendingWeaponIndex);
             OnWeaponSwitched?.Invoke(PendingWeaponIndex);
         }
 

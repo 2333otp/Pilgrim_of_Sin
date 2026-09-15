@@ -99,6 +99,22 @@ namespace PilgrimOfSin.StateMachine
             if (next == PlayerStateType.Damaged && !DamagableStates.Contains(CurrentStateType))
                 return false;
 
+            // 已經在目標狀態就不重進——Idle/Walk/Sprint/WeaponSwitch 都在 IsUnconditionalTransition
+            // 名單裡，只要有任何地方（或未來新增的邏輯）在同一個狀態下重複呼叫同一個 RequestTransition，
+            // DoTransition 會無條件 Exit()+Enter() 一次，把 CrossFade 動畫、_holdTime 等計時器全部重置，
+            // 表現就是動畫卡在最前面幾幀反覆重播（跟移動動畫先前那個 Any State 自我觸發是同一種病）。
+            // Damaged 例外：連續受傷本來就要能重新進入以刷新受擊硬直，這裡不能擋。
+            // LightAttack/HeavyAttack 例外：兩個狀態自己的 Update() 在「有下一個輸入、但沒接成連段」
+            // 時會主動 RequestTransition 回自己同一個型別，藉此重播下一次單發攻擊（例如連續點兩下輕攻擊）。
+            // 這裡如果照舊擋掉同狀態轉換，DoTransition 永遠不會執行，_nextInputBuffered 卻已經是 true、
+            // ComboBuffer 也已經 Reset()，於是下一幀又會再跑進同一個分支、再次呼叫同一個永遠被擋下的
+            // RequestTransition——動畫卡死在攻擊結束姿勢、Update() 每幀空轉，角色完全無法再移動或攻擊。
+            if (next == CurrentStateType
+                && next != PlayerStateType.Damaged
+                && next != PlayerStateType.LightAttack
+                && next != PlayerStateType.HeavyAttack)
+                return true;
+
             // 優先級檢查（Damaged 本身優先級未定義 → int.MaxValue，走無條件通道）
             int currentPriority = GetPriority(CurrentStateType);
             int nextPriority = GetPriority(next);
@@ -122,6 +138,8 @@ namespace PilgrimOfSin.StateMachine
                 Debug.LogWarning($"[StateMachine] 強制轉換找不到狀態：{next}");
                 return;
             }
+            // 同上：已經在目標狀態就不重進，避免動畫/計時器被無謂重置。
+            if (next == CurrentStateType) return;
             DoTransition(nextState);
         }
 

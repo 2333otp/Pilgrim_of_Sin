@@ -62,6 +62,42 @@ namespace PilgrimOfSin.StateMachine
         protected void CrossFadeAnimation(string stateName, float duration = 0.15f)
             => Anim.CrossFade(stateName, duration);
 
+        /// <summary>依 Combat.CurrentWeaponIndex（1~4）對應到 Animator 裡武器後綴，跟各 state 命名一致。</summary>
+        protected static string WeaponSuffix(int weaponIndex) => weaponIndex switch
+        {
+            1 => "Pencil",
+            2 => "Brush",
+            3 => "PaintKnife",
+            4 => "Palette",
+            _ => "Pencil",
+        };
+
+        /// <summary>
+        /// 讀取 Animator 目前正在播放的動畫實際長度，取代寫死的猜測時間——
+        /// 同一個 Trigger 在不同武器下會接到長度不同的動畫（例如 Combo3_Brush 6.43s vs Combo1_Pencil 3.97s），
+        /// 用這個才能讓每把武器都精準地播完自己的動畫再交還操作權，而不是全部套同一個保險時間。
+        ///
+        /// 用法：Enter() 把 cachedLength 歸零成 -1，之後每幀 Update() 呼叫本方法取得「這幀該用的持續時間」。
+        /// 必須傳入「這次應該切到的 Animator state 名稱」比對——
+        /// 有些武器目前還沒有對應動畫（例如調色刀/調色盤的攻擊、除了鉛筆以外的切換武器動畫），
+        /// 這種情況下 Trigger 送出去但 Animator 沒有任何轉場可用，會停在原本的狀態（例如還在 Idle/Locomotion）。
+        /// 如果不比對名稱、只看「有沒有在轉場」，就會誤把 Idle 或跑步 Blend Tree 的長度當成這次攻擊的長度，
+        /// 導致沒動畫的武器攻擊起來反而要等更久。名稱對不上就一路用 fallback，絕不鎖定錯誤的長度。
+        /// </summary>
+        protected float ResolveDuration(ref float cachedLength, string expectedStateName, float fallback)
+        {
+            if (cachedLength < 0f)
+            {
+                if (Anim.IsInTransition(0)) return fallback;
+                var info = Anim.GetCurrentAnimatorStateInfo(0);
+                if (info.IsName(expectedStateName) && info.length > 0.01f)
+                    cachedLength = info.length;
+                else
+                    return fallback;
+            }
+            return cachedLength;
+        }
+
         /// <summary>
         /// ESC 暫停偵測：PlayerInput.PausePressed 或 Keyboard 直讀（Game View 失焦時備援）。
         /// </summary>
@@ -291,15 +327,16 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.Roll;
 
         private float _rollTimer;
+        private Vector3 _rollDir;
 
         public RollState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _rollTimer = 0f;
+            _rollDir = Player.GetRollDirection(Input.MoveInput);
             Player.SetInvincible(true);
             PlayAnimation("Roll");
-            Player.ApplyRollForce(Input.MoveInput);
         }
 
         public override void Update(float dt)
@@ -314,6 +351,9 @@ namespace PilgrimOfSin.StateMachine
                 RequestTransition(PlayerStateType.Idle);
         }
 
+        public override void FixedUpdate(float fdt)
+            => Player.MoveRoll(_rollDir);
+
         public override void Exit()
             => Player.SetInvincible(false);
     }
@@ -326,18 +366,20 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.LightAttack;
 
         private bool _animDone;
-        private float _timer;
+        private float _elapsed;
+        private float _clipLength;
         private bool _nextInputBuffered; // 動畫中提前輸入的緩衝
 
-        [UnityEngine.Header("Temp - 無動畫時使用")]
-        private const float FallbackDuration = 0.6f;
+        // SoftAttack_pencil=1.70s、SoftAttack_Brush=1.93s；實際長度改由 ResolveDuration 動態讀取，這只是兩者都讀不到時的保險值
+        private const float FallbackDuration = 2.0f;
 
         public LightAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
-            _timer = FallbackDuration;
+            _elapsed = 0f;
+            _clipLength = -1f;
             _nextInputBuffered = false;
             PlayAnimation("LightAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
@@ -357,7 +399,9 @@ namespace PilgrimOfSin.StateMachine
             // 動畫進行中：提前記錄下一個輸入
             if (!_animDone)
             {
-                _timer -= dt;
+                _elapsed += dt;
+                int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+                float duration = ResolveDuration(ref _clipLength, "LightAttack_" + WeaponSuffix(weaponIndex), FallbackDuration);
                 if (Input.HeavyAttackPressed)
                 {
                     Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Heavy);
@@ -368,7 +412,7 @@ namespace PilgrimOfSin.StateMachine
                     Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
                     _nextInputBuffered = true;
                 }
-                if (_timer <= 0f) _animDone = true;
+                if (_elapsed >= duration) _animDone = true;
                 else return;
             }
 
@@ -388,6 +432,10 @@ namespace PilgrimOfSin.StateMachine
                     : PlayerStateType.LightAttack);
                 return;
             }
+            // 這次攻擊沒有接成連段、也沒有後續輸入：把緩衝清乾淨。
+            // 不清的話，這一下攻擊殘留的輸入紀錄會在視窗時間內（現在拉長到 3s）
+            // 跟下一次完全獨立、玩家沒打算連段的攻擊被誤判成連段序列。
+            Player.ComboBuffer.Reset();
             RequestTransition(PlayerStateType.Idle);
         }
 
@@ -408,16 +456,19 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.HeavyAttack;
 
         private bool _animDone;
-        private float _timer;
+        private float _elapsed;
+        private float _clipLength;
         private bool _nextInputBuffered;
-        private const float FallbackDuration = 0.6f;
+        // HardAttack_pencil=2.80s、HardAttack_Brush=2.10s；實際長度改由 ResolveDuration 動態讀取，這只是保險值
+        private const float FallbackDuration = 2.9f;
 
         public HeavyAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
-            _timer = FallbackDuration;
+            _elapsed = 0f;
+            _clipLength = -1f;
             _nextInputBuffered = false;
             PlayAnimation("HeavyAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
@@ -436,7 +487,9 @@ namespace PilgrimOfSin.StateMachine
 
             if (!_animDone)
             {
-                _timer -= dt;
+                _elapsed += dt;
+                int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+                float duration = ResolveDuration(ref _clipLength, "HeavyAttack_" + WeaponSuffix(weaponIndex), FallbackDuration);
                 if (Input.HeavyAttackPressed)
                 {
                     Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Heavy);
@@ -447,7 +500,7 @@ namespace PilgrimOfSin.StateMachine
                     Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
                     _nextInputBuffered = true;
                 }
-                if (_timer <= 0f) _animDone = true;
+                if (_elapsed >= duration) _animDone = true;
                 else return;
             }
 
@@ -465,6 +518,8 @@ namespace PilgrimOfSin.StateMachine
                     : PlayerStateType.LightAttack);
                 return;
             }
+            // 沒接成連段、也沒有後續輸入：清掉緩衝，避免殘留輸入跟下一次無關的攻擊誤判成連段。
+            Player.ComboBuffer.Reset();
             RequestTransition(PlayerStateType.Idle);
         }
 
@@ -485,19 +540,24 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.ComboAttack;
 
         private bool _animDone;
-        private float _timer;
-        private const float FallbackDuration = 0.8f;
+        private float _elapsed;
+        private float _clipLength;
+        private int _comboIndex;
+        // Combo1~4 × 鉛筆/畫筆最長是 Combo3_Brush = 6.43s；實際長度改由 ResolveDuration 依當下
+        // 播的是哪個 Combo{n}_武器 動態讀取，這只是完全讀不到時的保險值
+        private const float FallbackDuration = 6.5f;
 
         public ComboAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
-            _timer = FallbackDuration;
-            int comboIndex = Player.ComboBuffer.CurrentComboIndex;
-            PlayAnimation($"Combo{comboIndex}");
+            _elapsed = 0f;
+            _clipLength = -1f;
+            _comboIndex = Player.ComboBuffer.CurrentComboIndex;
+            PlayAnimation($"Combo{_comboIndex}");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
-            Player.Combat?.StartComboAttack(comboIndex);
+            Player.Combat?.StartComboAttack(_comboIndex);
         }
 
         public override void Update(float dt)
@@ -509,8 +569,10 @@ namespace PilgrimOfSin.StateMachine
 
             if (!_animDone)
             {
-                _timer -= dt;
-                if (_timer <= 0f) _animDone = true;
+                _elapsed += dt;
+                int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+                float duration = ResolveDuration(ref _clipLength, $"Combo{_comboIndex}_" + WeaponSuffix(weaponIndex), FallbackDuration);
+                if (_elapsed >= duration) _animDone = true;
                 else return;
             }
 
@@ -537,8 +599,9 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.SpecialSkill;
 
         private float _timer;
+        private float _clipLength;
         private bool _animDone;
-        private const float FallbackDuration = 1.2f; // 無動畫時的招式持續時間
+        private const float FallbackDuration = 5.4f; // SP_skill_pencil 實際長度 5.27s，讀不到動畫長度時的保險值
         private const float InvincibleEndPercent = 0.8f; // 前80%有無敵幀
 
         public SpecialSkillState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
@@ -546,6 +609,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _timer = 0f;
+            _clipLength = -1f;
             _animDone = false;
             Player.SetInvincible(true);
             PlayAnimation("SpecialSkill");
@@ -559,12 +623,14 @@ namespace PilgrimOfSin.StateMachine
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
 
             _timer += dt;
+            int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            float duration = ResolveDuration(ref _clipLength, "SpecialSkill_" + WeaponSuffix(weaponIndex), FallbackDuration);
 
             // 前80%有無敵，後20%移除（模擬末尾幾幀無無敵）
-            if (_timer >= FallbackDuration * InvincibleEndPercent)
+            if (_timer >= duration * InvincibleEndPercent)
                 Player.SetInvincible(false);
 
-            if (!_animDone && _timer >= FallbackDuration)
+            if (!_animDone && _timer >= duration)
                 _animDone = true;
 
             if (_animDone)
@@ -603,17 +669,21 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.WeaponSwitch;
 
         private bool _animDone;
-        private float _timer;
-        private const float FallbackDuration = 0.5f;
+        private float _elapsed;
+        private float _clipLength;
+        private int _weaponIndex;
+        // ChangeWeapon_pencil 實際長度 2.10s；其他武器目前沒有切換動畫，讀不到時走這個保險時間
+        private const float FallbackDuration = 2.2f;
 
         public WeaponSwitchState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
         {
             _animDone = false;
-            _timer = FallbackDuration;
-            int weaponIndex = Player.PendingWeaponIndex;
-            PlayAnimation($"WeaponSwitch_{weaponIndex}");
+            _elapsed = 0f;
+            _clipLength = -1f;
+            _weaponIndex = Player.PendingWeaponIndex;
+            PlayAnimation($"WeaponSwitch_{_weaponIndex}");
             Player.OnWeaponSwitchAnimationEnd += HandleAnimEnd;
             Player.SetInvincible(true);
         }
@@ -629,8 +699,9 @@ namespace PilgrimOfSin.StateMachine
 
             if (!_animDone)
             {
-                _timer -= dt;
-                if (_timer <= 0f) _animDone = true;
+                _elapsed += dt;
+                float duration = ResolveDuration(ref _clipLength, "WeaponSwitch_" + WeaponSuffix(_weaponIndex), FallbackDuration);
+                if (_elapsed >= duration) _animDone = true;
                 else return;
             }
             RequestTransition(PlayerStateType.Idle);
@@ -739,7 +810,12 @@ namespace PilgrimOfSin.StateMachine
                     PilgrimOfSin.PauseMenuUI.Instance.ConsumeEscIfSubPanelOpen())
                     return;
 
-                RequestTransition(_resumeState);
+                // 用 ForceTransition 而非 RequestTransition：Paused 優先權是 0（最高），
+                // 但 _resumeState 可能是 Roll/攻擊/連段/跳躍/特殊招式，優先權數字是 2~3，
+                // 一般的優先權檢查（目標數字 <= 目前數字）在這裡永遠不通過，會讓
+                // RequestTransition 靜默失敗，角色卡在 Paused、timeScale 永遠回不去 1。
+                // 這裡是「離開系統層暫停、恢復先前動作」，不該被戰鬥打斷規則擋下。
+                Machine.ForceTransition(_resumeState);
             }
         }
 

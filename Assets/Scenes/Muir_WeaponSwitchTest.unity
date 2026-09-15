@@ -559,7 +559,7 @@ MonoBehaviour:
   _sprintSpeed: 7
   _jumpForce: 8
   _jumpCooldown: 0.12
-  _rollForce: 6
+  _rollSpeed: 2.4
   _rollDuration: 0.5
   _aerialControl: 0.6
   _maxHp: 11000

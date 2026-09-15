@@ -20,7 +20,11 @@ namespace PilgrimOfSin.StateMachine
                                         ? _inputs[_inputs.Count - 1]
                                         : AttackInput.Light;
 
-        private const float InputWindow = 0.5f; // 秒：連段輸入窗口
+        // 秒：連段輸入窗口。原本 0.5s 是攻擊動畫還沒接上真的動畫、只播 0.6s 就結束時抓的值；
+        // 現在 LightAttack/HeavyAttack 會播完真正的動畫（1.7~2.9s），視窗太短的話，
+        // 玩家照著動畫節奏按下一下攻擊時，前一次輸入早就被這個計時器判定逾時清空，
+        // 連段永遠打不出來、感覺輸入卡住沒反應。抓比最長的輕/重攻擊動畫再寬鬆一點。
+        private const float InputWindow = 3.0f;
         private float _windowTimer;
 
         public void AddInput(AttackInput input)
