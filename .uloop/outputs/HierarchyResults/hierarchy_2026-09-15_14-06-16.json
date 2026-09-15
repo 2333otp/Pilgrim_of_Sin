@@ -1,0 +1,415 @@
+{
+  "ExportTimestamp": "2026-09-15 14:06:16",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 32,
+    "maxDepth": 9
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 32,
+        "maxDepth": 9
+      },
+      "componentsLut": [
+        "Transform",
+        "ScaleObject",
+        "BoxCollider",
+        "SphereCollider",
+        "ScaleHitbox",
+        "Animator",
+        "SkinnedMeshRenderer"
+      ],
+      "roots": [
+        {
+          "name": "Scale",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1,
+            2
+          ],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "ScaleHitBox",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                3,
+                4
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Libra",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                5
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Base_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Bow_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Bowl_low_geo_L",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Bowl_low_geo_R",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "CrossBar_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Diamond_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "handcuffs_geo_L",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "handcuffs_geo_R",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Leaf_low_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Libra_deform",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "DEF-lever_L",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "DEF-chain_L",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "DEF-chain01_L",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": [
+                                {
+                                  "name": "DEF-chain02_L",
+                                  "isActive": true,
+                                  "componentsIdx": [
+                                    0
+                                  ],
+                                  "siblingIndex": 0,
+                                  "tag": "Untagged",
+                                  "layer": 0,
+                                  "children": [
+                                    {
+                                      "name": "DEF-chain03_L",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 0,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "DEF-chain04_L",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": [
+                                            {
+                                              "name": "ScaleRightSide",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0
+                                              ],
+                                              "siblingIndex": 0,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "DEF-lever_R",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "DEF-chain_R",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": [
+                            {
+                              "name": "DEF-chain01_R",
+                              "isActive": true,
+                              "componentsIdx": [
+                                0
+                              ],
+                              "siblingIndex": 0,
+                              "tag": "Untagged",
+                              "layer": 0,
+                              "children": [
+                                {
+                                  "name": "DEF-chain02_R",
+                                  "isActive": true,
+                                  "componentsIdx": [
+                                    0
+                                  ],
+                                  "siblingIndex": 0,
+                                  "tag": "Untagged",
+                                  "layer": 0,
+                                  "children": [
+                                    {
+                                      "name": "DEF-chain03_R",
+                                      "isActive": true,
+                                      "componentsIdx": [
+                                        0
+                                      ],
+                                      "siblingIndex": 0,
+                                      "tag": "Untagged",
+                                      "layer": 0,
+                                      "children": [
+                                        {
+                                          "name": "DEF-chain04_R",
+                                          "isActive": true,
+                                          "componentsIdx": [
+                                            0
+                                          ],
+                                          "siblingIndex": 0,
+                                          "tag": "Untagged",
+                                          "layer": 0,
+                                          "children": [
+                                            {
+                                              "name": "ScaleLeftSide",
+                                              "isActive": true,
+                                              "componentsIdx": [
+                                                0
+                                              ],
+                                              "siblingIndex": 0,
+                                              "tag": "Untagged",
+                                              "layer": 0,
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "DEF-pillar",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0
+                      ],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "wing_01_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "wing_02_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 11,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "wing_03_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 12,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "wing_04_geo",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    6
+                  ],
+                  "siblingIndex": 13,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
