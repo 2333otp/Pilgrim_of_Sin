@@ -21,6 +21,7 @@ namespace PilgrimOfSin.StateMachine
         [Header("References")]
         [SerializeField] private Animator _libraAnimator;              // Libra 模型上的 Animator（LibraScale.controller）
         [SerializeField] private GreedBossController _bossController;   // 拖入 GreedBossController
+        [SerializeField] private GreedScaleConfig _config;              // Assets/遊戲素材/SO 底下的設定，企劃可直接調整
 
         // ── 傾斜方向對應 ──────────────────────────────────────────────
         [Header("Tilt Mapping")]
@@ -38,9 +39,14 @@ namespace PilgrimOfSin.StateMachine
         [Header("Break Animation")]
         [SerializeField] private float _breakDuration = 2.4f; // Break clip 長度，播完視為「踢翻完成」
 
+        // ── 受擊 + 重製動畫（超重時攻擊天秤觸發）────────────────────────
+        [Header("Hit + Reset Animation")]
+        [SerializeField] private float _hitResetDuration = 1.3f; // Attacked(0.25s) + MoneyBagUpdate(1.04s) 播完視為「重製完成」
+
         // ── Animator 參數 ────────────────────────────────────────────
-        private static readonly int TiltHash    = Animator.StringToHash("Tilt");
-        private static readonly int DoBreakHash = Animator.StringToHash("DoBreak");
+        private static readonly int TiltHash       = Animator.StringToHash("Tilt");
+        private static readonly int DoBreakHash    = Animator.StringToHash("DoBreak");
+        private static readonly int DoHitResetHash = Animator.StringToHash("DoHitReset");
 
         private const int TiltCenter = 0;
         private const int TiltScaleLeft  = 1; // CtoL
@@ -49,6 +55,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 內部 ──────────────────────────────────────────────────────
         private float _rightWeight;
         private int _currentTilt = -1;
+        private int _hitCount; // 累積攻擊次數，達到 _config.HitsRequiredToTrigger 才觸發受擊+重製
 
         // ── 事件 ──────────────────────────────────────────────────────
         /// <summary>右側重量變化時觸發，傳出當前右側總重。</summary>
@@ -56,6 +63,9 @@ namespace PilgrimOfSin.StateMachine
 
         /// <summary>Break 動畫播完時觸發（供 GreedBossController 收尾用）。</summary>
         public event Action OnBreakComplete;
+
+        /// <summary>受擊+重製動畫播完時觸發（供 GreedBossController 收尾用）。</summary>
+        public event Action OnHitResetComplete;
 
         // ── 公開屬性 ──────────────────────────────────────────────────
         public float RightWeight => _rightWeight;
@@ -85,26 +95,22 @@ namespace PilgrimOfSin.StateMachine
 
         // ════════════════════════════════════════════════════════════
         //  攻擊偵測 — 任何帶 PlayerAttackHitbox 的碰撞進入時
-        //  · 超重狀態：觸發循環重製（之後補受擊動畫）
-        //  · 其他狀態：打落天秤上所有錢袋，並重置攻擊窗口計時器
+        //  不論當下相位（雕像重/平衡/錢袋重），累積攻擊次數達到
+        //  _config.HitsRequiredToTrigger 就播受擊+重製動畫（見 PlayHitReset）。
+        //  踢翻動畫播放中（Kicked）不計入，避免跟 Break 動畫互相打斷。
         // ════════════════════════════════════════════════════════════
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<PlayerAttackHitbox>() == null) return;
+            if (_bossController != null && _bossController.CurrentPhase == ScalePhase.Kicked) return;
 
-            // 超重時攻擊天秤 → 循環重製（唯一能結束超重狀態的方式）
-            if (_bossController != null && _bossController.CurrentPhase == ScalePhase.MoneyBagHeavy)
-            {
-                _bossController.OnScaleHitWhileOverweight();
-                return;
-            }
+            _hitCount++;
+            int required = _config != null ? _config.HitsRequiredToTrigger : 1;
+            if (_hitCount < required) return;
 
-            var bags = FindObjectsByType<MoneybagObject>(FindObjectsSortMode.None);
-            foreach (var bag in bags)
-                bag.TakeDamage(0f);
-
-            _bossController?.ResetBalanceWindow();
+            _hitCount = 0;
+            _bossController?.OnScaleAttacked();
         }
 
         // ════════════════════════════════════════════════════════════
@@ -151,6 +157,24 @@ namespace PilgrimOfSin.StateMachine
         {
             yield return new WaitForSeconds(_breakDuration);
             OnBreakComplete?.Invoke();
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  受擊 + 重製（超重時攻擊天秤）
+        // ════════════════════════════════════════════════════════════
+
+        /// <summary>由 GreedBossController.OnScaleAttacked 呼叫：播受擊+重製動畫。</summary>
+        public void PlayHitReset()
+        {
+            if (_libraAnimator != null) _libraAnimator.SetTrigger(DoHitResetHash);
+            StopAllCoroutines();
+            StartCoroutine(HitResetRoutine());
+        }
+
+        private IEnumerator HitResetRoutine()
+        {
+            yield return new WaitForSeconds(_hitResetDuration);
+            OnHitResetComplete?.Invoke();
         }
 
         // ════════════════════════════════════════════════════════════

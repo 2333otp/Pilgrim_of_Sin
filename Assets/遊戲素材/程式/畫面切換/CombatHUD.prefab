@@ -1268,5 +1268,5 @@ MonoBehaviour:
   _bossNameText: {fileID: 489786157514032679}
   _bossShieldOverlay: {fileID: 0}
   _bossFillNormal: {r: 1, g: 1, b: 1, a: 1}
-  _bossFillShielded: {r: 0.13, g: 0.11, b: 0.11, a: 1}
+  _bossFillShielded: {r: 0.55, g: 0.55, b: 0.6, a: 1}
   _fillLerpSpeed: 1.5

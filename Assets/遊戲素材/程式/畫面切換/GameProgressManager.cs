@@ -51,6 +51,12 @@ namespace PilgrimOfSin
                 _data.defeatedBosses.Add(key);
         }
 
+        /// <summary>貪、嗔、癡三隻 Boss 是否皆已擊敗（供結局跑馬燈名單判斷觸發時機）。</summary>
+        public bool AllBossesDefeated =>
+            IsBossDefeated(SceneTransitionManager.BossType.Greed) &&
+            IsBossDefeated(SceneTransitionManager.BossType.Wrath) &&
+            IsBossDefeated(SceneTransitionManager.BossType.Foolish);
+
         /// <summary>回傳「已成功克服Ｘ、Ｙ之心魔」格式的文字，供玩家狀態頁顯示。</summary>
         public string GetDefeatedBossesText()
         {

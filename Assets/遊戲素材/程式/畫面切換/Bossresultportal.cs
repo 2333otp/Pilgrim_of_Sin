@@ -28,6 +28,12 @@ namespace PilgrimOfSin
         [Tooltip("true = 失敗後重新挑戰同一Boss；false = 回小木屋")]
         [SerializeField] private bool _restartOnLose = true;
 
+        [Header("通關通知")]
+        [Tooltip("Boss死亡動畫播完後顯示的「OO・心魔克服」通知，播完才切到過場圖片場景")]
+        [SerializeField] private LevelClearNotification _levelClearNotification;
+
+        private bool _bossDefeatedHandled;
+
         private void Awake()
         {
             // 場景內單例（不跨場景）
@@ -35,10 +41,16 @@ namespace PilgrimOfSin
         }
 
         /// <summary>
-        /// Boss 被擊敗 → 流程圖：贏 → 回小木屋（或進入通關流程）
+        /// Boss 被擊敗 → 流程圖：贏 → 回小木屋（或進入通關流程）。
+        /// 只處理第一次呼叫，防止死亡瞬間多重觸發（例如同一幀多重攻擊判定）造成通知/切場景重複播放。
         /// </summary>
         public void OnBossDefeated()
         {
+            if (_bossDefeatedHandled) return;
+            _bossDefeatedHandled = true;
+
+            GameProgressManager.Instance?.MarkBossDefeated(SceneTransitionManager.LastBossType);
+            GameProgressManager.Instance?.Save();
             PauseMenuUI.Instance?.NotifyBossDefeated();
             StartCoroutine(WinRoutine());
         }
@@ -54,6 +66,13 @@ namespace PilgrimOfSin
         private IEnumerator WinRoutine()
         {
             yield return new WaitForSeconds(_winDelay);
+
+            if (_levelClearNotification != null)
+            {
+                bool notificationDone = false;
+                _levelClearNotification.Show(SceneTransitionManager.LastBossType, () => notificationDone = true);
+                while (!notificationDone) yield return null;
+            }
 
             if (SceneTransitionManager.Instance != null)
                 SceneTransitionManager.Instance.LoadImageCutscene();

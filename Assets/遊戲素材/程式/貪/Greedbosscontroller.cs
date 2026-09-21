@@ -104,6 +104,7 @@ namespace PilgrimOfSin.StateMachine
             {
                 _scale.OnWeightChanged += HandleScaleWeightChanged;
                 _scale.OnBreakComplete += HandleScaleBreakComplete;
+                _scale.OnHitResetComplete += HandleScaleHitResetComplete;
             }
             else
                 Debug.LogError("[Greed] ❌ _scale 未設定！天秤機制無法運作。");
@@ -148,6 +149,7 @@ namespace PilgrimOfSin.StateMachine
             {
                 _scale.OnWeightChanged -= HandleScaleWeightChanged;
                 _scale.OnBreakComplete -= HandleScaleBreakComplete;
+                _scale.OnHitResetComplete -= HandleScaleHitResetComplete;
             }
         }
 
@@ -195,7 +197,7 @@ namespace PilgrimOfSin.StateMachine
             else if (_scale.IsRightHeavy())
             {
                 // 超重：取消平衡窗口，天秤只維持傾斜、不自行打翻。
-                // 要玩家主動攻擊天秤才會觸發重製（見 OnScaleHitWhileOverweight）。
+                // 累積攻擊天秤達門檻才會觸發重製（見 OnScaleAttacked）。
                 _balanceWindowActive = false;
                 _balanceWindowTimeRemaining = 0f;
                 CurrentPhase = ScalePhase.MoneyBagHeavy;
@@ -224,21 +226,6 @@ namespace PilgrimOfSin.StateMachine
         }
 
         // ════════════════════════════════════════════════════════════
-        //  攻擊天秤重置窗口（由 ScaleObject.TakeDamage 呼叫）
-        // ════════════════════════════════════════════════════════════
-
-        /// <summary>
-        /// 玩家攻擊天秤碰撞體時呼叫。
-        /// 取消本輪攻擊窗口，計時器歸零，等待天秤下次進入平衡才重新計時。
-        /// </summary>
-        public void ResetBalanceWindow()
-        {
-            if (!_balanceWindowActive) return;
-            _balanceWindowActive = false;
-            _balanceWindowTimeRemaining = 0f;
-        }
-
-        // ════════════════════════════════════════════════════════════
         //  循環重置（由 KickScaleState 動畫結束後呼叫）
         // ════════════════════════════════════════════════════════════
 
@@ -257,21 +244,22 @@ namespace PilgrimOfSin.StateMachine
         }
 
         // ════════════════════════════════════════════════════════════
-        //  超重狀態下玩家攻擊天秤（由 ScaleObject.OnTriggerEnter 呼叫）
+        //  玩家攻擊天秤累積達門檻（由 ScaleObject.OnTriggerEnter 呼叫）
         // ════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// 超重（MoneyBagHeavy）時玩家攻擊天秤才會觸發。
-        /// 目前先直接跑循環重製（打落錢袋、重生一批、相位回雕像重、傾斜靠 weight 歸零自然轉回），
-        /// 沒有受擊演出。
-        /// TODO(美術待補)：接「天秤受擊 + 重製」專屬動畫，改成動畫事件驅動 ResetScale()，
-        ///                 不要沿用 Break 打翻動畫。
+        /// 玩家攻擊天秤累積次數達到 GreedScaleConfig.HitsRequiredToTrigger 時呼叫，
+        /// 不論當下相位（雕像重/平衡/錢袋重）。
+        /// 播受擊+重製動畫（Attacked → MoneyBagUpdate），動畫播完由 HandleScaleHitResetComplete
+        /// 呼叫 ResetScale()（打落錢袋、重生一批、相位回雕像重）。
         /// </summary>
-        public void OnScaleHitWhileOverweight()
+        public void OnScaleAttacked()
         {
-            if (CurrentPhase != ScalePhase.MoneyBagHeavy) return;
-            ResetScale();
+            _scale?.PlayHitReset();
         }
+
+        /// <summary>天秤受擊+重製動畫播完 → 執行實際的重製邏輯。</summary>
+        private void HandleScaleHitResetComplete() => ResetScale();
 
         // ════════════════════════════════════════════════════════════
         //  踢翻天秤（由 GreedKickScaleState 呼叫）

@@ -66,9 +66,10 @@ namespace PilgrimOfSin.StateMachine
             return true;
         }
 
-        /// <summary>強制轉換，用於 HP=0 死亡與 KickScale 強制中斷。</summary>
+        /// <summary>強制轉換，用於 HP=0 死亡與 KickScale 強制中斷。Dead 狀態後不再接受任何轉換（防止重複觸發死亡流程）。</summary>
         public void Force(GreedBossStateType next)
         {
+            if (CurrentType == GreedBossStateType.Dead) return;
             if (_states.TryGetValue(next, out var s)) Transition(s);
             else Debug.LogWarning($"[GreedFSM] Force: 狀態不存在 {next}");
         }

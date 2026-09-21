@@ -1,22 +1,26 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 
 namespace PilgrimOfSin
 {
     /// <summary>
-    /// 「製作團隊、官方社群」頁面的翻頁書本邏輯。
-    /// 每頁是獨立的文字物件（直接在該物件的 TextMeshPro 欄位打字即可），
-    /// 這裡只負責切換哪一頁的物件是啟用狀態，不會覆寫任何人打的文字。
+    /// 「製作團隊、官方社群」頁面的翻頁書邏輯。
+    /// 文字內容統一從 CreditsData 讀取（與結局跑馬燈 EndingCreditsRoll 共用同一份資料），
+    /// 這裡只負責切換顯示哪一頁。
     /// </summary>
     public class CreditsPageBook : MonoBehaviour
     {
+        [Header("資料來源")]
+        [SerializeField] private CreditsData _creditsData;
+
         [Header("翻頁按鈕")]
         [SerializeField] private Button _leftArrowBtn;
         [SerializeField] private Button _rightArrowBtn;
 
-        [Header("每頁的文字物件（依序：第1頁～第4頁）")]
-        [SerializeField] private GameObject[] _pageObjects = new GameObject[4];
+        [Header("內容顯示")]
+        [SerializeField] private TextMeshProUGUI _pageText;
 
         private int _currentPage = 0;
 
@@ -51,28 +55,24 @@ namespace PilgrimOfSin
 
         private void NextPage()
         {
-            if (_currentPage >= _pageObjects.Length - 1) return;
+            if (_creditsData == null || _currentPage >= _creditsData.PageCount - 1) return;
             _currentPage++;
             RefreshDisplay();
         }
 
         private void RefreshDisplay()
         {
-            if (_pageObjects == null || _pageObjects.Length == 0)
-                return;
+            if (_creditsData == null || _creditsData.PageCount == 0) return;
 
-            _currentPage = Mathf.Clamp(_currentPage, 0, _pageObjects.Length - 1);
+            _currentPage = Mathf.Clamp(_currentPage, 0, _creditsData.PageCount - 1);
 
-            for (int i = 0; i < _pageObjects.Length; i++)
-            {
-                if (_pageObjects[i] != null)
-                    _pageObjects[i].SetActive(i == _currentPage);
-            }
+            if (_pageText != null)
+                _pageText.text = _creditsData.GetPage(_currentPage);
 
             if (_leftArrowBtn != null)
                 _leftArrowBtn.interactable = _currentPage > 0;
             if (_rightArrowBtn != null)
-                _rightArrowBtn.interactable = _currentPage < _pageObjects.Length - 1;
+                _rightArrowBtn.interactable = _currentPage < _creditsData.PageCount - 1;
         }
     }
 }

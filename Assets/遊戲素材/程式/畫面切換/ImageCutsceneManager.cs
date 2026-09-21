@@ -63,7 +63,14 @@ namespace PilgrimOfSin
             yield return StartCoroutine(Fade(1f, 0f));       // 淡入（黑→圖）
             yield return new WaitForSeconds(_displayDuration);
             yield return StartCoroutine(Fade(0f, 1f));       // 淡出（圖→黑）
-            UnityEngine.SceneManagement.SceneManager.LoadScene(SceneTransitionManager.HUB_SCENE);
+
+            // 貪嗔癡三隻 Boss 皆已擊敗 → 接結局跑馬燈名單，否則照舊回小木屋
+            bool allDefeated = GameProgressManager.Instance != null
+                                && GameProgressManager.Instance.AllBossesDefeated;
+            string nextScene = allDefeated
+                ? SceneTransitionManager.CREDITS_SCENE
+                : SceneTransitionManager.HUB_SCENE;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextScene);
         }
 
         private IEnumerator Fade(float from, float to)

@@ -14,6 +14,7 @@ namespace PilgrimOfSin
         public const string GREED_SCENE = "GreedBossScene";
         public const string WRATH_SCENE = "WrathBossScene";
         public const string FOOLISH_SCENE = "FoolishBossScene";
+        public const string CREDITS_SCENE = "CreditsScene";
 
         // ── 單例 ────────────────────────────────────────────────────────
         public static SceneTransitionManager Instance { get; private set; }

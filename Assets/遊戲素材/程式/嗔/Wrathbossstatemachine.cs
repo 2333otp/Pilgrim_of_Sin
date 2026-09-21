@@ -36,8 +36,10 @@ namespace PilgrimOfSin.StateMachine
         }
 
         /// <summary>強制轉換，用於 HP=0 死亡與外部中斷。</summary>
+        /// <summary>Dead 狀態後不再接受任何轉換（防止重複觸發死亡流程）。</summary>
         public void Force(WrathBossStateType next)
         {
+            if (CurrentType == WrathBossStateType.Dead) return;
             if (_states.TryGetValue(next, out var s)) Transition(s);
             else Debug.LogWarning($"[WrathFSM] Force: 狀態不存在 {next}");
         }
