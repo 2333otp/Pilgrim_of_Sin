@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.Users;
 
 namespace PilgrimOfSin.StateMachine
 {
@@ -7,8 +9,72 @@ namespace PilgrimOfSin.StateMachine
     /// 新版 Input System（Send Messages 模式）的輸入讀取器。
     /// PlayerInput 組件會自動呼叫 On{ActionName} 方法。
     /// </summary>
+    [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputReader : MonoBehaviour
     {
+        // ── 裝置配對修正 ─────────────────────────────────────────────
+        // 專案的 PlayerInputActions 定義了 Control Scheme 後，PlayerInput 只會回應
+        // 「目前 currentControlScheme 對應 group」的 binding，其他 group 的 binding
+        // 即使裝置已連接，事件也會被完全遮蔽、不會觸發任何 SendMessage 回呼。
+        //
+        // 【踩過的坑】一開始這裡曾經在 OnEnable 時主動把手把也預先配對進去，
+        // 結果反而讓問題更嚴重：Unity 的自動裝置切換是靠 InputUser.onUnpairedDeviceUsed
+        // 偵測「未配對裝置的操作」來觸發的——一旦手把被提前配對，它就永遠不會被
+        // 判定為「未配對裝置」，導致 currentControlScheme 永遠切不到 "Gamepad"，
+        // 手把對應的所有按鍵綁定（含攻擊、跳躍、翻滾、Pause…）從此完全失效，
+        // 而且比原本沒修的狀況更難發現。
+        //
+        // 正確做法：鍵盤/滑鼠是預設一開始就能用的裝置，直接配對；手把則刻意
+        // 保持「未配對」，改成訂閱 InputUser.onUnpairedDeviceUsed，偵測到玩家
+        // 第一次操作手把時，才呼叫 PerformPairingWithDevice 觸發配對＋切換 Scheme。
+        private PlayerInput _playerInput;
+
+        private void Awake() => _playerInput = GetComponent<PlayerInput>();
+
+        private void OnEnable()
+        {
+            if (Keyboard.current != null) PairDevice(Keyboard.current);
+            if (Mouse.current != null) PairDevice(Mouse.current);
+
+            InputUser.onUnpairedDeviceUsed += OnUnpairedDeviceUsed;
+        }
+
+        private void OnDisable() => InputUser.onUnpairedDeviceUsed -= OnUnpairedDeviceUsed;
+
+        private void OnUnpairedDeviceUsed(InputControl control, InputEventPtr eventPtr)
+        {
+            if (control.device is Gamepad gamepad)
+                PairDevice(gamepad);
+        }
+
+        private void PairDevice(InputDevice device)
+        {
+            var paired = _playerInput.user.pairedDevices;
+            for (int i = 0; i < paired.Count; i++)
+                if (paired[i] == device) return;
+
+            InputUser.PerformPairingWithDevice(device, _playerInput.user);
+        }
+
+        // 保險機制：onUnpairedDeviceUsed 理論上會在玩家第一次操作手把時自動觸發配對，
+        // 但這個機制依賴 Unity 內部事件時序，曾在測試環境下出現沒有如預期觸發的情況。
+        // 這裡額外主動輪詢手把是否有按鍵操作，確保就算內建機制沒生效，手把也一定能用。
+        private void Update()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad == null || _playerInput.currentControlScheme == "Gamepad") return;
+
+            foreach (var control in gamepad.allControls)
+            {
+                if (control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame)
+                {
+                    PairDevice(gamepad);
+                    _playerInput.SwitchCurrentControlScheme("Gamepad", gamepad);
+                    break;
+                }
+            }
+        }
+
         // ── 移動 ─────────────────────────────────────────────────────
         public Vector2 MoveInput { get; private set; }
 

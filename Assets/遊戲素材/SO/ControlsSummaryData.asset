@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a3bcd7b703ea6f4199bd85ab749b106, type: 3}
+  m_Name: ControlsSummaryData
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.ControlsSummaryData
+  _entries:
+  - label: "\u93E1\u982D\u91CD\u7F6E"
+    action: {fileID: 2364749686109171641, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u9396\u5B9A"
+    action: {fileID: 2400486746733612302, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u4E92\u52D5"
+    action: {fileID: 5440693529501783091, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u7279\u6B8A\u62DB\u5F0F"
+    action: {fileID: 2633339608859028303, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u8F15\u653B\u64CA"
+    action: {fileID: 7080920375251834439, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u91CD\u653B\u64CA"
+    action: {fileID: -4914039258738061805, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u7FFB\u6EFE"
+    action: {fileID: -6733349599393616276, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u8DF3\u8E8D"
+    action: {fileID: 3793116627525149589, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u79FB\u52D5"
+    action: {fileID: -4033506145979086924, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u93E1\u982D\u65CB\u8F49"
+    action: {fileID: 5353718799561740957, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u925B\u7B46"
+    action: {fileID: -2870295444244903358, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u6C34\u5F69\u7B46"
+    action: {fileID: -7807146523492504092, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u756B\u5200"
+    action: {fileID: -6462783222176420706, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u8ABF\u8272\u76E4"
+    action: {fileID: -2107383943378023829, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
+  - label: "\u66AB\u505C"
+    action: {fileID: 8271190178645638590, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}

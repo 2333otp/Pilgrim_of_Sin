@@ -1,0 +1,40 @@
+{
+  "ExportTimestamp": "2026-09-22 23:40:58",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 2,
+    "maxDepth": 1
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 2,
+        "maxDepth": 1
+      },
+      "roots": [
+        {
+          "name": "Controls_SubPanel",
+          "isActive": false,
+          "components": [],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "操作說明圖",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

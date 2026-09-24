@@ -105,9 +105,11 @@ namespace PilgrimOfSin.StateMachine
 
             // 正常走場景內 HubInput 上的 PlayerInputReader（鍵鼠 + 手把都吃）。
             // 萬一 _input 沒接到，仍用直接讀裝置當後備，確保上下切換與確認鍵可用。
+            // 確認鍵刻意不吃 _input.InteractPressed（R2/互動鍵）——進入關卡只能按圈圈，
+            // R2 要留給撿錢袋、進傳送門等世界互動用，避免混用。
             bool up = (_input != null && _input.MenuUpPressed) || MenuUpFallback();
             bool down = (_input != null && _input.MenuDownPressed) || MenuDownFallback();
-            bool confirm = (_input != null && _input.InteractPressed) || ConfirmFallback();
+            bool confirm = ConfirmFallback();
 
             if (up) SwitchFocus(1);
             else if (down) SwitchFocus(-1);
@@ -135,7 +137,7 @@ namespace PilgrimOfSin.StateMachine
             var kb = Keyboard.current;
             var gp = Gamepad.current;
             return (kb != null && (kb.xKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame))
-                   || (gp != null && (gp.buttonSouth.wasPressedThisFrame || gp.buttonEast.wasPressedThisFrame));
+                   || (gp != null && gp.buttonEast.wasPressedThisFrame);
         }
 
         // ── ESC 暫停選單（Hub 專用接線）──────────────────────────────

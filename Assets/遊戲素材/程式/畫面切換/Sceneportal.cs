@@ -16,7 +16,9 @@ namespace PilgrimOfSin
 
         private void Update()
         {
-            if (!_playerInRange) return;
+            // Time.timeScale == 0 代表 ESC 選單開著（PauseMenuUI 暫停時的作法），
+            // 這時候互動鍵（R2）要留給選單的返回操作用，不能同時觸發傳送門。
+            if (!_playerInRange || Time.timeScale == 0f) return;
 
             bool interactPressed = (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
                                 || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame);

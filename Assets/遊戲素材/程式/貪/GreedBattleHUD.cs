@@ -30,7 +30,7 @@ namespace PilgrimOfSin
 
         [Header("右側提示（互動，隨條件顯示）")]
         [SerializeField] private RectTransform _rightPrompt;
-        [SerializeField] private TMP_Text _rightPromptText;
+        [SerializeField] private InputPromptUI _rightPromptUI;
         [SerializeField] private float _rightShownX = 0f;
         [SerializeField] private float _rightHiddenX = 760f;
 
@@ -41,9 +41,9 @@ namespace PilgrimOfSin
         [Header("靠近錢袋提示旗標（MoneybagObject 控制的 InteractPrompt）")]
         [SerializeField] private GameObject _moneybagNearFlag;
 
-        // 「按 ___ 鍵」的按鍵字之後團隊定案再填
-        private const string AttackMsg = "按 ___ 鍵攻擊";
-        private const string PickupMsg = "按 ___ 鍵撿取錢袋";
+        [Header("操作提示內容（文字 + 對應按鍵，圖示依裝置自動切換）")]
+        [SerializeField] private InputPromptData _attackPrompt;
+        [SerializeField] private InputPromptData _pickupPrompt;
 
         private StateMachine.ScalePhase _lastPhase;
         private bool _seenFirstPhase;
@@ -130,9 +130,9 @@ namespace PilgrimOfSin
             bool nearBag = _moneybagNearFlag != null && _moneybagNearFlag.activeInHierarchy;
             bool inWindow = _boss != null && _boss.IsInBalanceWindow;
 
-            string msg = nearBag ? PickupMsg : (inWindow ? AttackMsg : null);
-            bool shouldShow = msg != null;
-            if (shouldShow && _rightPromptText != null) _rightPromptText.text = msg;
+            InputPromptData data = nearBag ? _pickupPrompt : (inWindow ? _attackPrompt : null);
+            bool shouldShow = data != null;
+            if (shouldShow && _rightPromptUI != null) _rightPromptUI.SetData(data);
 
             if (shouldShow != _rightVisible)
             {

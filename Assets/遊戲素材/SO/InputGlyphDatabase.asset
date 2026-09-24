@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ce771ee95d04da478875e2efc6a3a7e, type: 3}
+  m_Name: InputGlyphDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.InputGlyphDatabase
+  _gamepadEntries:
+  - controlPath: <Gamepad>/buttonSouth
+    sprite: {fileID: 21300000, guid: 5623dad896c31af479119a6ad6312263, type: 3}
+    pressedSprite: {fileID: 21300000, guid: e6c9987b9a5d7eb4bb6748fac9cc0eac, type: 3}
+  - controlPath: <Gamepad>/buttonEast
+    sprite: {fileID: 21300000, guid: d11cbbce2f3dcfb48a85ae7c825b9d6b, type: 3}
+    pressedSprite: {fileID: 21300000, guid: fa14858e8f75ee3498060c93250f4b0e, type: 3}
+  - controlPath: <Gamepad>/buttonWest
+    sprite: {fileID: 21300000, guid: fc0a3df5f0698f34eb6fe30302c8e3dc, type: 3}
+    pressedSprite: {fileID: 21300000, guid: b879c88ff299d9149a303290ac044b8c, type: 3}
+  - controlPath: <Gamepad>/buttonNorth
+    sprite: {fileID: 21300000, guid: 747cb9381c9ac2341b4b7f445cf5dbb2, type: 3}
+    pressedSprite: {fileID: 21300000, guid: fa7a0f27efdeccd4bae966baa2c15d07, type: 3}
+  - controlPath: <Gamepad>/leftShoulder
+    sprite: {fileID: 21300000, guid: b1f984e49e0835c4e85e77680b33f7a2, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 48ac3121ed7890f47a09c1b7af10ef1c, type: 3}
+  - controlPath: <Gamepad>/rightShoulder
+    sprite: {fileID: 21300000, guid: ad20d9a2e54ff264186ef4ccbf7edcae, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 66002899c288d0f45bce1b52b77673b1, type: 3}
+  - controlPath: <Gamepad>/leftTrigger
+    sprite: {fileID: 21300000, guid: 15192968c59ae2b479b30da668ce22bb, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 1137f2b483ef46f419e57165f64e6768, type: 3}
+  - controlPath: <Gamepad>/rightTrigger
+    sprite: {fileID: 21300000, guid: e7ab762ab9e29764c9d54a4a04588a25, type: 3}
+    pressedSprite: {fileID: 21300000, guid: c2a439aaea9da2a408f79a5f1d3add0c, type: 3}
+  - controlPath: <Gamepad>/dpad/up
+    sprite: {fileID: 21300000, guid: 7dbc33c2a987de1469ce445bfa8b1f3e, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 4ea996f7b97cf484a8c074a83e56bb16, type: 3}
+  - controlPath: <Gamepad>/dpad/down
+    sprite: {fileID: 21300000, guid: 2113c68bfc085a740b00f4e7a9672ae3, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 28ff20bd13245334587a65e329866d71, type: 3}
+  - controlPath: <Gamepad>/dpad/left
+    sprite: {fileID: 21300000, guid: d4867c01b13c113468bfc6c5eb05eb48, type: 3}
+    pressedSprite: {fileID: 21300000, guid: d6bf2dd20f7406748aa7d30515d2364e, type: 3}
+  - controlPath: <Gamepad>/dpad/right
+    sprite: {fileID: 21300000, guid: ffd26e355792a644fa5ae83cb2ba4ec9, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 6ed8f5188ba66d34abe21263f7e259f0, type: 3}
+  - controlPath: <Gamepad>/leftStick
+    sprite: {fileID: 21300000, guid: f153452201e30174e8309ab7e41912f2, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 24bbdd4b81c1a9e428e606235c330d9d, type: 3}
+  - controlPath: <Gamepad>/rightStick
+    sprite: {fileID: 21300000, guid: b46a2dff625c61849ba7f89aa3f70174, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 434e90e5640da8d45aedac8db788f977, type: 3}
+  - controlPath: <Gamepad>/start
+    sprite: {fileID: 21300000, guid: 65cd0dd415a2a4e459cfc6ee5f0976aa, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 44e8da73490934643bf3c338acf6761d, type: 3}
+  _keyboardEntries: []

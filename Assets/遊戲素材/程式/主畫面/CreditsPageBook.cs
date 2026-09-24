@@ -24,9 +24,17 @@ namespace PilgrimOfSin
 
         private int _currentPage = 0;
 
+        // 左搖桿左右屬於類比輸入，需要自行做邊緣偵測（超過閾值那一瞬間才觸發一次），
+        // 避免搖桿持續推著不放時每幀都翻頁。
+        private const float StickThreshold = 0.5f;
+        private bool _stickWasLeft;
+        private bool _stickWasRight;
+
         private void OnEnable()
         {
             _currentPage = 0;
+            _stickWasLeft = false;
+            _stickWasRight = false;
             RefreshDisplay();
         }
 
@@ -38,12 +46,34 @@ namespace PilgrimOfSin
 
         private void Update()
         {
+            // 這個頁面同時用在主選單（無 PlayerInputReader 可用）跟 ESC 選單，
+            // 所以比照 MainMenuUI 的作法直接讀裝置，不依賴 PlayerInputReader。
+            if (Keyboard.current != null)
+            {
+                if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
+                    PrevPage();
+                else if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
+                    NextPage();
+            }
+
             if (Gamepad.current == null) return;
 
-            if (Gamepad.current.leftShoulder.wasPressedThisFrame)
+            if (Gamepad.current.leftShoulder.wasPressedThisFrame || Gamepad.current.dpad.left.wasPressedThisFrame)
                 PrevPage();
-            else if (Gamepad.current.rightShoulder.wasPressedThisFrame)
+            else if (Gamepad.current.rightShoulder.wasPressedThisFrame || Gamepad.current.dpad.right.wasPressedThisFrame)
                 NextPage();
+
+            float stickX = Gamepad.current.leftStick.ReadValue().x;
+            bool stickLeft = stickX < -StickThreshold;
+            bool stickRight = stickX > StickThreshold;
+
+            if (stickLeft && !_stickWasLeft)
+                PrevPage();
+            else if (stickRight && !_stickWasRight)
+                NextPage();
+
+            _stickWasLeft = stickLeft;
+            _stickWasRight = stickRight;
         }
 
         private void PrevPage()

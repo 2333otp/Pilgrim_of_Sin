@@ -18,6 +18,9 @@ namespace PilgrimOfSin
         [SerializeField] private Button _settingsButton;
         [SerializeField] private GameObject _mainButtonGroup;
 
+        [Tooltip("設置選單打開時蓋在主選單背景美術圖上的半透明黑色遮罩，避免背景太鮮豔搶了卷軸面板的視覺焦點。")]
+        [SerializeField] private GameObject _dimOverlay;
+
         [Header("子面板根物件")]
         [SerializeField] private GameObject _settingsSubPanel;
         [SerializeField] private GameObject _volumeSubPanel;
@@ -52,8 +55,15 @@ namespace PilgrimOfSin
         private Vector2? _lastMousePos;
         private float _navCooldown;
 
+        // 音量子面板左右調整音量：統一走 PlayerInputReader 的 VolumeUp/VolumeDown action，
+        // 一次涵蓋手把 D-pad、左搖桿、鍵盤左右鍵（比照 ESC 選單 PauseMenuUI 的做法）。
+        // MainScene 沒有玩家 FSM，這個 reader 是專門為了操作說明手把亮燈跟這裡而額外掛在場景裡的。
+        private StateMachine.PlayerInputReader _inputReader;
+
         private void Start()
         {
+            _inputReader = FindFirstObjectByType<StateMachine.PlayerInputReader>();
+
             _settingsButton.onClick.AddListener(OpenSettings);
             _btnSettingsVolume.onClick.AddListener(() => Show(_volumeSubPanel));
             _btnSettingsControls.onClick.AddListener(() => Show(_controlsSubPanel));
@@ -74,9 +84,7 @@ namespace PilgrimOfSin
             if (_navCooldown > 0f) _navCooldown -= Time.unscaledDeltaTime;
 
             bool keyboardBack = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
-            bool gamepadBack  = Gamepad.current  != null &&
-                                 (Gamepad.current.buttonSouth.wasPressedThisFrame ||
-                                  Gamepad.current.rightTrigger.wasPressedThisFrame);
+            bool gamepadBack  = Gamepad.current  != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
 
             if (_volumeSubPanel.activeSelf)
                 HandleVolumeSubPanelNav();
@@ -197,9 +205,7 @@ namespace PilgrimOfSin
             if (_volumeSliders == null)
                 _volumeSliders = new[] { _masterSlider, _musicSlider, _sfxSlider, _voiceSlider };
 
-            if (Gamepad.current == null) return;
-
-            if (_navCooldown <= 0f)
+            if (_navCooldown <= 0f && Gamepad.current != null)
             {
                 float stickY = Gamepad.current.leftStick.ReadValue().y;
                 bool up   = Gamepad.current.dpad.up.isPressed   || stickY > 0.5f;
@@ -209,12 +215,12 @@ namespace PilgrimOfSin
                 else if (down) { MoveVolumeSelection(1); _navCooldown = NavRepeatDelay; }
             }
 
-            if (_volumeSliders.Length == 0) return;
+            if (_volumeSliders.Length == 0 || _inputReader == null) return;
             int idx = Mathf.Clamp(_volumeSliderIndex, 0, _volumeSliders.Length - 1);
             Slider current = _volumeSliders[idx];
-            if (Gamepad.current.dpad.right.wasPressedThisFrame)
+            if (_inputReader.VolumeUpPressed)
                 AdjustSlider(current, 0.05f);
-            if (Gamepad.current.dpad.left.wasPressedThisFrame)
+            if (_inputReader.VolumeDownPressed)
                 AdjustSlider(current, -0.05f);
         }
 
@@ -236,6 +242,7 @@ namespace PilgrimOfSin
         private void OpenSettings()
         {
             _mainButtonGroup.SetActive(false);
+            if (_dimOverlay != null) _dimOverlay.SetActive(true);
             Show(_settingsSubPanel);
         }
 
@@ -243,6 +250,7 @@ namespace PilgrimOfSin
         {
             HideAll();
             _mainButtonGroup.SetActive(true);
+            if (_dimOverlay != null) _dimOverlay.SetActive(false);
         }
 
         private void Show(GameObject panel)

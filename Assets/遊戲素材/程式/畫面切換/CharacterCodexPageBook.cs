@@ -8,7 +8,7 @@ namespace PilgrimOfSin
     /// 「角色資料、心魔圖鑑」翻頁書。玩家狀態面板的分頁內容之一，由 PauseMenuUI 開關。
     /// 每頁一張直式立繪 + 右側名稱與介紹文字。
     /// 翻頁邏輯比照 MemoryPageBook / WeaponInfoPageBook（左右箭頭 + 手把 L1/R1，到頭停、不循環）。
-    /// 順序固定：繆爾（角色）→ 阿貪 → 阿嗔 → 阿痴（心魔照貪嗔痴關卡順序）。
+    /// 順序固定：繆爾（角色）→ 萊恩 → 凡斯（配角）→ 阿貪 → 阿嗔 → 阿痴（心魔照貪嗔痴關卡順序）。
     /// </summary>
     public class CharacterCodexPageBook : MonoBehaviour
     {
@@ -34,8 +34,8 @@ namespace PilgrimOfSin
         [SerializeField] private TextMeshProUGUI _descriptionText;
         [SerializeField] private TextMeshProUGUI _pageIndicatorText;
 
-        [Header("頁面資料（順序：繆爾 / 阿貪 / 阿嗔 / 阿痴）")]
-        [SerializeField] private CharPage[] _pages = new CharPage[4];
+        [Header("頁面資料（順序：繆爾 / 萊恩 / 凡斯 / 阿貪 / 阿嗔 / 阿痴）")]
+        [SerializeField] private CharPage[] _pages = new CharPage[6];
 
         private int _currentPage = 0;
 
