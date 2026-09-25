@@ -7,13 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<<< Updated upstream:Assets/遊戲素材/建築/貪/Material/InsideWindow_Mat.001.mat
-  m_Name: InsideWindow_Mat.001
-  m_Shader: {fileID: -6465566751694194690, guid: 6e0f0294a3869bd46a24234bfb7a7b62, type: 3}
-========
-  m_Name: smoke_Greed
+  m_Name: smoke_footstep
   m_Shader: {fileID: -6465566751694194690, guid: c467464f01b830543a7df1c8121ac1e2, type: 3}
->>>>>>>> Stashed changes:Assets/遊戲素材/粒子特效/smoke_Greed.mat
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,8 +24,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AlphaMask:
+        m_Texture: {fileID: 2800000, guid: eab968f8c386d754cbefc147a8a33883, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseColor:
-        m_Texture: {fileID: 2800000, guid: 9cd76604674985943bc8348d3c1170a6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 68bbd21edcb4af049ab11671c5750d9e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -57,12 +56,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Height:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MRAo:
-        m_Texture: {fileID: 2800000, guid: eceb33a210482804eb31d060750e8768, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7cb5abed84b5f7b499a3d39290060bac, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -74,7 +69,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: a5d262720a2f26b458802692a3949ea9, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -127,21 +122,15 @@ Material:
     - _DstBlend: 10
     - _DstBlendAlpha: 10
     - _EnvironmentReflections: 1
-<<<<<<<< Updated upstream:Assets/遊戲素材/建築/貪/Material/InsideWindow_Mat.001.mat
-    - _GlossMapScale: 1
-    - _Glossiness: 0.5
-    - _GlossyReflections: 1
-========
     - _FlipbookBlending: 0
     - _FlipbookMode: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
->>>>>>>> Stashed changes:Assets/遊戲素材/粒子特效/smoke_Greed.mat
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.02
+    - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -153,33 +142,22 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _SrcBlendAlpha: 1
-<<<<<<<< Updated upstream:Assets/遊戲素材/建築/貪/Material/InsideWindow_Mat.001.mat
-    - _Surface: 0
-    - _UVSec: 0
-========
     - _Surface: 1
->>>>>>>> Stashed changes:Assets/遊戲素材/粒子特效/smoke_Greed.mat
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 0
     m_Colors:
-<<<<<<<< Updated upstream:Assets/遊戲素材/建築/貪/Material/InsideWindow_Mat.001.mat
-    - _BaseColor: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
-    - _Color: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
-========
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OtherColor: {r: 0.335344, g: 0.09783552, b: 0.3433962, a: 1}
+    - _OtherColor: {r: 1, g: 1, b: 1, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
->>>>>>>> Stashed changes:Assets/遊戲素材/粒子特效/smoke_Greed.mat
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &1806633945599991449
+--- !u!114 &3571620811905603169
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
