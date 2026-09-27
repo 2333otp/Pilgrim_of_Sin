@@ -8,82 +8,82 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_bag_main_mat
-    second: {fileID: 2100000, guid: 27537fbfc8d90e14fba969af4666a419, type: 2}
+    second: {fileID: 2100000, guid: d450cbe1024d0b94f981311d8dbce596, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_bag_nail_mat
-    second: {fileID: 2100000, guid: a8e305d6a476d524ba210527ebf37a16, type: 2}
+    second: {fileID: 2100000, guid: 821b9f8d2a7b19a41870d947d958094f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_belt_mat
-    second: {fileID: 2100000, guid: d79f04ead35b51d46a1eb5d0556a34fb, type: 2}
+    second: {fileID: 2100000, guid: c3da7c5795757eb4a941bb858a13231a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_belt_ring_mat
-    second: {fileID: 2100000, guid: a0a977bae1e396741a1abf0376fbe351, type: 2}
+    second: {fileID: 2100000, guid: e51e5dd17ab13254c8821e673674b118, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_body_mat.002
-    second: {fileID: 2100000, guid: 81a61443b871aef4da9a9e00a772e0a2, type: 2}
+    second: {fileID: 2100000, guid: e3e57ed187cf09144924eb0223393bbc, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_cloth_pants_mat.001
-    second: {fileID: 2100000, guid: a8670d5ab051dfc41a94ce92bffcad4d, type: 2}
+    second: {fileID: 2100000, guid: 755672f3b33ff2744b8469df62e747e3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_cloth_shirt_02_mat.002
-    second: {fileID: 2100000, guid: caa9832b22f2dd245a7ca5d8c2cd5c5b, type: 2}
+    second: {fileID: 2100000, guid: b7100fb35465aac49a55a6e93e634ffc, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_cloth_shirt_mat.002
-    second: {fileID: 2100000, guid: 6b60d0386e0e620458805a3091b0b92c, type: 2}
+    second: {fileID: 2100000, guid: afe2552a36cd1cf4aa55945a251a281f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_cloth_shoes_mat.002
-    second: {fileID: 2100000, guid: 99d8a3a2b697d634eaee0bfddf6a6a9a, type: 2}
+    second: {fileID: 2100000, guid: ab047d6947cf13e4a80bfebe3aa4acdf, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_eyebrow_mat.002
-    second: {fileID: 2100000, guid: d3b42939d5f294c45919876c1d2f7d3b, type: 2}
+    second: {fileID: 2100000, guid: 33e47cf03c67da545aa618ea900f299c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_eyes_mat.002
-    second: {fileID: 2100000, guid: 9c45d60cc23b72144a1806d7ddf6a0a8, type: 2}
+    second: {fileID: 2100000, guid: 0de5cc922c2744944834370a497002eb, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_hair_bangs_mat.001
-    second: {fileID: 2100000, guid: 3842ee07d7375c4439ba421e11ff077c, type: 2}
+    second: {fileID: 2100000, guid: 6c10b840e0316744b81760b057694b80, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_hair_main_mat.001
-    second: {fileID: 2100000, guid: 56e89861593e83c4c8a5d569894c884c, type: 2}
+    second: {fileID: 2100000, guid: 6d29c54b678560247b00f5e648872d53, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_hair_tail_HairStrand_mat.002
-    second: {fileID: 2100000, guid: 1b710b517fd98024b9727d31dfee2341, type: 2}
+    second: {fileID: 2100000, guid: c47e8799e297af84e9ca40b49e0ae6a7, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_teeth_up_mat.002
-    second: {fileID: 2100000, guid: 23acd77f3421c864eab8d9edca8a2156, type: 2}
+    second: {fileID: 2100000, guid: b036f5e266b490a4381b8384dda112f0, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Muir_tongue_mat.002
-    second: {fileID: 2100000, guid: ca5a95e15fd05e848a61b1d517b0a5bc, type: 2}
+    second: {fileID: 2100000, guid: 94604a448ae2f154a8f9a37842afcfd8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
