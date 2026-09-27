@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseColor:
-        m_Texture: {fileID: 2800000, guid: 8e56aa4706744fb48a52eea6665f3d4d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7d8dc8f9cbd35294eac0d8b0ad700a2e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -53,11 +53,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Height:
-        m_Texture: {fileID: 2800000, guid: cf5ac30e5d9923b4c8b015b93511c0ce, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1a8640f329bdee143ad867693bc613eb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MRAo:
-        m_Texture: {fileID: 2800000, guid: f564313e9d7ae244c81c78502d1ddfa1, type: 3}
+        m_Texture: {fileID: 2800000, guid: eab0e0516c8e636409c796fe30b81c1b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -69,7 +69,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: ed071ae1da4ef844e9d18b30ec9dfdf5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 575280ed313121f4daae0102f800c8ed, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -123,6 +123,8 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RoughnessMax: 1
+    - _RoughnessMin: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -133,6 +135,9 @@ Material:
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
+    - _height: 1
+    - _heightMax: 1
+    - _heightMin: 0
     m_Colors:
     - _BaseColor: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
     - _Color: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}

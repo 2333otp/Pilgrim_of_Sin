@@ -1,0 +1,760 @@
+{
+  "ExportTimestamp": "2026-09-27 23:54:41",
+  "Context": {
+    "sceneType": "runtime",
+    "sceneName": "Multiple(2): GreedBossScene, DontDestroyOnLoad",
+    "nodeCount": 53,
+    "maxDepth": 4
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 53,
+        "maxDepth": 4
+      },
+      "componentsLut": [
+        "RectTransform",
+        "CanvasRenderer",
+        "Image",
+        "VerticalLayoutGroup",
+        "Button",
+        "LayoutElement",
+        "Text",
+        "HorizontalLayoutGroup",
+        "TextMeshProUGUI",
+        "ControlsSummaryListUI",
+        "InputPromptUI",
+        "CreditsPageBook",
+        "ContentSizeFitter",
+        "Shadow",
+        "NavSelectScale"
+      ],
+      "roots": [
+        {
+          "name": "ESC選單_Panel",
+          "isActive": true,
+          "componentsIdx": [
+            0
+          ],
+          "siblingIndex": 0,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "半透明黑底圖",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                1,
+                2
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "底圖",
+              "isActive": false,
+              "componentsIdx": [
+                0,
+                1,
+                2
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ButtonGroup",
+              "isActive": false,
+              "componentsIdx": [
+                0,
+                3
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Btn_查看玩家狀態",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Text (Legacy)",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_保存遊玩進度",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Text (Legacy)",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_設置選項",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Text (Legacy)",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_繼續遊戲",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Text (Legacy)",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_回小木屋",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Text (Legacy)",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_回主選單",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Text (Legacy)",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        6
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "SettingsSubPanels",
+              "isActive": false,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Volume_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Content",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        3
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Title",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            6,
+                            5
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "主音量_Row",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            7,
+                            5
+                          ],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "BGM_Row",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            7,
+                            5
+                          ],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "音效_Row",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            7,
+                            5
+                          ],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "角色語音_Row ",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            7,
+                            5
+                          ],
+                          "siblingIndex": 4,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Controls_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "操作說明圖",
+                      "isActive": false,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        2
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "ControlsSummaryContent",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Title",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            8
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "ListArea",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            3,
+                            9
+                          ],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "GamepadDiagramInstance",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0
+                          ],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "ReturnHint",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            10
+                          ],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "UpSwitchHint",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            10
+                          ],
+                          "siblingIndex": 4,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "DownSwitchHint",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            10
+                          ],
+                          "siblingIndex": 5,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "UpSwitchHint",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            10
+                          ],
+                          "siblingIndex": 6,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "DownSwitchHint",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            10
+                          ],
+                          "siblingIndex": 7,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Credits_SubPanel",
+                  "isActive": false,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    11
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "BG_Image",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        2
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Title",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            8
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "LeftArrow",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            4,
+                            1,
+                            2
+                          ],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "RightArrow",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            4,
+                            1,
+                            2
+                          ],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "PageContent",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            8
+                          ],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "ReturnHint",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            7,
+                            12,
+                            10
+                          ],
+                          "siblingIndex": 4,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        },
+                        {
+                          "name": "FlipHintGroup",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            7,
+                            12
+                          ],
+                          "siblingIndex": 5,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Settings_SubPanel",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Title",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        2,
+                        13
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "Btn_Settings_音量",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        2,
+                        4,
+                        5,
+                        14
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            6
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_Settings_操作說明",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        2,
+                        4,
+                        5,
+                        14
+                      ],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            6
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_Settings_製作團隊",
+                      "isActive": true,
+                      "componentsIdx": [
+                        0,
+                        1,
+                        2,
+                        4,
+                        5,
+                        14
+                      ],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "componentsIdx": [
+                            0,
+                            1,
+                            6
+                          ],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "標題_圖",
+              "isActive": false,
+              "componentsIdx": [
+                0,
+                1,
+                8
+              ],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "標題圖",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2,
+                    13
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
