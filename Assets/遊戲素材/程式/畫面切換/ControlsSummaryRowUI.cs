@@ -12,7 +12,11 @@ namespace PilgrimOfSin
         public void SetData(ControlsSummaryData.Entry entry, InputGlyphDatabase glyphDatabase)
         {
             if (_label != null) _label.text = entry.label;
-            if (_icon != null) _icon.Setup(entry.action, glyphDatabase);
+            if (_icon != null)
+            {
+                _icon.Setup(entry.action, glyphDatabase);
+                _icon.transform.localScale = Vector3.one * (entry.iconScale > 0 ? entry.iconScale : 1f);
+            }
         }
     }
 }

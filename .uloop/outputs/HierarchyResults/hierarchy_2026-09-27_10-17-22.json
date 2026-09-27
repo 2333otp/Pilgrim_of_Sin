@@ -1,0 +1,67 @@
+{
+  "ExportTimestamp": "2026-09-27 10:17:22",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "MainScene",
+    "nodeCount": 5,
+    "maxDepth": 1
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "MainScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 5,
+        "maxDepth": 1
+      },
+      "roots": [
+        {
+          "name": "ControlsSummaryContent",
+          "isActive": true,
+          "components": [],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "Title",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ListArea",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "GamepadDiagramInstance",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "ReturnHint",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

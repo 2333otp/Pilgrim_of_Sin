@@ -40,6 +40,13 @@ namespace PilgrimOfSin
 
         private void Start()
         {
+            // 防呆：SettingsCanvas 已經在編輯器裡被誤存成 inactive 兩次了，
+            // 會讓 MainMenuSettingsPanel.Start() 完全不執行、設置選單按鈕點了沒反應。
+            // 這裡強制在進遊戲時打開它，不依賴場景檔案存檔當下的狀態。
+            var settingsPanel = FindFirstObjectByType<MainMenuSettingsPanel>(FindObjectsInactive.Include);
+            if (settingsPanel != null && !settingsPanel.gameObject.activeSelf)
+                settingsPanel.gameObject.SetActive(true);
+
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible   = true;
 

@@ -1,0 +1,688 @@
+{
+  "ExportTimestamp": "2026-09-27 21:40:30",
+  "Context": {
+    "sceneType": "runtime",
+    "sceneName": "Multiple(2): MainScene, DontDestroyOnLoad",
+    "nodeCount": 46,
+    "maxDepth": 2
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "MainScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 46,
+        "maxDepth": 2
+      },
+      "componentsLut": [
+        "RectTransform",
+        "CanvasRenderer",
+        "TextMeshProUGUI",
+        "LayoutElement",
+        "TMP_SubMeshUI",
+        "VerticalLayoutGroup",
+        "ControlsSummaryListUI",
+        "ControlsSummaryRowUI",
+        "Image",
+        "GlyphHighlightIcon",
+        "InputPromptUI",
+        "HorizontalLayoutGroup",
+        "ContentSizeFitter"
+      ],
+      "roots": [
+        {
+          "name": "ControlsSummaryContent",
+          "isActive": true,
+          "componentsIdx": [
+            0
+          ],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "path": "ControlsSummaryContent",
+          "children": [
+            {
+              "name": "Title",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                1,
+                2
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "ControlsSummaryContent/Title",
+              "children": [
+                {
+                  "name": "TMP SubMeshUI [KingHwa_OldSong - Regular Material + KingHwa_OldSong - Regular Atlas 1]",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    3,
+                    1,
+                    4
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/Title/TMP SubMeshUI [KingHwa_OldSong - Regular Material + KingHwa_OldSong - Regular Atlas 1]",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "ListArea",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                5,
+                6
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "ControlsSummaryContent/ListArea",
+              "children": [
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 11,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 12,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 13,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                },
+                {
+                  "name": "ControlsSummaryRow(Clone)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    7
+                  ],
+                  "siblingIndex": 14,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ListArea/ControlsSummaryRow(Clone)",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "GamepadDiagramInstance",
+              "isActive": true,
+              "componentsIdx": [
+                0
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "ControlsSummaryContent/GamepadDiagramInstance",
+              "children": [
+                {
+                  "name": "Background",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/Background",
+                  "children": []
+                },
+                {
+                  "name": "MiddlePad",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/MiddlePad",
+                  "children": []
+                },
+                {
+                  "name": "L2",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/L2",
+                  "children": []
+                },
+                {
+                  "name": "R2",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/R2",
+                  "children": []
+                },
+                {
+                  "name": "L1",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/L1",
+                  "children": []
+                },
+                {
+                  "name": "R1",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/R1",
+                  "children": []
+                },
+                {
+                  "name": "OPTIONS",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/OPTIONS",
+                  "children": []
+                },
+                {
+                  "name": "DPad_Up",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/DPad_Up",
+                  "children": []
+                },
+                {
+                  "name": "DPad_Left",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/DPad_Left",
+                  "children": []
+                },
+                {
+                  "name": "DPad_Down",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/DPad_Down",
+                  "children": []
+                },
+                {
+                  "name": "DPad_Right",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/DPad_Right",
+                  "children": []
+                },
+                {
+                  "name": "Triangle",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 11,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/Triangle",
+                  "children": []
+                },
+                {
+                  "name": "Square",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 12,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/Square",
+                  "children": []
+                },
+                {
+                  "name": "Circle",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 13,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/Circle",
+                  "children": []
+                },
+                {
+                  "name": "Cross",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 14,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/Cross",
+                  "children": []
+                },
+                {
+                  "name": "StickL",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 15,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/StickL",
+                  "children": []
+                },
+                {
+                  "name": "StickR",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    9
+                  ],
+                  "siblingIndex": 16,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/GamepadDiagramInstance/StickR",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "ReturnHint",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                10
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "ControlsSummaryContent/ReturnHint",
+              "children": [
+                {
+                  "name": "Icon",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    3
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ReturnHint/Icon",
+                  "children": []
+                },
+                {
+                  "name": "Text",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/ReturnHint/Text",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "UpSwitchHint",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                11,
+                12,
+                10
+              ],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "ControlsSummaryContent/UpSwitchHint",
+              "children": [
+                {
+                  "name": "Text",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/UpSwitchHint/Text",
+                  "children": []
+                },
+                {
+                  "name": "Icon",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    3
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/UpSwitchHint/Icon",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "DownSwitchHint",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                11,
+                12,
+                10
+              ],
+              "siblingIndex": 5,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "ControlsSummaryContent/DownSwitchHint",
+              "children": [
+                {
+                  "name": "Text",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/DownSwitchHint/Text",
+                  "children": []
+                },
+                {
+                  "name": "Icon",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    1,
+                    8,
+                    3
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "ControlsSummaryContent/DownSwitchHint/Icon",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

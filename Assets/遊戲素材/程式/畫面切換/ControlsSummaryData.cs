@@ -20,6 +20,9 @@ namespace PilgrimOfSin
 
             [Tooltip("對應 PlayerInputActions 裡的 Action")]
             public InputActionReference action;
+
+            [Tooltip("圖示顯示縮放倍率，預設1。少數素材本身留白較多、圖案偏小，可以調大讓玩家看得更清楚")]
+            public float iconScale = 1f;
         }
 
         [SerializeField] private List<Entry> _entries = new List<Entry>();

@@ -37,6 +37,11 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private LayerMask _enemyLayer = ~0;
         [SerializeField] private float _lockOnLookAtHeight = 2.5f;  // 鎖定時瞄準敵人的高度（從腳底算起）
 
+        [Header("Camera Collision")]
+        [SerializeField] private LayerMask _collisionMask = ~0;   // 場景牆壁/地板所在的 Layer，記得排除 Player/Enemy
+        [SerializeField] private float _collisionRadius = 0.3f;   // SphereCast 半徑，避免鏡頭貼到牆面
+        [SerializeField] private float _collisionBuffer = 0.2f;   // 撞到牆後，鏡頭往前多留的緩衝距離
+
         // ── 公開狀態 ─────────────────────────────────────────────────
         public bool IsLockedOn { get; private set; }
         public Transform LockTarget { get; private set; }
@@ -132,16 +137,32 @@ namespace PilgrimOfSin.StateMachine
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
             Vector3 playerMid = _player.position + Vector3.up * (_height * 0.5f);
-            Vector3 targetPos = playerMid - rotation * Vector3.forward * _distance
-                                  + Vector3.up * _height * 0.5f;
+            Vector3 pivot = playerMid + Vector3.up * _height * 0.5f;
+            Vector3 desiredPos = pivot - rotation * Vector3.forward * _distance;
 
-            _camera.transform.position = targetPos;
+            _camera.transform.position = ResolveCameraCollision(pivot, desiredPos);
 
             // 鎖定時看向 Boss 胸前（_lockOnLookAtHeight 控制高度）；非鎖定時看向玩家
             Vector3 lookAtPoint = (IsLockedOn && LockTarget != null)
                 ? LockTarget.position + Vector3.up * _lockOnLookAtHeight
                 : playerMid;
             _camera.transform.LookAt(lookAtPoint);
+        }
+
+        // 從鏡頭軌道中心往理想鏡頭位置打 SphereCast，撞到場景就把鏡頭拉到牆面前，避免穿模看到場景背面
+        private Vector3 ResolveCameraCollision(Vector3 pivot, Vector3 desiredPos)
+        {
+            Vector3 offset = desiredPos - pivot;
+            float distance = offset.magnitude;
+            if (distance < 0.0001f) return desiredPos;
+
+            Vector3 direction = offset / distance;
+            if (Physics.SphereCast(pivot, _collisionRadius, direction, out RaycastHit hit, distance, _collisionMask, QueryTriggerInteraction.Ignore))
+            {
+                float safeDistance = Mathf.Max(hit.distance - _collisionBuffer, _collisionRadius);
+                return pivot + direction * safeDistance;
+            }
+            return desiredPos;
         }
 
         // ── 輸入處理 ──────────────────────────────────────────────────
