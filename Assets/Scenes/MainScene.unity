@@ -3060,7 +3060,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Alpha 0.1.01_0.2.00_0.3.00_1.4.01\nBuild 260924_01\n\xA9 2026 Team huluhuluxili.
+  m_text: "Alpha 0.1.03_0.2.00_0.3.00_1.4.03\nBuild 260929_03\n\xA9 2026 Team huluhuluxili.
     All Rights Reserved."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b435d9c3c7a699b4ca93f0d6f9c7d977, type: 2}
