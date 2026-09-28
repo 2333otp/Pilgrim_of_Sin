@@ -49,6 +49,12 @@ namespace PilgrimOfSin
             if (_bossDefeatedHandled) return;
             _bossDefeatedHandled = true;
 
+            // 直接在 Editor 開這個 Boss 場景測試（不經過小木屋 LoadBossScene()）時，
+            // LastBossType 會停在預設值 None，害死亡通知的「OO・心魔克服」印出空字串——
+            // Canvas 照常淡入淡出，只是沒有文字，看起來就像提示沒跳出來。這裡趁人還在
+            // Boss 場景內，依場景名稱把 LastBossType 修正回正確值，下面用到它的地方都受惠。
+            SceneTransitionManager.ResolveAndSyncCurrentBossType();
+
             GameProgressManager.Instance?.MarkBossDefeated(SceneTransitionManager.LastBossType);
             GameProgressManager.Instance?.Save();
             PauseMenuUI.Instance?.NotifyBossDefeated();

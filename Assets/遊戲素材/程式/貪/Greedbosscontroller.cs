@@ -85,6 +85,7 @@ namespace PilgrimOfSin.StateMachine
         private float _balanceWindowTimeRemaining;
         private bool _balanceWindowActive;
         private bool _gameplayStarted;   // 進場動畫播完前為 false，戰鬥/生成/天秤邏輯全部暫緩
+        private CapsuleCollider _capsule; // 供 MoveTowardPlayer() 做穿模檢查用
 
         // ════════════════════════════════════════════════════════════
         //  Unity 生命週期
@@ -93,6 +94,7 @@ namespace PilgrimOfSin.StateMachine
         private void Awake()
         {
             Animator = GetComponent<Animator>();
+            _capsule = GetComponent<CapsuleCollider>();
             CurrentHp = _maxHp;
             if (_scaleHitbox) _scaleHitbox.enabled = false;
             BuildFSM();
@@ -128,6 +130,8 @@ namespace PilgrimOfSin.StateMachine
 
         private void Update()
         {
+            EnsureFSM();
+
             // 暫停時跳過（坑 #9）
             if (Time.timeScale == 0f) return;
             if (!_gameplayStarted) return; // 進場動畫期間不跑戰鬥/天秤邏輯
@@ -138,9 +142,24 @@ namespace PilgrimOfSin.StateMachine
 
         private void FixedUpdate()
         {
+            EnsureFSM();
+
             if (Time.timeScale == 0f) return;
             if (!_gameplayStarted) return;
             _fsm.FixedUpdate(Time.fixedDeltaTime);
+        }
+
+        /// <summary>
+        /// 同 PlayerController.EnsureStateMachine() 的坑：Play Mode 途中若剛好發生 Domain Reload，
+        /// Unity 不會對場景裡已存在的物件重新呼叫 Awake()，_fsm 這種純 C# 物件（非 MonoBehaviour、
+        /// 沒有被序列化）會被清空成 null，Update()/FixedUpdate() 因此每幀丟 NullReferenceException，
+        /// Boss 卡死不動。這裡偵測到 null 就重建一次自救，代價是重建後回到 Idle。
+        /// </summary>
+        private void EnsureFSM()
+        {
+            if (_fsm != null) return;
+            Debug.LogWarning("[GreedBossController] _fsm 是 null（可能是 Play Mode 中途發生了 Domain Reload），重新建立狀態機。");
+            BuildFSM();
         }
 
         private void OnDestroy()
@@ -327,10 +346,49 @@ namespace PilgrimOfSin.StateMachine
             if (_player == null) return;
             Vector3 dir = (_player.position - transform.position).normalized;
             dir.y = 0f;
-            transform.position += dir * _moveSpeed * dt;
+
+            float step = _moveSpeed * dt;
+            if (dir != Vector3.zero && step > 0f)
+                step = ClampStepToAvoidObstacles(dir, step);
+
+            transform.position += dir * step;
             if (dir != Vector3.zero)
                 transform.rotation = Quaternion.Slerp(transform.rotation,
                     Quaternion.LookRotation(dir), 10f * dt);
+        }
+
+        /// <summary>
+        /// Boss 的 Rigidbody 是 kinematic（避免被玩家碰撞推走，見「蹬到 Boss 身上會位移」修正），
+        /// 但 kinematic 不會被 Unity 物理自動擋出場景固定物件（例如天秤）——直線朝玩家移動時
+        /// 會直接穿模走進去。這裡用 CapsuleCast 掃描下一步是否會撞進場景固定碰撞體，撞到就把
+        /// 這一步的距離縮到碰撞點前，不再穿模。忽略觸發器、自己所在的敵人層、以及玩家層
+        /// （撞到玩家該是物理推擠玩家，不該卡住 Boss 的追擊路徑）。
+        /// </summary>
+        private float ClampStepToAvoidObstacles(Vector3 dir, float step)
+        {
+            if (_capsule == null) return step;
+
+            float radius = _capsule.radius;
+            float halfLine = Mathf.Max(0f, _capsule.height * 0.5f - radius);
+            Vector3 center = transform.position + _capsule.center;
+            Vector3 p1 = center + Vector3.up * halfLine;
+            Vector3 p2 = center - Vector3.up * halfLine;
+
+            int mask = ~(1 << gameObject.layer);
+            int playerLayer = LayerMask.NameToLayer("Player");
+            if (playerLayer >= 0) mask &= ~(1 << playerLayer);
+
+            if (!Physics.CapsuleCast(p1, p2, radius, dir, out RaycastHit hit, step, mask, QueryTriggerInteraction.Ignore))
+                return step;
+
+            // 起點本身已經跟障礙物重疊時（例如錢袋剛好生成在 Boss 身上、或上一幀貼著邊緣停下時
+            // 精度誤差造成微重疊），CapsuleCast 不管往哪個方向一律回傳 distance=0——上一版直接
+            // 拿 0 當這一步的移動距離，Boss 從此每幀都被同一個重疊碰撞體鎖死，玩家怎麼移動都追不動、
+            // 永遠停在原地。這裡偵測到「起點已重疊」就放行整步移動，讓 Boss 先脫離重疊區域，
+            // 之後 CapsuleCast 才會恢復正常擋人效果，不會被自己的防穿模機制反鎖住。
+            if (hit.distance <= 0f) return step;
+
+            return Mathf.Max(0f, hit.distance - 0.05f);
         }
 
         public void OnDeath()

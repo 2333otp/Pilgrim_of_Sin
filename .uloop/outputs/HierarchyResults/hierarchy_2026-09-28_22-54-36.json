@@ -1,0 +1,217 @@
+{
+  "ExportTimestamp": "2026-09-28 22:54:36",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 13,
+    "maxDepth": 2
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 13,
+        "maxDepth": 2
+      },
+      "componentsLut": [
+        "RectTransform",
+        "VerticalLayoutGroup",
+        "CanvasRenderer",
+        "Image",
+        "Button",
+        "LayoutElement",
+        "Text"
+      ],
+      "roots": [
+        {
+          "name": "ButtonGroup",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1
+          ],
+          "siblingIndex": 2,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "Btn_查看玩家狀態",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                2,
+                3,
+                4,
+                5
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Text (Legacy)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    2,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Btn_保存遊玩進度",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                2,
+                3,
+                4,
+                5
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Text (Legacy)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    2,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Btn_設置選項",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                2,
+                3,
+                4,
+                5
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Text (Legacy)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    2,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Btn_繼續遊戲",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                2,
+                3,
+                4,
+                5
+              ],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Text (Legacy)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    2,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Btn_回小木屋",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                2,
+                3,
+                4,
+                5
+              ],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Text (Legacy)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    2,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Btn_回主選單",
+              "isActive": true,
+              "componentsIdx": [
+                0,
+                2,
+                3,
+                4,
+                5
+              ],
+              "siblingIndex": 5,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Text (Legacy)",
+                  "isActive": true,
+                  "componentsIdx": [
+                    0,
+                    2,
+                    6
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

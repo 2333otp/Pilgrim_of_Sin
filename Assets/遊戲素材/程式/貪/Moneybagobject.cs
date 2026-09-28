@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace PilgrimOfSin.StateMachine
@@ -40,6 +41,15 @@ namespace PilgrimOfSin.StateMachine
         private Vector3 _flyEnd;
         private float _spawnY;          // 由 Spawner 傳入，不再是 SerializeField
         private int _slotIndex;       // 天秤右側排列用
+
+        /// <summary>互動範圍，供 Spawner 換算最小間距用，避免兩顆錢袋的互動範圍互相重疊。</summary>
+        public float InteractRadius => _interactRadius;
+
+        // 場景內所有錢袋共用同一個提示 UI（唯一一個），見 CheckPlayerProximity() 的註解。
+        private static readonly List<MoneybagObject> _allBags = new List<MoneybagObject>();
+
+        private void OnEnable() => _allBags.Add(this);
+        private void OnDisable() => _allBags.Remove(this);
 
         // ════════════════════════════════════════════════════════════
         //  初始化（由 MoneybagSpawner 呼叫）
@@ -101,19 +111,39 @@ namespace PilgrimOfSin.StateMachine
             if (nearby != _playerNearby)
             {
                 _playerNearby = nearby;
-                if (_interactPromptUI) _interactPromptUI.SetActive(_playerNearby);
+
+                // 場景內所有錢袋共用同一個提示 UI（唯一一個），每顆錢袋各自獨立開關。
+                // 兩顆錢袋的偵測範圍如果重疊，玩家離開 A 的範圍、卻還站在 B 腳邊時，
+                // A 的 SetActive(false) 有機率在同一影格晚於 B 的 SetActive(true) 執行，
+                // 直接把提示關掉——即使玩家明明還站在 B 旁邊。改成「除非全部錢袋都確認
+                // 沒人在旁邊，否則不要關」，開的時候不受影響（只要有一顆近就該開）。
+                if (_playerNearby || !AnyBagNearby())
+                    if (_interactPromptUI) _interactPromptUI.SetActive(_playerNearby);
             }
+        }
+
+        private static bool AnyBagNearby()
+        {
+            foreach (var bag in _allBags)
+                if (bag != null && bag._playerNearby) return true;
+            return false;
         }
 
         // ════════════════════════════════════════════════════════════
         //  按 X 撿起
         // ════════════════════════════════════════════════════════════
 
+        // 錢袋間距如果太小，會有兩顆錢袋的互動範圍重疊，玩家同時站在兩顆的範圍內，
+        // 按一次互動鍵時每顆錢袋各自獨立判定，導致一次動作卻撿到兩顆。這裡用「這一幀
+        // 是否已經有錢袋被撿走」擋掉同一次按鍵重複觸發，不管間距多近都保證一次只撿一顆。
+        private static int _lastPickupFrame = -1;
+
         private void CheckPickupInput()
         {
             // Time.timeScale == 0 代表 ESC 選單開著（PauseMenuUI 暫停時的作法），
             // 這時候互動鍵（R2）要留給選單的返回操作用，不能同時撿起錢袋。
             if (!_playerNearby || Time.timeScale == 0f) return;
+            if (Time.frameCount == _lastPickupFrame) return;
             bool interactPressed = (Keyboard.current != null && Keyboard.current.xKey.wasPressedThisFrame)
                                 || (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame);
             if (interactPressed)
@@ -124,6 +154,7 @@ namespace PilgrimOfSin.StateMachine
         {
             if (CurrentState != BagState.OnGround) return;
 
+            _lastPickupFrame = Time.frameCount;
             CurrentState = BagState.OnScale;
 
             if (_interactPromptUI) _interactPromptUI.SetActive(false);
@@ -199,6 +230,10 @@ namespace PilgrimOfSin.StateMachine
 
         private bool IsNearOtherBag(Vector3 candidate)
         {
+            // 間距至少要大於兩顆錢袋互動範圍的總和，否則兩顆的偵測圈會重疊：
+            // 玩家同時站在兩顆範圍內，提示 UI 互搶、按一次互動鍵可能兩顆一起被撿走。
+            float safeSpacing = Mathf.Max(_minBagSpacing, _interactRadius * 2f + 1f);
+
             var allBags = FindObjectsByType<MoneybagObject>(FindObjectsSortMode.None);
             foreach (var bag in allBags)
             {
@@ -206,7 +241,7 @@ namespace PilgrimOfSin.StateMachine
                 if (bag.CurrentState != BagState.OnGround) continue;
                 if (Vector2.Distance(new Vector2(candidate.x, candidate.z),
                                      new Vector2(bag.transform.position.x, bag.transform.position.z))
-                    < _minBagSpacing)
+                    < safeSpacing)
                     return true;
             }
             return false;

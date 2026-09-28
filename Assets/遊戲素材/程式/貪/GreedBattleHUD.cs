@@ -75,14 +75,20 @@ namespace PilgrimOfSin
             if (!_seenFirstPhase)
             {
                 _seenFirstPhase = true;
-                if (phase != StateMachine.ScalePhase.Balanced && phase != StateMachine.ScalePhase.Kicked)
+                if (phase == StateMachine.ScalePhase.MoneyBagHeavy)
+                    ShowLeftBanner("天秤過重了！攻擊天秤讓它恢復平衡！");
+                else if (phase == StateMachine.ScalePhase.StatueHeavy)
                     ShowLeftBanner("天秤傾斜了！收集錢袋使天秤平衡！");
             }
             else if (phase != _lastPhase)
             {
                 if (phase == StateMachine.ScalePhase.Balanced)
                     ShowLeftBanner("趁現在！攻擊心魔的最佳時刻！");
-                else if (_lastPhase == StateMachine.ScalePhase.Balanced && phase != StateMachine.ScalePhase.Kicked)
+                // 過重（錢袋側太重）：繼續收集錢袋只會更重，正確做法是攻擊天秤讓它恢復平衡，
+                // 跟「雕像重、要收集錢袋」是相反的建議，文字不能共用。
+                else if (phase == StateMachine.ScalePhase.MoneyBagHeavy)
+                    ShowLeftBanner("天秤過重了！攻擊天秤讓它恢復平衡！");
+                else if (phase == StateMachine.ScalePhase.StatueHeavy && _lastPhase == StateMachine.ScalePhase.Balanced)
                     ShowLeftBanner("天秤傾斜了！收集錢袋使天秤平衡！");
             }
             _lastPhase = phase;

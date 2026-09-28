@@ -103,6 +103,20 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         protected bool ShouldPause()
             => Input.PausePressed || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
+
+        /// <summary>
+        /// 攻擊/技能/切換武器結束時用這個決定回哪個狀態，取代直接 RequestTransition(Idle)。
+        /// 玩家還按著移動鍵的話直接接回 Walk，不要先繞路回 Idle——IdleState.Enter() 會
+        /// CrossFade 到 Idle 姿勢（0.15s），這段 Crossfade 進行中 Any State 轉場無法打斷
+        /// （InterruptionSource=None），但 WalkState 已經開始用 Move() 全速位移，
+        /// 表現就是「攻擊完回到跑步會平移一下才切正確動畫」。
+        /// </summary>
+        protected void RequestIdleOrWalk()
+        {
+            RequestTransition(Input.MoveInput.sqrMagnitude > 0.01f
+                ? PlayerStateType.Walk
+                : PlayerStateType.Idle);
+        }
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -381,6 +395,12 @@ namespace PilgrimOfSin.StateMachine
             _elapsed = 0f;
             _clipLength = -1f;
             _nextInputBuffered = false;
+            // 移動中攻擊會卡住的根因：Animator 有「Any State -> 移動 BlendTree」轉場，條件只看
+            // IsMoving==true，沒有 Exit Time、每幀重判。若不在這裡關掉 IsMoving，攻擊動畫播下一幀
+            // 就被拉回 Locomotion，ResolveDuration() 永遠比對不到攻擊動畫名稱，只能用保底時間鎖住
+            // 操作，表現就是移動時攻擊卡住不動、要等保底時間到才恢復。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             PlayAnimation("LightAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
             Player.Combat?.StartLightAttack();
@@ -436,7 +456,7 @@ namespace PilgrimOfSin.StateMachine
             // 不清的話，這一下攻擊殘留的輸入紀錄會在視窗時間內（現在拉長到 3s）
             // 跟下一次完全獨立、玩家沒打算連段的攻擊被誤判成連段序列。
             Player.ComboBuffer.Reset();
-            RequestTransition(PlayerStateType.Idle);
+            RequestIdleOrWalk();
         }
 
         public override void Exit()
@@ -470,6 +490,9 @@ namespace PilgrimOfSin.StateMachine
             _elapsed = 0f;
             _clipLength = -1f;
             _nextInputBuffered = false;
+            // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             PlayAnimation("HeavyAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
             Player.Combat?.StartHeavyAttack();
@@ -520,7 +543,7 @@ namespace PilgrimOfSin.StateMachine
             }
             // 沒接成連段、也沒有後續輸入：清掉緩衝，避免殘留輸入跟下一次無關的攻擊誤判成連段。
             Player.ComboBuffer.Reset();
-            RequestTransition(PlayerStateType.Idle);
+            RequestIdleOrWalk();
         }
 
         public override void Exit()
@@ -555,6 +578,9 @@ namespace PilgrimOfSin.StateMachine
             _elapsed = 0f;
             _clipLength = -1f;
             _comboIndex = Player.ComboBuffer.CurrentComboIndex;
+            // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             PlayAnimation($"Combo{_comboIndex}");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
             Player.Combat?.StartComboAttack(_comboIndex);
@@ -577,7 +603,7 @@ namespace PilgrimOfSin.StateMachine
             }
 
             Player.ComboBuffer.Reset();
-            RequestTransition(PlayerStateType.Idle);
+            RequestIdleOrWalk();
         }
 
         public override void Exit()
@@ -611,6 +637,9 @@ namespace PilgrimOfSin.StateMachine
             _timer = 0f;
             _clipLength = -1f;
             _animDone = false;
+            // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             Player.SetInvincible(true);
             PlayAnimation("SpecialSkill");
             Player.OnSpecialSkillAnimationEnd += HandleAnimEnd;
@@ -658,7 +687,7 @@ namespace PilgrimOfSin.StateMachine
         public SpecialSkillCooldownState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
-            => RequestTransition(PlayerStateType.Idle); // 立刻回 Idle，CD 由 PlayerController 計時
+            => RequestIdleOrWalk(); // CD 由 PlayerController 計時，這裡只負責回 Idle/Walk
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -683,6 +712,9 @@ namespace PilgrimOfSin.StateMachine
             _elapsed = 0f;
             _clipLength = -1f;
             _weaponIndex = Player.PendingWeaponIndex;
+            // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             PlayAnimation($"WeaponSwitch_{_weaponIndex}");
             Player.OnWeaponSwitchAnimationEnd += HandleAnimEnd;
             Player.SetInvincible(true);
@@ -704,7 +736,7 @@ namespace PilgrimOfSin.StateMachine
                 if (_elapsed >= duration) _animDone = true;
                 else return;
             }
-            RequestTransition(PlayerStateType.Idle);
+            RequestIdleOrWalk();
         }
 
         public override void Exit()

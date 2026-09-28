@@ -1,0 +1,1076 @@
+{
+  "ExportTimestamp": "2026-09-28 23:57:08",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 102,
+    "maxDepth": 4
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 102,
+        "maxDepth": 4
+      },
+      "roots": [
+        {
+          "name": "PauseCanvas",
+          "isActive": false,
+          "components": [],
+          "siblingIndex": 12,
+          "tag": "Untagged",
+          "layer": 0,
+          "path": "PauseCanvas",
+          "children": [
+            {
+              "name": "ESC選單_Panel",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "PauseCanvas/ESC選單_Panel",
+              "children": [
+                {
+                  "name": "半透明黑底圖",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ESC選單_Panel/半透明黑底圖",
+                  "children": []
+                },
+                {
+                  "name": "底圖",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ESC選單_Panel/底圖",
+                  "children": []
+                },
+                {
+                  "name": "ButtonGroup",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ESC選單_Panel/ButtonGroup",
+                  "children": [
+                    {
+                      "name": "Btn_查看玩家狀態",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_查看玩家狀態",
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_查看玩家狀態/Text (Legacy)",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_保存遊玩進度",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_保存遊玩進度",
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_保存遊玩進度/Text (Legacy)",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_設置選項",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_設置選項",
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_設置選項/Text (Legacy)",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_繼續遊戲",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_繼續遊戲",
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_繼續遊戲/Text (Legacy)",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_回小木屋",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_回小木屋",
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_回小木屋/Text (Legacy)",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Btn_回主選單",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_回主選單",
+                      "children": [
+                        {
+                          "name": "Text (Legacy)",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/ButtonGroup/Btn_回主選單/Text (Legacy)",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "SettingsSubPanels",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels",
+                  "children": [
+                    {
+                      "name": "Volume_SubPanel",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Volume_SubPanel",
+                      "children": [
+                        {
+                          "name": "Content",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Volume_SubPanel/Content",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Controls_SubPanel",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Controls_SubPanel",
+                      "children": [
+                        {
+                          "name": "操作說明圖",
+                          "isActive": false,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Controls_SubPanel/操作說明圖",
+                          "children": []
+                        },
+                        {
+                          "name": "ControlsSummaryContent",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Controls_SubPanel/ControlsSummaryContent",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Credits_SubPanel",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Credits_SubPanel",
+                      "children": [
+                        {
+                          "name": "BG_Image",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Credits_SubPanel/BG_Image",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Settings_SubPanel",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Settings_SubPanel",
+                      "children": [
+                        {
+                          "name": "Title",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Settings_SubPanel/Title",
+                          "children": []
+                        },
+                        {
+                          "name": "Btn_Settings_音量",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Settings_SubPanel/Btn_Settings_音量",
+                          "children": []
+                        },
+                        {
+                          "name": "Btn_Settings_操作說明",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Settings_SubPanel/Btn_Settings_操作說明",
+                          "children": []
+                        },
+                        {
+                          "name": "Btn_Settings_製作團隊",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ESC選單_Panel/SettingsSubPanels/Settings_SubPanel/Btn_Settings_製作團隊",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "標題_圖",
+                  "isActive": false,
+                  "components": [],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ESC選單_Panel/標題_圖",
+                  "children": [
+                    {
+                      "name": "標題圖",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ESC選單_Panel/標題_圖/標題圖",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "PlayerStatus_Panel",
+              "isActive": true,
+              "components": [],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "PauseCanvas/PlayerStatus_Panel",
+              "children": [
+                {
+                  "name": "玩家狀態_底圖",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/玩家狀態_底圖",
+                  "children": []
+                },
+                {
+                  "name": "角色立繪",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/角色立繪",
+                  "children": []
+                },
+                {
+                  "name": "InfoArea",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/InfoArea",
+                  "children": [
+                    {
+                      "name": "HP_Bar",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/HP_Bar",
+                      "children": [
+                        {
+                          "name": "Background",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/HP_Bar/Background",
+                          "children": []
+                        },
+                        {
+                          "name": "Fill Area",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/HP_Bar/Fill Area",
+                          "children": []
+                        },
+                        {
+                          "name": "Handle Slide Area",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/HP_Bar/Handle Slide Area",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "HP_Text",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/HP_Text",
+                      "children": []
+                    },
+                    {
+                      "name": "DefeatedBosses_Text",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/DefeatedBosses_Text",
+                      "children": []
+                    },
+                    {
+                      "name": "StatusButtonGroup",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/StatusButtonGroup",
+                      "children": [
+                        {
+                          "name": "Btn_返回ESC選單",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/StatusButtonGroup/Btn_返回ESC選單",
+                          "children": []
+                        },
+                        {
+                          "name": "Btn_武器介紹",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/StatusButtonGroup/Btn_武器介紹",
+                          "children": []
+                        },
+                        {
+                          "name": "Btn_過往記憶",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 2,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/StatusButtonGroup/Btn_過往記憶",
+                          "children": []
+                        },
+                        {
+                          "name": "Btn_角色資料",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 3,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/StatusButtonGroup/Btn_角色資料",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "邊框",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/InfoArea/邊框",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Memories_Content",
+                  "isActive": false,
+                  "components": [],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content",
+                  "children": [
+                    {
+                      "name": "CGImage",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/CGImage",
+                      "children": []
+                    },
+                    {
+                      "name": "Frame",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/Frame",
+                      "children": []
+                    },
+                    {
+                      "name": "Caption",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/Caption",
+                      "children": []
+                    },
+                    {
+                      "name": "PageIndicator",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/PageIndicator",
+                      "children": []
+                    },
+                    {
+                      "name": "LeftArrow",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/LeftArrow",
+                      "children": []
+                    },
+                    {
+                      "name": "RightArrow",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/RightArrow",
+                      "children": []
+                    },
+                    {
+                      "name": "HintLeft",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 6,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/HintLeft",
+                      "children": []
+                    },
+                    {
+                      "name": "HintRight",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 7,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Memories_Content/HintRight",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "WeaponInfo_Content",
+                  "isActive": false,
+                  "components": [],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content",
+                  "children": [
+                    {
+                      "name": "WeaponArt",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/WeaponArt",
+                      "children": [
+                        {
+                          "name": "ArtA",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/WeaponArt/ArtA",
+                          "children": []
+                        },
+                        {
+                          "name": "ArtB",
+                          "isActive": false,
+                          "components": [],
+                          "siblingIndex": 1,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/WeaponArt/ArtB",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "WeaponName",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/WeaponName",
+                      "children": []
+                    },
+                    {
+                      "name": "WeaponDescription",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/WeaponDescription",
+                      "children": []
+                    },
+                    {
+                      "name": "LeftArrow",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/LeftArrow",
+                      "children": []
+                    },
+                    {
+                      "name": "RightArrow",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/RightArrow",
+                      "children": []
+                    },
+                    {
+                      "name": "PageIndicator",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/WeaponInfo_Content/PageIndicator",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "CharData_Content",
+                  "isActive": false,
+                  "components": [],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content",
+                  "children": [
+                    {
+                      "name": "Portrait",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content/Portrait",
+                      "children": []
+                    },
+                    {
+                      "name": "CharName",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content/CharName",
+                      "children": []
+                    },
+                    {
+                      "name": "CharDescription",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content/CharDescription",
+                      "children": []
+                    },
+                    {
+                      "name": "PageIndicator",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 3,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content/PageIndicator",
+                      "children": []
+                    },
+                    {
+                      "name": "LeftArrow",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 4,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content/LeftArrow",
+                      "children": []
+                    },
+                    {
+                      "name": "RightArrow",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 5,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/CharData_Content/RightArrow",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Backpack_Content",
+                  "isActive": false,
+                  "components": [],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/PlayerStatus_Panel/Backpack_Content",
+                  "children": [
+                    {
+                      "name": "Text",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/PlayerStatus_Panel/Backpack_Content/Text",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "ReturnMainMenu_ConfirmPanel",
+              "isActive": false,
+              "components": [],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel",
+              "children": [
+                {
+                  "name": "黑底",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/黑底",
+                  "children": []
+                },
+                {
+                  "name": "背景",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/背景",
+                  "children": []
+                },
+                {
+                  "name": "MessageText",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/MessageText",
+                  "children": []
+                },
+                {
+                  "name": "Btn_是",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_是",
+                  "children": [
+                    {
+                      "name": "HighlightGroup",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_是/HighlightGroup",
+                      "children": [
+                        {
+                          "name": "Bar",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_是/HighlightGroup/Bar",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Label",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_是/Label",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_返回遊戲",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_返回遊戲",
+                  "children": [
+                    {
+                      "name": "HighlightGroup",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_返回遊戲/HighlightGroup",
+                      "children": [
+                        {
+                          "name": "Bar",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_返回遊戲/HighlightGroup/Bar",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Label",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnMainMenu_ConfirmPanel/Btn_返回遊戲/Label",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "ReturnHub_ConfirmPanel",
+              "isActive": false,
+              "components": [],
+              "siblingIndex": 3,
+              "tag": "Untagged",
+              "layer": 0,
+              "path": "PauseCanvas/ReturnHub_ConfirmPanel",
+              "children": [
+                {
+                  "name": "黑底",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnHub_ConfirmPanel/黑底",
+                  "children": []
+                },
+                {
+                  "name": "背景",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnHub_ConfirmPanel/背景",
+                  "children": []
+                },
+                {
+                  "name": "MessageText",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnHub_ConfirmPanel/MessageText",
+                  "children": []
+                },
+                {
+                  "name": "Btn_是",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_是",
+                  "children": [
+                    {
+                      "name": "HighlightGroup",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_是/HighlightGroup",
+                      "children": [
+                        {
+                          "name": "Bar",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_是/HighlightGroup/Bar",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Label",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_是/Label",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Btn_返回遊戲",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_返回遊戲",
+                  "children": [
+                    {
+                      "name": "HighlightGroup",
+                      "isActive": false,
+                      "components": [],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_返回遊戲/HighlightGroup",
+                      "children": [
+                        {
+                          "name": "Bar",
+                          "isActive": true,
+                          "components": [],
+                          "siblingIndex": 0,
+                          "tag": "Untagged",
+                          "layer": 0,
+                          "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_返回遊戲/HighlightGroup/Bar",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Label",
+                      "isActive": true,
+                      "components": [],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "path": "PauseCanvas/ReturnHub_ConfirmPanel/Btn_返回遊戲/Label",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "SaveNotification_Panel",
+              "isActive": false,
+              "components": [],
+              "siblingIndex": 4,
+              "tag": "Untagged",
+              "layer": 5,
+              "path": "PauseCanvas/SaveNotification_Panel",
+              "children": [
+                {
+                  "name": "黑底_Image",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "path": "PauseCanvas/SaveNotification_Panel/黑底_Image",
+                  "children": []
+                },
+                {
+                  "name": "提示圖_Image",
+                  "isActive": true,
+                  "components": [],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 5,
+                  "path": "PauseCanvas/SaveNotification_Panel/提示圖_Image",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

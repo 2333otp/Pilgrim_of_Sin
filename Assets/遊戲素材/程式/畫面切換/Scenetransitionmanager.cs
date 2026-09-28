@@ -66,6 +66,19 @@ namespace PilgrimOfSin
             Cursor.lockState = needsCursor ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible   = needsCursor;
 
+            // 直接在 Editor 開特定 Boss 場景測試（不經過小木屋 LoadBossScene()）時，
+            // LastBossType 會停在預設的 None：死亡後「OO・心魔克服」提示的 Canvas 淡入淡出
+            // 照常播放，但文字用 None 對不到任何 case、印出空字串，看起來就像「提示沒跳出來」；
+            // 同一顆變數還會連帶讓進度紀錄記錯 Boss、結局過場圖片選錯池。這裡場景一載入就依
+            // 場景名稱自我修正，不管是從小木屋進來還是直接在 Boss 場景按 Play，都會是對的。
+            LastBossType = scene.name switch
+            {
+                GREED_SCENE   => BossType.Greed,
+                WRATH_SCENE   => BossType.Wrath,
+                FOOLISH_SCENE => BossType.Foolish,
+                _             => LastBossType,
+            };
+
             if (scene.name == MAIN_SCENE)
             {
                 _isTransitioning = false;
@@ -116,6 +129,25 @@ namespace PilgrimOfSin
         {
             if (_isTransitioning) return;
             StartCoroutine(TransitionRoutine(MAIN_SCENE));
+        }
+
+        /// <summary>
+        /// 依「目前作用中場景」解析出 Boss 類型並同步回 LastBossType，不需要 SceneTransitionManager
+        /// 的實例存在——直接在 Editor 開特定 Boss 場景測試（不經過小木屋 LoadBossScene()）時就是
+        /// 這種情況，LastBossType 會停在預設值 None。Boss 死亡當下（人還在 Boss 場景內）呼叫這個，
+        /// 取代直接讀 LastBossType，避免死亡通知文字印出空字串、進度紀錄記錯 Boss、結局過場圖片
+        /// 選錯池——這三個下游都共用同一顆 LastBossType，一起修正。
+        /// </summary>
+        public static BossType ResolveAndSyncCurrentBossType()
+        {
+            LastBossType = SceneManager.GetActiveScene().name switch
+            {
+                GREED_SCENE   => BossType.Greed,
+                WRATH_SCENE   => BossType.Wrath,
+                FOOLISH_SCENE => BossType.Foolish,
+                _             => LastBossType,
+            };
+            return LastBossType;
         }
 
         /// <summary>從小木屋進入 Boss 場景。</summary>

@@ -108,34 +108,58 @@ namespace PilgrimOfSin.StateMachine
         }
         private Vector3 RandomSpawnPosition(List<Vector3> existingPositions)
         {
-            Vector3 pos;
-            int safety = 100;
-            do
+            // 間距至少要大於兩顆錢袋互動範圍的總和，否則兩顆的偵測圈會重疊：玩家同時站在
+            // 兩顆範圍內，共用的提示 UI 互搶、按一次互動鍵可能兩顆一起被撿走。
+            float safeSpacing = Mathf.Max(_minBagSpacing, GetBagInteractRadius() * 2f + 1f);
+
+            // 場地扣掉天秤禁區後不一定塞得下「6~8 顆都間距 safeSpacing」的理想排列——
+            // 舊版超過重試上限就直接採用最後一次的亂數位置，那個位置完全沒驗證過，
+            // 有機率剛好貼在別顆錢袋旁邊，等於間距形同虛設。改成全程記錄「離現有錢袋
+            // 最遠」的候選位置當保底，就算真的湊不出完全合格的間距，也會盡量分散，
+            // 不會隨便抓到互相重疊的爛位置。
+            Vector3 best = new Vector3(_spawnAreaMinX, _spawnY, _spawnAreaMinZ);
+            float bestNearestDist = float.NegativeInfinity;
+
+            const int maxAttempts = 200;
+            for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
                 float x = Random.Range(_spawnAreaMinX, _spawnAreaMaxX);
                 float z = Random.Range(_spawnAreaMinZ, _spawnAreaMaxZ);
-                pos = new Vector3(x, _spawnY, z);
-                safety--;
+                var pos = new Vector3(x, _spawnY, z);
 
-                if (safety <= 0) break;
-
-                // 檢查天秤禁區
+                // 天秤禁區內的候選直接跳過，不列入保底比較
                 if (_scaleCenter != null &&
                     Vector2.Distance(new Vector2(pos.x, pos.z),
                                      new Vector2(_scaleCenter.position.x, _scaleCenter.position.z))
                     < _scaleExcludeRadius) continue;
 
-                // 檢查與其他錢袋的間距
-                bool tooClose = false;
+                float nearestDist = float.PositiveInfinity;
                 foreach (var ep in existingPositions)
-                    if (Vector2.Distance(new Vector2(pos.x, pos.z), new Vector2(ep.x, ep.z)) < _minBagSpacing)
-                    { tooClose = true; break; }
+                {
+                    float d = Vector2.Distance(new Vector2(pos.x, pos.z), new Vector2(ep.x, ep.z));
+                    if (d < nearestDist) nearestDist = d;
+                }
 
-                if (!tooClose) break;
+                if (nearestDist >= safeSpacing) return pos; // 完全合格，直接採用
+
+                if (nearestDist > bestNearestDist)
+                {
+                    bestNearestDist = nearestDist;
+                    best = pos;
+                }
             }
-            while (true);
 
-            return pos;
+            return best;
+        }
+
+        private float _cachedInteractRadius = -1f;
+
+        private float GetBagInteractRadius()
+        {
+            if (_cachedInteractRadius >= 0f) return _cachedInteractRadius;
+            var bag = _moneybagPrefab != null ? _moneybagPrefab.GetComponent<MoneybagObject>() : null;
+            _cachedInteractRadius = bag != null ? bag.InteractRadius : 2f;
+            return _cachedInteractRadius;
         }
 
         // ════════════════════════════════════════════════════════════
