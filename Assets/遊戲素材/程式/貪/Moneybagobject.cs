@@ -42,6 +42,13 @@ namespace PilgrimOfSin.StateMachine
         private float _spawnY;          // 由 Spawner 傳入，不再是 SerializeField
         private int _slotIndex;       // 天秤右側排列用
 
+        // 天秤右碗實測的X/Z世界座標範圍（Bowl_low_geo正X群頂點量出來的），已內縮0.08m留安全邊距。
+        // 用來在PickUp()堆疊完後做最後一道強制夾限，防止極少數旋轉角度組合貼著碗緣超出。
+        private const float BowlSafeMinX = 1.636f;
+        private const float BowlSafeMaxX = 3.831f;
+        private const float BowlSafeMinZ = -1.104f;
+        private const float BowlSafeMaxZ = 1.105f;
+
         /// <summary>互動範圍，供 Spawner 換算最小間距用，避免兩顆錢袋的互動範圍互相重疊。</summary>
         public float InteractRadius => _interactRadius;
 
@@ -160,12 +167,68 @@ namespace PilgrimOfSin.StateMachine
             if (_interactPromptUI) _interactPromptUI.SetActive(false);
             _playerNearby = false;
 
-            // 移到天秤右側，依 slotIndex 橫向排開（每顆間距 0.4）
+            // 移到天秤右側，堆成一堆（不要整齊排一排）。
+            // 碗是上寬下窄的錐形：碗口滿出來是允許的自然堆疊效果，但碗身下半部/底座
+            // 絕對不能穿出去。之前把錢袋堆在貼近碗底(Y≈0)的地方，底部本來就窄，
+            // 水平半徑再怎麼收都會穿出碗身——不是校正精度問題，是堆放的高度位置錯了。
+            // 改成堆在碗口附近(接近碗深度的上緣)，那裡最寬、而且滿出來本來就OK。
             if (_scaleRightSide)
                 transform.SetParent(_scaleRightSide);
 
-            float offset = (_slotIndex - 2) * 0.4f; // 以 0 為中心左右排列
-            transform.localPosition = new Vector3(offset, 0f, 0f);
+            const float radius = 0.6f;
+            const float rimHeightMin = 0.68f; // 碗實測內部深度約1.0m，堆在接近碗口的上緣
+            const float rimHeightMax = 0.85f;
+            // 實測過完整偏移量(0.19,0.26)會過度修正到另一邊，取一半當折衷值。
+            const float centerOffsetX = 0.095f;
+            const float centerOffsetZ = 0.13f;
+
+            float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float dist = Mathf.Sqrt(Random.value) * radius; // 圓內均勻分布，不會都擠在邊緣
+            Vector3 targetLocalCenter = new Vector3(
+                Mathf.Cos(angle) * dist + centerOffsetX,
+                Random.Range(rimHeightMin, rimHeightMax),
+                Mathf.Sin(angle) * dist + centerOffsetZ);
+
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.Euler(
+                90f + Random.Range(-10f, 10f),
+                Random.Range(0f, 360f),
+                Random.Range(-15f, 15f));
+
+            // 側躺旋轉後，原本針對「站立」校正好的pivot(腳底)不再對齊幾何中心，直接用
+            // local position會讓錢袋整個歪向一邊、甚至凸出碗外（之前就是這樣爆出去的）。
+            // 用實際Renderer bounds量出目前的世界中心，反推pivot該放在哪，確保「網格看得到
+            // 的中心」精準落在目標位置，跟旋轉角度無關，不會再算錯。
+            var renderers = GetComponentsInChildren<Renderer>();
+            if (renderers.Length > 0)
+            {
+                Bounds worldBounds = renderers[0].bounds;
+                for (int i = 1; i < renderers.Length; i++) worldBounds.Encapsulate(renderers[i].bounds);
+                Vector3 pivotToCenter = worldBounds.center - transform.position;
+                transform.localPosition = targetLocalCenter - pivotToCenter;
+            }
+            else
+            {
+                transform.localPosition = targetLocalCenter;
+            }
+
+            // 保險：極少數旋轉角度組合，堆疊後合成的bounds還是會貼著碗緣超出一點點
+            // （機率性邊界情況，實測過5輪~8%的樣本會超出0.01~0.03m）。這裡直接拿碗實測的
+            // 精確X/Z範圍（已內縮留安全邊距）做最後一道強制夾限，不是「機率上大概不會」，
+            // 是每次都實際檢查合成後的bounds、超出多少就拉回來多少。
+            var finalRenderers = GetComponentsInChildren<Renderer>();
+            if (finalRenderers.Length > 0)
+            {
+                Bounds b = finalRenderers[0].bounds;
+                for (int i = 1; i < finalRenderers.Length; i++) b.Encapsulate(finalRenderers[i].bounds);
+
+                Vector3 correction = Vector3.zero;
+                if (b.min.x < BowlSafeMinX) correction.x += BowlSafeMinX - b.min.x;
+                if (b.max.x > BowlSafeMaxX) correction.x += BowlSafeMaxX - b.max.x;
+                if (b.min.z < BowlSafeMinZ) correction.z += BowlSafeMinZ - b.min.z;
+                if (b.max.z > BowlSafeMaxZ) correction.z += BowlSafeMaxZ - b.max.z;
+                transform.position += correction;
+            }
 
             _scale?.AddMoneybagWeight(Weight);
         }

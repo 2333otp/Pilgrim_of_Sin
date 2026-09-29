@@ -1,0 +1,214 @@
+{
+  "ExportTimestamp": "2026-09-29 19:24:41",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 15,
+    "maxDepth": 2
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 15,
+        "maxDepth": 2
+      },
+      "roots": [
+        {
+          "name": "MoneyBag",
+          "isActive": true,
+          "components": [
+            "Transform"
+          ],
+          "siblingIndex": 25,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "MonryBag_Body_Llow_geo",
+              "isActive": true,
+              "components": [
+                "Transform",
+                "MeshFilter",
+                "MeshRenderer"
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "MonryBag_Body_Tlow_geo",
+              "isActive": true,
+              "components": [
+                "Transform",
+                "MeshFilter",
+                "MeshRenderer"
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "money_other_low",
+              "isActive": true,
+              "components": [
+                "Transform"
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Ball_L_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "BowTie_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FringeL_01_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FringeL_02_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FringeL_03_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FringeR_01_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FringeR_02_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "FringeR_03_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "GoldOre_01_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "GoldOre_02_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "GoldOre_03_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "MeshFilter",
+                    "MeshRenderer"
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
