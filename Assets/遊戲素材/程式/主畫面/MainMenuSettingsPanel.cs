@@ -218,9 +218,20 @@ namespace PilgrimOfSin
             if (_volumeSliders.Length == 0 || _inputReader == null) return;
             int idx = Mathf.Clamp(_volumeSliderIndex, 0, _volumeSliders.Length - 1);
             Slider current = _volumeSliders[idx];
-            if (_inputReader.VolumeUpPressed)
+
+            // 直讀裝置備援：這裡常常是玩家在整場遊戲中第一次透過 PlayerInputReader（Action系統）
+            // 操作手把——主選單本身的上下左右導覽都是直接讀 Gamepad.current（比照 MainMenuUI），
+            // 不會經過 PlayerInput 的 currentControlScheme。玩家從主選單按手把進到這裡時，
+            // currentControlScheme 可能還停在 "Keyboard&Mouse"，VolumeUpPressed/VolumeDownPressed
+            // 這類 Action 會被目前方案遮罩掉、吃掉第一下輸入，所以要跟 ShouldPause() 一樣直接讀裝置。
+            bool volUp = _inputReader.VolumeUpPressed
+                || (Gamepad.current != null && (Gamepad.current.dpad.right.wasPressedThisFrame || Gamepad.current.leftStick.right.wasPressedThisFrame));
+            bool volDown = _inputReader.VolumeDownPressed
+                || (Gamepad.current != null && (Gamepad.current.dpad.left.wasPressedThisFrame || Gamepad.current.leftStick.left.wasPressedThisFrame));
+
+            if (volUp)
                 AdjustSlider(current, 0.05f);
-            if (_inputReader.VolumeDownPressed)
+            if (volDown)
                 AdjustSlider(current, -0.05f);
         }
 

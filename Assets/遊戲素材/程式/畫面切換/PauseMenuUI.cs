@@ -279,9 +279,17 @@ namespace PilgrimOfSin
 
             int idx = Mathf.Clamp(_volumeSliderIndex, 0, _volumeSliders.Length - 1);
             Slider current = _volumeSliders[idx];
-            if (_inputReader.VolumeUpPressed)
+
+            // 直讀裝置備援，同 ShouldPause() 的理由：避免 currentControlScheme 還沒切換過去
+            // 時吃掉輸入（見 MainMenuSettingsPanel.HandleVolumeSubPanelNav() 同樣的處理）。
+            bool volUp = _inputReader.VolumeUpPressed
+                || (Gamepad.current != null && (Gamepad.current.dpad.right.wasPressedThisFrame || Gamepad.current.leftStick.right.wasPressedThisFrame));
+            bool volDown = _inputReader.VolumeDownPressed
+                || (Gamepad.current != null && (Gamepad.current.dpad.left.wasPressedThisFrame || Gamepad.current.leftStick.left.wasPressedThisFrame));
+
+            if (volUp)
                 AdjustSlider(current, 0.05f);
-            if (_inputReader.VolumeDownPressed)
+            if (volDown)
                 AdjustSlider(current, -0.05f);
         }
 
@@ -321,7 +329,8 @@ namespace PilgrimOfSin
             if (_navCooldown > 0f) return;
             if (_navButtons == null || _navButtons.Length == 0) return;
 
-            bool isConfirmDialog = _currentSubPanel == _returnHubConfirmPanel || _currentSubPanel == _returnMainMenuConfirmPanel;
+            bool isConfirmDialog = _currentSubPanel != null &&
+                (_currentSubPanel == _returnHubConfirmPanel || _currentSubPanel == _returnMainMenuConfirmPanel);
             if (isConfirmDialog)
             {
                 if (_inputReader.MenuPageLeftPressed)

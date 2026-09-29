@@ -99,10 +99,15 @@ namespace PilgrimOfSin.StateMachine
         }
 
         /// <summary>
-        /// ESC 暫停偵測：PlayerInput.PausePressed 或 Keyboard 直讀（Game View 失焦時備援）。
+        /// ESC 暫停偵測：PlayerInput.PausePressed 或 Keyboard/Gamepad 直讀裝置備援。
+        /// 手把直讀是必要的：手把第一次被摸到那一下，PlayerInput 的 currentControlScheme
+        /// 還沒切過去 "Gamepad"（配對跟切換方案有時間差），Action 的 SendMessage
+        /// 會用舊方案判斷而被吃掉，PausePressed 抓不到那一下，要直接讀裝置原始狀態備援。
         /// </summary>
         protected bool ShouldPause()
-            => Input.PausePressed || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
+            => Input.PausePressed
+               || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
+               || (Gamepad.current?.startButton.wasPressedThisFrame ?? false);
 
         /// <summary>
         /// 攻擊/技能/切換武器結束時用這個決定回哪個狀態，取代直接 RequestTransition(Idle)。

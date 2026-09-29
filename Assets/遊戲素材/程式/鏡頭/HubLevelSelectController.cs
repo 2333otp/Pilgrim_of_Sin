@@ -38,6 +38,7 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private TMP_Text _bossDescriptionText;
         [SerializeField] private GameObject _dividerRoot;
         [SerializeField] private GameObject _confirmHintRoot;
+        [SerializeField] private GameObject _menuHintRoot;
 
         private int _currentIndex;
         private bool _inputLocked;
@@ -53,6 +54,7 @@ namespace PilgrimOfSin.StateMachine
         {
             _inputLocked = true;
             if (_confirmHintRoot != null) _confirmHintRoot.SetActive(false);
+            if (_menuHintRoot != null) _menuHintRoot.SetActive(false);
             if (_bossNameText != null) _bossNameText.gameObject.SetActive(false);
             if (_bossDescriptionText != null) _bossDescriptionText.gameObject.SetActive(false);
             if (_dividerRoot != null) _dividerRoot.SetActive(false);
@@ -76,6 +78,7 @@ namespace PilgrimOfSin.StateMachine
             if (_bossDescriptionText != null) _bossDescriptionText.gameObject.SetActive(true);
             if (_dividerRoot != null) _dividerRoot.SetActive(true);
             if (_confirmHintRoot != null) _confirmHintRoot.SetActive(true);
+            if (_menuHintRoot != null) _menuHintRoot.SetActive(true);
             _inputLocked = false;
         }
 
@@ -91,8 +94,11 @@ namespace PilgrimOfSin.StateMachine
             if (_isBlending) UpdateBlend();
 
             // ── ESC 暫停選單：Hub 沒有玩家 FSM（沒有 PausedState），這裡自己接 ──
+            // 手把直讀是必要的備援：手把第一次被摸到那一下，currentControlScheme 還沒切過去
+            // "Gamepad"，_input.PausePressed 會用舊方案判斷而吃不到那一下，需要直接讀裝置原始狀態。
             bool pausePressed = (_input != null && _input.PausePressed)
-                                || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
+                                || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
+                                || (Gamepad.current?.startButton.wasPressedThisFrame ?? false);
             if (pausePressed)
             {
                 if (_pauseMenuOpen) ClosePauseMenu();

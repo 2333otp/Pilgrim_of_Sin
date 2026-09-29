@@ -9,9 +9,20 @@ namespace PilgrimOfSin
     /// </summary>
     public static class InputBindingUtility
     {
-        /// <summary>取得目前使用中的 ControlScheme 名稱，偵測不到時預設回傳 "Gamepad"。</summary>
+        /// <summary>
+        /// 取得目前使用中的 ControlScheme 名稱，偵測不到時預設回傳 "Gamepad"。
+        ///
+        /// 【手把插著但還沒被摸過時，優先顯示手把圖示】
+        /// 鍵盤/滑鼠在 PlayerInputReader.OnEnable() 就會主動配對，手把則刻意保持未配對
+        /// （見 PlayerInputReader.cs 註解），玩家實際按下手把前，PlayerInput.currentControlScheme
+        /// 會一路停在 "Keyboard&Mouse"——這只是配對順序的技術結果，不代表玩家真的在用鍵盤。
+        /// 鍵盤的按鍵圖示素材目前也還沒補齊，所以只要偵測到有手把裝置存在，一律優先顯示
+        /// 手把圖示，避免玩家一進場景看到的操作提示是空白的。
+        /// </summary>
         public static string GetCurrentScheme(PlayerInput playerInput)
         {
+            if (Gamepad.current != null) return "Gamepad";
+
             return playerInput != null && !string.IsNullOrEmpty(playerInput.currentControlScheme)
                 ? playerInput.currentControlScheme
                 : "Gamepad";

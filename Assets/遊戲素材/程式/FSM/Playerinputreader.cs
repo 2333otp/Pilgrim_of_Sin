@@ -44,7 +44,15 @@ namespace PilgrimOfSin.StateMachine
         private void OnUnpairedDeviceUsed(InputControl control, InputEventPtr eventPtr)
         {
             if (control.device is Gamepad gamepad)
+            {
                 PairDevice(gamepad);
+                // 關掉 Unity 內建自動切換（m_NeverAutoSwitchControlSchemes）後，
+                // 配對本身不會再順便切換 currentControlScheme，要在這裡手動補上，
+                // 否則手把第一次被摸到那一下只完成配對、方案還沒切過去，
+                // 導致那次按鍵對應的 Action 用舊方案判斷、被吃掉，要按第二次才有反應。
+                if (_playerInput.currentControlScheme != "Gamepad")
+                    _playerInput.SwitchCurrentControlScheme("Gamepad", gamepad);
+            }
         }
 
         private void PairDevice(InputDevice device)
