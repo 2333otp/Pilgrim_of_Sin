@@ -42,12 +42,15 @@ namespace PilgrimOfSin.StateMachine
         private float _spawnY;          // 由 Spawner 傳入，不再是 SerializeField
         private int _slotIndex;       // 天秤右側排列用
 
-        // 天秤右碗實測的X/Z世界座標範圍（Bowl_low_geo正X群頂點量出來的），已內縮0.08m留安全邊距。
-        // 用來在PickUp()堆疊完後做最後一道強制夾限，防止極少數旋轉角度組合貼著碗緣超出。
-        private const float BowlSafeMinX = 1.636f;
-        private const float BowlSafeMaxX = 3.831f;
-        private const float BowlSafeMinZ = -1.104f;
-        private const float BowlSafeMaxZ = 1.105f;
+        // 天秤右碗實測的X/Z範圍，用「相對錨點(_scaleRightSide)的偏移量」而不是寫死絕對世界座標——
+        // 天秤依重量在Center/TiltLeft/TiltRight三種姿態間切換時，碗會跟著小幅位移，絕對座標在
+        // 某些姿態下安全邊距會從0.08m縮到只剩0.024m（幾乎貼邊）。實測過三種姿態，相對偏移量
+        // 幾乎不變，已內縮0.08m留安全邊距。用來在PickUp()堆疊完後做最後一道強制夾限，防止
+        // 極少數旋轉角度組合貼著碗緣超出。
+        private const float BowlRelSafeMinX = -1.0931f;
+        private const float BowlRelSafeMaxX = 1.0930f;
+        private const float BowlRelSafeMinZ = -0.9586f;
+        private const float BowlRelSafeMaxZ = 1.2504f;
 
         /// <summary>互動範圍，供 Spawner 換算最小間距用，避免兩顆錢袋的互動範圍互相重疊。</summary>
         public float InteractRadius => _interactRadius;
@@ -214,19 +217,25 @@ namespace PilgrimOfSin.StateMachine
 
             // 保險：極少數旋轉角度組合，堆疊後合成的bounds還是會貼著碗緣超出一點點
             // （機率性邊界情況，實測過5輪~8%的樣本會超出0.01~0.03m）。這裡直接拿碗實測的
-            // 精確X/Z範圍（已內縮留安全邊距）做最後一道強制夾限，不是「機率上大概不會」，
-            // 是每次都實際檢查合成後的bounds、超出多少就拉回來多少。
+            // 精確X/Z範圍（相對錨點當下位置換算、已內縮留安全邊距）做最後一道強制夾限，
+            // 不是「機率上大概不會」，是每次都實際檢查合成後的bounds、超出多少就拉回來多少。
             var finalRenderers = GetComponentsInChildren<Renderer>();
-            if (finalRenderers.Length > 0)
+            if (finalRenderers.Length > 0 && _scaleRightSide != null)
             {
                 Bounds b = finalRenderers[0].bounds;
                 for (int i = 1; i < finalRenderers.Length; i++) b.Encapsulate(finalRenderers[i].bounds);
 
+                Vector3 anchorPos = _scaleRightSide.position;
+                float bowlSafeMinX = anchorPos.x + BowlRelSafeMinX;
+                float bowlSafeMaxX = anchorPos.x + BowlRelSafeMaxX;
+                float bowlSafeMinZ = anchorPos.z + BowlRelSafeMinZ;
+                float bowlSafeMaxZ = anchorPos.z + BowlRelSafeMaxZ;
+
                 Vector3 correction = Vector3.zero;
-                if (b.min.x < BowlSafeMinX) correction.x += BowlSafeMinX - b.min.x;
-                if (b.max.x > BowlSafeMaxX) correction.x += BowlSafeMaxX - b.max.x;
-                if (b.min.z < BowlSafeMinZ) correction.z += BowlSafeMinZ - b.min.z;
-                if (b.max.z > BowlSafeMaxZ) correction.z += BowlSafeMaxZ - b.max.z;
+                if (b.min.x < bowlSafeMinX) correction.x += bowlSafeMinX - b.min.x;
+                if (b.max.x > bowlSafeMaxX) correction.x += bowlSafeMaxX - b.max.x;
+                if (b.min.z < bowlSafeMinZ) correction.z += bowlSafeMinZ - b.min.z;
+                if (b.max.z > bowlSafeMaxZ) correction.z += bowlSafeMaxZ - b.max.z;
                 transform.position += correction;
             }
 

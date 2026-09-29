@@ -1668,7 +1668,7 @@ MonoBehaviour:
   _scale: {fileID: 41600402}
   _scaleHitbox: {fileID: 1434837447}
   _spawner: {fileID: 942762640}
-  _maxHp: 200
+  _maxHp: 300
   _moveSpeed: 4
   _idleDuration: 1
   _attack1Range: 3
@@ -3160,7 +3160,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1742285223
 Transform:
   m_ObjectHideFlags: 0

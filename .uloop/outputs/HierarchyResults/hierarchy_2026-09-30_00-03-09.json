@@ -1,0 +1,410 @@
+{
+  "ExportTimestamp": "2026-09-30 00:03:09",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 25,
+    "maxDepth": 0
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 25,
+        "nodeCount": 25,
+        "maxDepth": 0
+      },
+      "componentsLut": [
+        "Transform",
+        "Camera",
+        "AudioListener",
+        "CinemachineBrain",
+        "UniversalAdditionalCameraData",
+        "Light",
+        "UniversalAdditionalLightData",
+        "MeshFilter",
+        "MeshRenderer",
+        "MeshCollider",
+        "Animator",
+        "Rigidbody",
+        "GreedBossController",
+        "CapsuleCollider",
+        "ScaleObject",
+        "BoxCollider",
+        "PlayerInput",
+        "PlayerInputReader",
+        "PlayerController",
+        "PlayerCombat",
+        "PlayerWeaponVisual",
+        "CameraController",
+        "EventSystem",
+        "InputSystemUIInputModule",
+        "BossResultPortal",
+        "MoneybagSpawner",
+        "RectTransform",
+        "Canvas",
+        "CanvasScaler",
+        "GraphicRaycaster",
+        "GreedBattleHUD",
+        "WeaponHUDUI",
+        "LockOnMarkerUI",
+        "CombatHUD",
+        "PauseMenuUI",
+        "GameProgressManager",
+        "CanvasGroup",
+        "LevelClearNotification",
+        "AudioSource"
+      ],
+      "roots": [
+        {
+          "name": "Main Camera",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "siblingIndex": 0,
+          "tag": "MainCamera",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Directional Light",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            5,
+            6
+          ],
+          "siblingIndex": 1,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "地板",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            9
+          ],
+          "siblingIndex": 2,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "GreedBoss",
+          "isActive": false,
+          "componentsIdx": [
+            0,
+            10,
+            11,
+            12,
+            13,
+            8,
+            7
+          ],
+          "siblingIndex": 3,
+          "tag": "Untagged",
+          "layer": 6,
+          "children": []
+        },
+        {
+          "name": "Scale",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            14,
+            15,
+            15,
+            15
+          ],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Player",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            15,
+            16,
+            11,
+            10,
+            17,
+            18,
+            19,
+            20
+          ],
+          "siblingIndex": 5,
+          "tag": "Player",
+          "layer": 8,
+          "children": []
+        },
+        {
+          "name": "CameraManager",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            21
+          ],
+          "siblingIndex": 6,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "EventSystem",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            22,
+            23
+          ],
+          "siblingIndex": 7,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "BossResultPortal",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            24
+          ],
+          "siblingIndex": 8,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Chicken",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            10,
+            11,
+            12,
+            13,
+            25
+          ],
+          "siblingIndex": 9,
+          "tag": "Untagged",
+          "layer": 6,
+          "children": []
+        },
+        {
+          "name": "GameplayCanvas",
+          "isActive": true,
+          "componentsIdx": [
+            26,
+            27,
+            28,
+            29,
+            30
+          ],
+          "siblingIndex": 10,
+          "tag": "Untagged",
+          "layer": 5,
+          "children": []
+        },
+        {
+          "name": "CombatHUD",
+          "isActive": true,
+          "componentsIdx": [
+            26,
+            27,
+            28,
+            29,
+            31,
+            32,
+            33
+          ],
+          "siblingIndex": 11,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "PauseCanvas",
+          "isActive": false,
+          "componentsIdx": [
+            26,
+            27,
+            28,
+            29,
+            34
+          ],
+          "siblingIndex": 12,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "GameProgressManager",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            35
+          ],
+          "siblingIndex": 13,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "LevelClearNotification",
+          "isActive": true,
+          "componentsIdx": [
+            26,
+            27,
+            28,
+            36,
+            37
+          ],
+          "siblingIndex": 14,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "greedy_low",
+          "isActive": true,
+          "componentsIdx": [
+            0
+          ],
+          "siblingIndex": 15,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "ColumnRelief_01_low",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8
+          ],
+          "siblingIndex": 16,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Pedestal_low_geo",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            9
+          ],
+          "siblingIndex": 17,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Pillar_low_geo",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8
+          ],
+          "siblingIndex": 18,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "DoorHandle_low_geo",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            9
+          ],
+          "siblingIndex": 19,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "Door_Relief_low_geo",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8,
+            9
+          ],
+          "siblingIndex": 20,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "CameraSafetyBounds",
+          "isActive": true,
+          "componentsIdx": [
+            0
+          ],
+          "siblingIndex": 21,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "ColumnRelief_03_low_geo",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8
+          ],
+          "siblingIndex": 22,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "ColumnRelief_04_low_geo",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            7,
+            8
+          ],
+          "siblingIndex": 23,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        },
+        {
+          "name": "BGM",
+          "isActive": true,
+          "componentsIdx": [
+            0,
+            38
+          ],
+          "siblingIndex": 24,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

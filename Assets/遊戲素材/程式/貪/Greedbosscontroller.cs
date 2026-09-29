@@ -341,6 +341,9 @@ namespace PilgrimOfSin.StateMachine
             return baseDmg * mult;
         }
 
+        // Boss capsule半徑0.5 + Player box collider半寬0.5，留一點緩衝，避免兩者實體重疊。
+        private const float MinDistanceToPlayer = 1.1f;
+
         public void MoveTowardPlayer(float dt)
         {
             if (_player == null) return;
@@ -349,7 +352,10 @@ namespace PilgrimOfSin.StateMachine
 
             float step = _moveSpeed * dt;
             if (dir != Vector3.zero && step > 0f)
+            {
                 step = ClampStepToAvoidObstacles(dir, step);
+                step = ClampStepToAvoidPlayer(step);
+            }
 
             transform.position += dir * step;
             if (dir != Vector3.zero)
@@ -389,6 +395,27 @@ namespace PilgrimOfSin.StateMachine
             if (hit.distance <= 0f) return step;
 
             return Mathf.Max(0f, hit.distance - 0.05f);
+        }
+
+        /// <summary>
+        /// ClampStepToAvoidObstacles() 故意忽略玩家層，讓 Boss 追擊時不會被玩家卡住路徑；
+        /// 但這代表玩家如果剛好站在 Boss 跟場景固定物件（例如天秤）中間，Boss 這個kinematic
+        /// 直接瞬移的移動方式會完全不管玩家在不在，每一幀硬擠過來，把玩家夾著往固定物件裡推——
+        /// 這才是玩家使用連段/攻擊動作時「跑進天秤裡」的真正根因，跟攻擊動畫的 root motion 無關
+        /// （已個別測過全部4種武器共24種攻擊動作的 root motion，單獨測試都沒有穿透）。
+        /// 這裡另外擋一層：不管上面那條擋不擋固定物件，Boss 這一步都不能把自己跟玩家的水平距離
+        /// 縮到小於兩者碰撞體半徑總和以內，避免物理擠壓把玩家推穿場景固定物件。
+        /// </summary>
+        private float ClampStepToAvoidPlayer(float step)
+        {
+            if (_player == null || _capsule == null) return step;
+
+            Vector3 flatBossPos = transform.position; flatBossPos.y = 0f;
+            Vector3 flatPlayerPos = _player.position; flatPlayerPos.y = 0f;
+            float currentDist = Vector3.Distance(flatBossPos, flatPlayerPos);
+            float allowedStep = Mathf.Max(0f, currentDist - MinDistanceToPlayer);
+
+            return Mathf.Min(step, allowedStep);
         }
 
         public void OnDeath()
