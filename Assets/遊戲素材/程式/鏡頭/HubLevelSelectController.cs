@@ -96,12 +96,23 @@ namespace PilgrimOfSin.StateMachine
             // ── ESC 暫停選單：Hub 沒有玩家 FSM（沒有 PausedState），這裡自己接 ──
             // 手把直讀是必要的備援：手把第一次被摸到那一下，currentControlScheme 還沒切過去
             // "Gamepad"，_input.PausePressed 會用舊方案判斷而吃不到那一下，需要直接讀裝置原始狀態。
-            bool pausePressed = (_input != null && _input.PausePressed)
-                                || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
-                                || (Gamepad.current?.startButton.wasPressedThisFrame ?? false);
-            if (pausePressed)
+            // 手把 Options 與鍵盤 Esc 分開：選單開著時 Options 直接關閉整個選單（操作說明頁／確認框內不作用，
+            // 只有 ✕ 能退）；Esc 維持先退一層子面板（鍵盤沒有 ✕）。
+            bool startPressed = Gamepad.current?.startButton.wasPressedThisFrame ?? false;
+            bool keyboardPause = (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
+                                 || (_input != null && _input.PausePressed && !startPressed);
+            if (startPressed || keyboardPause)
             {
-                if (_pauseMenuOpen) ClosePauseMenu();
+                if (_pauseMenuOpen)
+                {
+                    if (startPressed)
+                    {
+                        var menu = PauseMenuUI.Instance;
+                        if (menu != null && menu.IgnoreGamepadStartNow) return;
+                        ClosePauseMenu(force: true);
+                    }
+                    else ClosePauseMenu();
+                }
                 else OpenPauseMenu();
                 return;
             }
@@ -163,16 +174,16 @@ namespace PilgrimOfSin.StateMachine
             }
             if (menu == null) return;
 
-            menu.Show(_input, ClosePauseMenu);
+            menu.Show(_input, () => ClosePauseMenu());
             _pauseMenuOpen = true;
         }
 
-        private void ClosePauseMenu()
+        private void ClosePauseMenu(bool force = false)
         {
             var menu = PauseMenuUI.Instance;
             if (menu != null)
             {
-                if (menu.ConsumeEscIfSubPanelOpen()) return; // 先退子面板，選單不關
+                if (!force && menu.ConsumeEscIfSubPanelOpen()) return; // 先退子面板，選單不關
                 menu.Hide();
             }
             _pauseMenuOpen = false;

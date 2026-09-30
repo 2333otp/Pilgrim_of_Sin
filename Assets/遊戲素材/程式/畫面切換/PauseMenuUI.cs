@@ -622,6 +622,16 @@ namespace PilgrimOfSin
         }
 
         /// <summary>
+        /// 手把 Options 在這些頁面不作用（操作說明頁要讓玩家測按鍵反紅；確認框只能用 ✕ 取消）。
+        /// 其他頁 Options 直接關閉整個選單；鍵盤 Esc 不受此限（鍵盤沒有 ✕，Esc 仍是退一層）。
+        /// </summary>
+        public bool IgnoreGamepadStartNow =>
+            _currentSubPanel != null && _currentSubPanel.activeSelf &&
+            (_currentSubPanel == _controlsSubPanel ||
+             _currentSubPanel == _returnHubConfirmPanel ||
+             _currentSubPanel == _returnMainMenuConfirmPanel);
+
+        /// <summary>
         /// 若目前有子面板或玩家狀態頁開著，關閉上一層並回傳 true。
         /// PausedState 收到 true 時不恢復遊戲。
         /// </summary>

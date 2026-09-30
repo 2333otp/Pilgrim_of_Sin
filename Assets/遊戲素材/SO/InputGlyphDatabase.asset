@@ -56,6 +56,6 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: b46a2dff625c61849ba7f89aa3f70174, type: 3}
     pressedSprite: {fileID: 21300000, guid: 434e90e5640da8d45aedac8db788f977, type: 3}
   - controlPath: <Gamepad>/start
-    sprite: {fileID: 21300000, guid: 65cd0dd415a2a4e459cfc6ee5f0976aa, type: 3}
+    sprite: {fileID: 21300000, guid: 3b9b41347f721454b86741d36f4509ad, type: 3}
     pressedSprite: {fileID: 21300000, guid: 44e8da73490934643bf3c338acf6761d, type: 3}
   _keyboardEntries: []

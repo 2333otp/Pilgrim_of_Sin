@@ -838,12 +838,20 @@ namespace PilgrimOfSin.StateMachine
         {
             // 游標解鎖後 Game View 可能失焦，PlayerInput 不再送 OnPause()
             // 因此直接讀取 Keyboard.current 作為備援，確保 ESC 在任何情況下都能恢復
-            bool escPressed = Input.PausePressed
-                              || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false);
+            // 手把 Options（start）與鍵盤 Esc 分開處理：
+            //  · Options：操作說明頁／確認框不作用（只有 ✕ 能退）；其他情況直接關閉整個選單。
+            //  · Esc：維持「先退一層子面板，沒有才恢復遊戲」（鍵盤沒有 ✕）。
+            bool startPressed = Gamepad.current?.startButton.wasPressedThisFrame ?? false;
+            bool keyboardPause = (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
+                                 || (Input.PausePressed && !startPressed);
 
-            if (escPressed)
+            if (startPressed && PilgrimOfSin.PauseMenuUI.Instance != null &&
+                PilgrimOfSin.PauseMenuUI.Instance.IgnoreGamepadStartNow)
+                return;
+
+            if (startPressed || keyboardPause)
             {
-                if (PilgrimOfSin.PauseMenuUI.Instance != null &&
+                if (!startPressed && PilgrimOfSin.PauseMenuUI.Instance != null &&
                     PilgrimOfSin.PauseMenuUI.Instance.ConsumeEscIfSubPanelOpen())
                     return;
 

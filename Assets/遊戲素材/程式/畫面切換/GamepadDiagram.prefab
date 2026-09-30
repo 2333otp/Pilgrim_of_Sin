@@ -93,6 +93,7 @@ MonoBehaviour:
   _image: {fileID: 6092911359312755532}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &308882725515425042
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,6 +314,7 @@ MonoBehaviour:
   _image: {fileID: 329087809536725109}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &1477085297666774044
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,7 +350,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.216, y: 0.5556}
   m_AnchorMax: {x: 0.216, y: 0.5556}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 27}
   m_SizeDelta: {x: 246.4, y: 246.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7800403582777155994
@@ -406,6 +408,7 @@ MonoBehaviour:
   _image: {fileID: 6671538822582418641}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &2511006205812569193
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,6 +502,7 @@ MonoBehaviour:
   _image: {fileID: 6103742719490710959}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &3662275598385197974
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,6 +596,7 @@ MonoBehaviour:
   _image: {fileID: 820687586082389538}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &5294576372178684748
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +690,7 @@ MonoBehaviour:
   _image: {fileID: 7250576502677369671}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &5523159605469845442
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,7 +726,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.6377, y: 0.2218}
   m_AnchorMax: {x: 0.6377, y: 0.2218}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 10, y: 0}
   m_SizeDelta: {x: 205, y: 205}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8300993349538905051
@@ -778,6 +784,7 @@ MonoBehaviour:
   _image: {fileID: 4241149250918461715}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &5717206070767453644
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,8 +820,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.7823, y: 0.5897}
   m_AnchorMax: {x: 0.7823, y: 0.5897}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 79, y: 79}
+  m_AnchoredPosition: {x: 1, y: 12}
+  m_SizeDelta: {x: 88.8934, y: 88.8934}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3703088010547724840
 CanvasRenderer:
@@ -871,6 +878,7 @@ MonoBehaviour:
   _image: {fileID: 8549902435002121991}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &6069771780163772471
 GameObject:
   m_ObjectHideFlags: 0
@@ -964,6 +972,7 @@ MonoBehaviour:
   _image: {fileID: 939164629503818895}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &7021001740565250456
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,8 +1008,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.6732, y: 0.7372}
   m_AnchorMax: {x: 0.6732, y: 0.7372}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: 0.000091552734, y: -43.382004}
+  m_SizeDelta: {x: 130.19, y: 130.1861}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4890319300056213724
 CanvasRenderer:
@@ -1030,7 +1039,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 65cd0dd415a2a4e459cfc6ee5f0976aa, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3b9b41347f721454b86741d36f4509ad, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1057,6 +1066,7 @@ MonoBehaviour:
   _image: {fileID: 8436294077758436128}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &7261869050296599517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1092,8 +1102,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.7823, y: 0.3986}
   m_AnchorMax: {x: 0.7823, y: 0.3986}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 79, y: 79}
+  m_AnchoredPosition: {x: 1.0000305, y: -12.009308}
+  m_SizeDelta: {x: 88.8934, y: 88.8934}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7593254651196016069
 CanvasRenderer:
@@ -1150,6 +1160,7 @@ MonoBehaviour:
   _image: {fileID: 2085404848856577943}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &7300761804456115140
 GameObject:
   m_ObjectHideFlags: 0
@@ -1185,8 +1196,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.7284, y: 0.4948}
   m_AnchorMax: {x: 0.7284, y: 0.4948}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 79, y: 79}
+  m_AnchoredPosition: {x: -11.038757, y: 0.07699013}
+  m_SizeDelta: {x: 88.8934, y: 88.8934}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6799812815298682670
 CanvasRenderer:
@@ -1243,6 +1254,7 @@ MonoBehaviour:
   _image: {fileID: 8187455297872339462}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &7895522793941734784
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,8 +1290,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.8362, y: 0.4948}
   m_AnchorMax: {x: 0.8362, y: 0.4948}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 79, y: 79}
+  m_AnchoredPosition: {x: 13.038879, y: 0.07699013}
+  m_SizeDelta: {x: 88.8934, y: 88.8934}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &482590639424232802
 CanvasRenderer:
@@ -1336,6 +1348,7 @@ MonoBehaviour:
   _image: {fileID: 3742728499442377370}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &8036809754665331725
 GameObject:
   m_ObjectHideFlags: 0
@@ -1371,7 +1384,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.3623, y: 0.2218}
   m_AnchorMax: {x: 0.3623, y: 0.2218}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -20, y: 0}
   m_SizeDelta: {x: 205, y: 205}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3990733600732902709
@@ -1429,6 +1442,7 @@ MonoBehaviour:
   _image: {fileID: 1323044905228728531}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1
 --- !u!1 &8448892570074709016
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,3 +1611,4 @@ MonoBehaviour:
   _image: {fileID: 2970643051566527133}
   _playerInput: {fileID: 0}
   _forcedScheme: Gamepad
+  _bringToFrontWhenPressed: 1

@@ -28,9 +28,58 @@ namespace PilgrimOfSin
                  "（給「手把示意圖」這種本身就固定畫的是某一種裝置外觀的整體圖用，不會因為玩家換鍵盤操作就變成別的東西）。")]
         [SerializeField] private string _forcedScheme;
 
+        [Tooltip("按下時把這個圖示移到同層最前面，放開後還原原本的排序。" +
+                 "給「手把示意圖」用（方向鍵四塊圖會互相重疊，反紅圖要完整顯示在最上層）。" +
+                 "操作說明「列表」是自動排版，絕對不能開，否則整個列表順序會亂掉。")]
+        [SerializeField] private bool _bringToFrontWhenPressed;
+
         private string _lastScheme;
         private bool _isPressed;
         private InputAction _boundAction;
+        private bool _isFront;
+
+        // 按下狀態 = 動作事件 OR 直接讀裝置。只靠動作事件的話，玩家剛從鍵鼠改用手把的第一下，
+        // PlayerInput 的 currentControlScheme 還沒切過去，手把綁定被遮罩而吃掉那一下（同 ShouldPause() 的備援理由），
+        // 所以多一條直接讀裝置的路徑補上。
+        private bool _eventPressed;
+        private bool _polledPressed;
+        private readonly System.Collections.Generic.List<string> _pollPaths = new System.Collections.Generic.List<string>();
+        private const float PollThreshold = 0.35f; // 搖桿／類比扳機的判定門檻
+
+        // 同一個父物件底下可能有多顆同時被按住：記錄原始排序，全部放開後才一次還原，避免順序漂移。
+        private class FrontState { public System.Collections.Generic.List<Transform> order; public int count; }
+        private static readonly System.Collections.Generic.Dictionary<Transform, FrontState> s_front =
+            new System.Collections.Generic.Dictionary<Transform, FrontState>();
+
+        private void SetFront(bool front)
+        {
+            if (!_bringToFrontWhenPressed || front == _isFront) return;
+            Transform parent = transform.parent;
+            if (parent == null) return;
+
+            if (front)
+            {
+                if (!s_front.TryGetValue(parent, out FrontState st))
+                {
+                    st = new FrontState { order = new System.Collections.Generic.List<Transform>() };
+                    foreach (Transform c in parent) st.order.Add(c);
+                    s_front[parent] = st;
+                }
+                st.count++;
+                transform.SetAsLastSibling();
+                _isFront = true;
+            }
+            else
+            {
+                _isFront = false;
+                if (s_front.TryGetValue(parent, out FrontState st) && --st.count <= 0)
+                {
+                    for (int i = 0; i < st.order.Count; i++)
+                        if (st.order[i] != null) st.order[i].SetSiblingIndex(i);
+                    s_front.Remove(parent);
+                }
+            }
+        }
 
         /// <summary>動態指定要監聽的 Action 與圖示資料庫（給動態生成的清單行使用；靜態擺放在手把示意圖上的實例則直接在 Inspector 指定即可，不需要呼叫這個）。</summary>
         public void Setup(InputActionReference action, InputGlyphDatabase glyphDatabase)
@@ -54,12 +103,18 @@ namespace PilgrimOfSin
 
             _lastScheme = null;
             _isPressed = false;
+            _eventPressed = false;
+            _polledPressed = false;
 
             SubscribeCurrent();
             Refresh();
         }
 
-        private void OnDisable() => UnsubscribeCurrent();
+        private void OnDisable()
+        {
+            SetFront(false);
+            UnsubscribeCurrent();
+        }
 
         private void SubscribeCurrent()
         {
@@ -89,27 +144,68 @@ namespace PilgrimOfSin
                 _lastScheme = scheme;
                 Refresh();
             }
+
+            _polledPressed = PollPressed();
+            ApplyPressed();
+        }
+
+        /// <summary>直接檢查這個動作在目前方案下所有綁定的實體按鍵／搖桿是否被按住（任一即算）。</summary>
+        private bool PollPressed()
+        {
+            for (int i = 0; i < _pollPaths.Count; i++)
+            {
+                using (var controls = InputSystem.FindControls(_pollPaths[i]))
+                {
+                    foreach (var c in controls)
+                    {
+                        if (c is UnityEngine.InputSystem.Controls.ButtonControl b ? b.isPressed : c.IsActuated(PollThreshold))
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void RebuildPollPaths(string scheme)
+        {
+            _pollPaths.Clear();
+            if (_boundAction == null || string.IsNullOrEmpty(scheme)) return;
+            foreach (var b in _boundAction.bindings)
+            {
+                if (b.isComposite || string.IsNullOrEmpty(b.path)) continue;
+                if (!string.IsNullOrEmpty(b.groups) && System.Array.IndexOf(b.groups.Split(';'), scheme) < 0) continue;
+                _pollPaths.Add(b.path);
+            }
+        }
+
+        private void ApplyPressed()
+        {
+            bool pressed = _eventPressed || _polledPressed;
+            if (pressed == _isPressed) return;
+            _isPressed = pressed;
+            SetFront(pressed);
+            Refresh();
         }
 
         private void OnPerformed(InputAction.CallbackContext ctx)
         {
-            _isPressed = true;
-            Refresh();
+            _eventPressed = true;
+            ApplyPressed();
         }
 
         private void OnCanceled(InputAction.CallbackContext ctx)
         {
-            _isPressed = false;
-            Refresh();
+            _eventPressed = false;
+            ApplyPressed();
         }
 
         private void Refresh()
         {
-            if (_image == null || _boundAction == null || _glyphDatabase == null) return;
-
             string scheme = !string.IsNullOrEmpty(_forcedScheme)
                 ? _forcedScheme
                 : InputBindingUtility.GetCurrentScheme(_playerInput);
+            RebuildPollPaths(scheme);
+            if (_image == null || _boundAction == null || _glyphDatabase == null) return;
             string path = InputBindingUtility.FindBindingPath(_boundAction, scheme);
             if (path == null)
             {

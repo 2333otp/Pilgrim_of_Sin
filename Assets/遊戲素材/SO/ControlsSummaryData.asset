@@ -57,4 +57,4 @@ MonoBehaviour:
     iconScale: 1.3
   - label: "\u66AB\u505C"
     action: {fileID: 8271190178645638590, guid: ddfb3c894ed088544b1e697a5ac49e40, type: 3}
-    iconScale: 1.3
+    iconScale: 1
