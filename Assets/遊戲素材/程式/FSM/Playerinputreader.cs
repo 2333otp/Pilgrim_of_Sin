@@ -89,7 +89,13 @@ namespace PilgrimOfSin.StateMachine
         // ── 攻擊（每幀只有按下那幀為 true） ──────────────────────────
         public bool LightAttackPressed { get; private set; }
         public bool HeavyAttackPressed { get; private set; }
-        public bool SpecialPressed { get; private set; }
+        // 特殊技能有 5 秒 CD 且只有特定狀態才吃得到輸入，按早了/按在不能用的那一幀就整個被吃掉，
+        // 表現就是「按好幾下才有反應」。這裡把按下的輸入保留一小段時間，等狀態機真的能施放
+        // （SpecialSkillState.Enter 會呼叫 ConsumeSpecial()）才清掉。
+        private const float SpecialBufferSeconds = 0.25f;
+        private float _specialBufferedUntil = -1f;
+        public bool SpecialPressed => Time.unscaledTime <= _specialBufferedUntil;
+        public void ConsumeSpecial() => _specialBufferedUntil = -1f;
 
         // ── 動作 ─────────────────────────────────────────────────────
         public bool JumpPressed { get; private set; }
@@ -124,7 +130,6 @@ namespace PilgrimOfSin.StateMachine
         {
             LightAttackPressed = false;
             HeavyAttackPressed = false;
-            SpecialPressed = false;
             JumpPressed = false;
             RollPressed = false;
             WeaponSwitchPressed = false;
@@ -165,7 +170,7 @@ namespace PilgrimOfSin.StateMachine
         { if (value.isPressed) HeavyAttackPressed = true; }
 
         private void OnSpecial(InputValue value)
-        { if (value.isPressed) SpecialPressed = true; }
+        { if (value.isPressed) _specialBufferedUntil = Time.unscaledTime + SpecialBufferSeconds; }
 
         private void OnWeaponSwitch1(InputValue value)
         { if (value.isPressed) { WeaponSwitchPressed = true; WeaponSwitchIndex = 1; } }

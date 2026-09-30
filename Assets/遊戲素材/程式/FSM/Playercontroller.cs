@@ -38,6 +38,18 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _rollDuration = 1.2f; // Roll 動畫實際長度 1.167s，留一點餘裕
         [SerializeField] private float _aerialControl = 0.6f;
 
+        [Header("Jump Feel（有重力感的跳躍）")]
+        [Tooltip("關掉就回到舊版：Impulse 起跳 + Rigidbody 阻力自然衰減（飄、滯空短）。")]
+        [SerializeField] private bool _weightyJump = true;
+        [SerializeField] private float _jumpHeight = 1.6f;          // 起跳最高點高度（公尺）
+        [SerializeField] private float _riseGravityScale = 1.5f;    // 上升時的重力倍率
+        [SerializeField] private float _fallGravityScale = 1.8f;    // 下降時的重力倍率（比上升重，落下有份量）
+        [SerializeField] private float _maxFallSpeed = 20f;
+        [Tooltip("按下跳躍到物理真正起跳的延遲（秒），對齊 Jump 動畫的蓄力段。Jump 動畫 60% 才離地，"
+               + "延遲 = 0.5s / Animator 裡 Jump_* 的播放速度。0 = 立刻起跳。")]
+        [SerializeField] private float _jumpLaunchDelay = 0.22f;
+        public float JumpLaunchDelay => _jumpLaunchDelay;
+
         public float WalkSpeed => _walkSpeed;
         public float SprintSpeed => _sprintSpeed;
         public float RollDuration => _rollDuration;
@@ -61,12 +73,12 @@ namespace PilgrimOfSin.StateMachine
         public bool IsDead => CurrentHp <= 0f;
         public bool IsGrounded { get; private set; }
         public bool IsFalling { get; private set; }
-        // 目前 Animator 只做了 SpecialSkill_Pencil，其他武器（畫筆/畫刀/調色盤）觸發 Trigger 後
-        // 找不到對應的轉場，Animator 會停在原本正在播的動畫（例如跑步）不動，玩家卻已經卡進
-        // SpecialSkillState 動不了、也打不了，表現就是「跑步跑到一半按特殊技能，動畫卡在跑步上」。
-        // 在對應武器的 SpecialSkill 動畫做出來之前，先把非鉛筆武器的特殊技能鎖住，避免踩到這個洞。
-        public bool CanUseSpecial => _specialCdTimer <= 0f
-                                      && (Combat == null || Combat.CurrentWeaponIndex == 1);
+        /// <summary>腳底貼地（短射線），Jump/Fall 用這個判斷真正落地。</summary>
+        public bool IsLanded { get; private set; }
+        public float VerticalVelocity => Rb.linearVelocity.y;
+        // 四把武器的 SpecialSkill_* Animator state 都已接好。新增武器時要先補 state + 轉場才能放行，
+        // 否則 Trigger 找不到轉場，Animator 會停在原本的動畫，玩家卻已卡進 SpecialSkillState 動不了。
+        public bool CanUseSpecial => _specialCdTimer <= 0f;
         public bool CanJump => _jumpCooldownTimer <= 0f;
         public bool EnableWeaponSwitch => _enableWeaponSwitch;
         public PlayerStateType CurrentStateType => _stateMachine?.CurrentStateType ?? PlayerStateType.Idle;
@@ -157,6 +169,7 @@ namespace PilgrimOfSin.StateMachine
         {
             EnsureStateMachine();
             _stateMachine.FixedUpdate(Time.fixedDeltaTime);
+            ApplyPendingRootMotion();
         }
 
         /// <summary>
@@ -169,6 +182,8 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         private void EnsureStateMachine()
         {
+            // Domain Reload 後 ComboBuffer 也會被清空（非序列化），攻擊狀態每幀會因此丟 NullReferenceException
+            ComboBuffer ??= new ComboBuffer();
             if (_stateMachine != null) return;
             Debug.LogWarning("[PlayerController] _stateMachine 是 null（可能是 Play Mode 中途發生了 Domain Reload），重新建立狀態機。");
             BuildStateMachine();
@@ -184,8 +199,48 @@ namespace PilgrimOfSin.StateMachine
         {
             if (_stateMachine == null) return; // 見 EnsureStateMachine() 註解：Domain Reload 後這裡可能還沒被 Update() 救回來
             var state = _stateMachine.CurrentStateType;
-            if (state == PlayerStateType.HeavyAttack || state == PlayerStateType.ComboAttack)
-                Rb.MovePosition(Rb.position + Animator.deltaPosition);
+            if (state == PlayerStateType.LightAttack || state == PlayerStateType.HeavyAttack
+                || state == PlayerStateType.ComboAttack || state == PlayerStateType.SpecialSkill)
+                _pendingRootMotion += Animator.deltaPosition;
+        }
+
+        // OnAnimatorMove 每個渲染幀跑一次，但 Rb.MovePosition 只在下個物理步生效——直接在那裡呼叫，
+        // 一個物理步內多次呼叫會互相覆蓋，而且非 kinematic 的 MovePosition 是瞬移、不會掃描路徑，
+        // 動畫位移稍大就會直接穿進天秤/怪物。所以先累積，到 FixedUpdate 掃描過再一次移動。
+        private Vector3 _pendingRootMotion;
+        private const float RootMotionSkin = 0.02f;
+
+        private void ApplyPendingRootMotion()
+        {
+            Vector3 delta = _pendingRootMotion;
+            _pendingRootMotion = Vector3.zero;
+            if (delta.sqrMagnitude < 1e-10f) return;
+
+            Vector3 horizontal = new Vector3(delta.x, 0f, delta.z);
+            Vector3 move = new Vector3(0f, delta.y, 0f);
+
+            // 最多掃兩輪：第一輪撞到就貼著障礙停下，剩餘位移沿碰撞面滑開再掃一次
+            for (int i = 0; i < 2 && horizontal.sqrMagnitude > 1e-8f; i++)
+            {
+                float dist = horizontal.magnitude;
+                Vector3 dir = horizontal / dist;
+                if (!Rb.SweepTest(dir, out RaycastHit hit, dist + RootMotionSkin, QueryTriggerInteraction.Ignore)
+                    || hit.normal.y > 0.5f) // 地板/緩坡不算擋路
+                {
+                    move += horizontal;
+                    horizontal = Vector3.zero;
+                    break;
+                }
+
+                float allowed = Mathf.Max(0f, hit.distance - RootMotionSkin);
+                move += dir * Mathf.Min(allowed, dist);
+
+                Vector3 rest = horizontal - dir * Mathf.Min(allowed, dist);
+                Vector3 n = new Vector3(hit.normal.x, 0f, hit.normal.z).normalized;
+                horizontal = Vector3.ProjectOnPlane(rest, n);
+            }
+
+            Rb.MovePosition(Rb.position + move);
         }
 
         // ────────────────────────────────────────────────────────────
@@ -244,10 +299,40 @@ namespace PilgrimOfSin.StateMachine
         {
             Vector3 dir = GetCameraRelativeDirection(input);
             Rb.AddForce(dir * _walkSpeed * _aerialControl, ForceMode.Force);
+            ApplyWeightyGravity();
         }
 
         public void ApplyJumpForce()
-            => Rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        {
+            if (!_weightyJump)
+            {
+                Rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+                return;
+            }
+            // 由目標高度反推初速：v = sqrt(2 * g * scale * h)，垂直速度直接設定、水平速度保留
+            float g = Mathf.Abs(Physics.gravity.y) * _riseGravityScale;
+            Vector3 v = Rb.linearVelocity;
+            v.y = Mathf.Sqrt(2f * g * _jumpHeight);
+            Rb.linearVelocity = v;
+        }
+
+        /// <summary>
+        /// Rigidbody.linearDamping（水平要靠它限速）對垂直方向也生效，會讓上升快速衰減、
+        /// 下落被終端速度（g/drag ≈ 2m/s）壓住，表現就是飄、滯空短。這裡每個物理步先把垂直方向
+        /// 被阻力吃掉的量補回去，再依上升/下降套不同的重力倍率。只在 Jump/Fall 狀態呼叫。
+        /// </summary>
+        private void ApplyWeightyGravity()
+        {
+            if (!_weightyJump) return;
+            float dt = Time.fixedDeltaTime;
+            Vector3 v = Rb.linearVelocity;
+            float keep = 1f - Rb.linearDamping * dt;
+            if (keep > 0.01f) v.y /= keep;
+            float scale = v.y > 0f ? _riseGravityScale : _fallGravityScale;
+            v.y += Physics.gravity.y * (scale - 1f) * dt;
+            v.y = Mathf.Max(v.y, -_maxFallSpeed);
+            Rb.linearVelocity = v;
+        }
 
         /// <summary>翻滾方向在 Enter() 時鎖定一次，避免滾動途中搖桿方向改變導致軌跡跑掉。</summary>
         public Vector3 GetRollDirection(Vector2 input)
@@ -400,7 +485,17 @@ namespace PilgrimOfSin.StateMachine
         {
             IsGrounded = Physics.Raycast(transform.position, Vector3.down,
                                          _groundCheckDistance, _groundLayer);
-            IsFalling = !IsGrounded && Rb.linearVelocity.y < -0.1f;
+            // IsGrounded 的射線長度是給「站在地上」用的寬鬆值（場景裡設 1m），角色原點在腳底，
+            // 拿來當落地判定會在離地 1m 就切回 Idle/Walk，Walk 又是 MovePosition 全速位移，
+            // 表現就是「跳躍結束後在空中繼續走」。Jump/Fall 的落地改用貼地的短射線：
+            // 從腳底上方一點往下，只看腳下一小段。
+            IsLanded = Physics.Raycast(transform.position + Vector3.up * LandCheckLift, Vector3.down,
+                                       LandCheckLift + LandCheckDistance, _groundLayer,
+                                       QueryTriggerInteraction.Ignore);
+            IsFalling = !IsLanded && Rb.linearVelocity.y < -0.1f;
         }
+
+        private const float LandCheckLift = 0.1f;
+        private const float LandCheckDistance = 0.12f;
     }
 }

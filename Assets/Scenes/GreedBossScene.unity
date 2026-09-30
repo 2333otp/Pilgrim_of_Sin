@@ -2653,6 +2653,14 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4165858617860116430, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
+      propertyPath: _jumpForce
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4165858617860116430, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
+      propertyPath: _jumpCooldown
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4165858617860116430, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
       propertyPath: _rollDuration
       value: 1.2
       objectReference: {fileID: 0}
@@ -2678,7 +2686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6529558982910083567, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
       propertyPath: m_Center.y
-      value: 0.85
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 6998285119623690126, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
       propertyPath: m_LocalScale.y

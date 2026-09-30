@@ -33,7 +33,9 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _stickSensitivityY = 100f;
 
         [Header("Lock-On Settings")]
-        [SerializeField] private float _lockOnRange = 20f;
+        [SerializeField] private float _lockOnRange = 20f;          // 一般可打物件（錢袋、畫作…）的鎖定距離
+        [Tooltip("Boss 的鎖定距離。Boss 場地大，站在遠端時 20m 內找不到 Boss，按鎖定會完全沒反應。")]
+        [SerializeField] private float _bossLockOnRange = 45f;
         [SerializeField] private LayerMask _enemyLayer = ~0;
         [SerializeField] private float _lockOnLookAtHeight = 2.5f;  // 鎖定時瞄準敵人的高度（從腳底算起）
 
@@ -172,9 +174,9 @@ namespace PilgrimOfSin.StateMachine
             if (_input == null || _lockOnCooldown > 0f) return;
             if (!_input.LockOnPressed) return;
 
-            if (IsLockedOn) Unlock();
-            else TryLockOn();
-            _lockOnCooldown = CooldownDuration;
+            // 鎖定失敗（範圍內沒有目標）不進冷卻，玩家立刻再按一次不會被吃掉
+            if (IsLockedOn) { Unlock(); _lockOnCooldown = CooldownDuration; }
+            else if (TryLockOn()) _lockOnCooldown = CooldownDuration;
         }
 
         private void HandleSwitchInput()
@@ -200,16 +202,17 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 鎖定邏輯 ─────────────────────────────────────────────────
 
-        private void TryLockOn()
+        private bool TryLockOn()
         {
             var enemies = GetEnemiesInRange();
             if (enemies.Count == 0)
-                return;
+                return false;
 
             LockTarget = enemies[0];
             IsLockedOn = true;
             _switchHistory.Clear();
             _switchHistory.Add(LockTarget);
+            return true;
         }
 
         private void Unlock()
@@ -244,24 +247,45 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 輔助 ─────────────────────────────────────────────────────
 
+        private static bool IsBoss(IDamageable d)
+            => d is IBossHealth || d is WrathBossController || d is FoolishBossController;
+
+        /// <summary>
+        /// 可鎖定目標，Boss 排在最前面（其次才是錢袋、畫作等一般可打物件），同類再依距離排序。
+        /// · 以 IDamageable 所在物件的 Transform 當目標，不是打到的 Collider 的 Transform——
+        ///   同一個物件有多個 Collider 時不會重複出現，也不會鎖到某個子物件。
+        /// · Boss 用 _bossLockOnRange，一般物件用 _lockOnRange。
+        /// </summary>
         private List<Transform> GetEnemiesInRange()
         {
-            var hits = Physics.OverlapSphere(_player.position, _lockOnRange, _enemyLayer);
-            var result = new List<Transform>();
+            float searchRadius = Mathf.Max(_lockOnRange, _bossLockOnRange);
+            var hits = Physics.OverlapSphere(_player.position, searchRadius, _enemyLayer);
+            var best = new Dictionary<Transform, (bool boss, float dist)>();
 
             foreach (var hit in hits)
             {
                 if (hit.transform == _player) continue;
                 if (!hit.gameObject.activeInHierarchy) continue;
-                if (hit.GetComponentInParent<IDamageable>() == null) continue;
-                result.Add(hit.transform);
+                var damageable = hit.GetComponentInParent<IDamageable>();
+                if (damageable == null) continue;
+
+                var owner = ((Component)damageable).transform;
+                if (owner == _player) continue;
+                if (damageable is IBossHealth health && health.IsDead) continue;
+
+                bool boss = IsBoss(damageable);
+                float dist = Vector3.Distance(_player.position, hit.ClosestPoint(_player.position));
+                if (dist > (boss ? _bossLockOnRange : _lockOnRange)) continue;
+
+                if (!best.TryGetValue(owner, out var prev) || dist < prev.dist)
+                    best[owner] = (boss, dist);
             }
 
-            result.Sort((a, b) =>
-                Vector3.Distance(_player.position, a.position)
-                .CompareTo(Vector3.Distance(_player.position, b.position)));
-
-            return result;
+            return best
+                .OrderByDescending(kv => kv.Value.boss)
+                .ThenBy(kv => kv.Value.dist)
+                .Select(kv => kv.Key)
+                .ToList();
         }
     }
 }

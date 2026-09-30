@@ -203,6 +203,17 @@ namespace PilgrimOfSin.StateMachine
             _holdTime = 0f;
             SetAnimBool("IsMoving", true);
             SetAnimBool("IsSprinting", false);
+
+            // 只靠 IsMoving 讓 Any State 轉場切到 Locomotion 不夠穩：Any State 轉場
+            // （InterruptionSource=None）在任何轉場進行中都會被擋下，例如技能/攻擊結束後
+            // Idle 的 CrossFade 或動畫收尾混合。此時 Walk 已經用 Move() 全速位移，
+            // 腿卻還沒動，表現就是「先滑行一小段才開始走路」。這裡跟 IdleState 一樣主動
+            // CrossFade，直接打斷進行中的轉場；已經在 Locomotion 就不重播，避免動畫被重置。
+            int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            string locomotion = "Locomotion_" + WeaponSuffix(weaponIndex);
+            var info = Anim.GetCurrentAnimatorStateInfo(0);
+            if (Anim.IsInTransition(0) || !info.IsName(locomotion))
+                CrossFadeAnimation(locomotion, 0.1f);
         }
 
         public override void Update(float dt)
@@ -278,6 +289,8 @@ namespace PilgrimOfSin.StateMachine
         public override PlayerStateType StateType => PlayerStateType.Jump;
 
         private float _airTime; // 起跳後已經過的時間
+        private float _windup;  // 按下跳躍後、物理起跳前的蓄力時間
+        private bool _launched;
         private const float MinAirTime = 0.15f; // 至少滯空這麼久才判斷落地
 
         public JumpState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
@@ -285,13 +298,30 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _airTime = 0f;
+            _windup = 0f;
+            _launched = false;
+            // 見 RollState.Enter() 註解：IsMoving 還是 true 會讓 Any State → Locomotion 切掉跳躍動畫。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             PlayAnimation("Jump");
+            // 物理起跳延到動畫蓄力（深蹲）結束的影格，見 PlayerController._jumpLaunchDelay。
+            if (Player.JumpLaunchDelay <= 0f) Launch();
+        }
+
+        private void Launch()
+        {
+            _launched = true;
             Player.ApplyJumpForce();
         }
 
         public override void Update(float dt)
         {
-            _airTime += dt;
+            if (_launched) _airTime += dt;
+            else
+            {
+                _windup += dt;
+                if (_windup >= Player.JumpLaunchDelay) Launch();
+            }
 
             if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
             if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
@@ -300,15 +330,18 @@ namespace PilgrimOfSin.StateMachine
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
             if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
 
-            // MinAirTime 內不判斷落地，避免起跳第一幀就被 IsGrounded 拉回
-            if (_airTime < MinAirTime) return;
+            // 還在蓄力（沒離地）或 MinAirTime 內不判斷落地，避免起跳第一幀就被拉回 Idle
+            if (!_launched || _airTime < MinAirTime) return;
 
             if (Player.IsFalling) { RequestTransition(PlayerStateType.Fall); return; }
-            if (Player.IsGrounded) { RequestTransition(PlayerStateType.Idle); return; } // 矮跳直接落地
+            // 還在上升不算落地（剛起跳腳底仍貼著地面）
+            if (Player.IsLanded && Player.VerticalVelocity <= 0.5f) { RequestTransition(PlayerStateType.Idle); return; } // 矮跳直接落地
         }
 
         public override void FixedUpdate(float fdt)
-            => Player.MoveAerial(Input.MoveInput);
+        {
+            if (_launched) Player.MoveAerial(Input.MoveInput);
+        }
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -331,7 +364,7 @@ namespace PilgrimOfSin.StateMachine
             if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
             if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
             // 落地
-            if (Player.IsGrounded) { RequestTransition(PlayerStateType.Idle); return; }
+            if (Player.IsLanded) { RequestTransition(PlayerStateType.Idle); return; }
         }
 
         public override void FixedUpdate(float fdt)
@@ -354,6 +387,10 @@ namespace PilgrimOfSin.StateMachine
         {
             _rollTimer = 0f;
             _rollDir = Player.GetRollDirection(Input.MoveInput);
+            // 見 LightAttackState.Enter() 註解：從 Walk/Sprint 進來時 IsMoving 還是 true，
+            // Any State → Locomotion 轉場會在 Roll 轉場結束後立刻成立，把翻滾動畫切掉。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
             Player.SetInvincible(true);
             PlayAnimation("Roll");
         }
@@ -645,6 +682,7 @@ namespace PilgrimOfSin.StateMachine
             // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
+            Input.ConsumeSpecial();
             Player.SetInvincible(true);
             PlayAnimation("SpecialSkill");
             Player.OnSpecialSkillAnimationEnd += HandleAnimEnd;
