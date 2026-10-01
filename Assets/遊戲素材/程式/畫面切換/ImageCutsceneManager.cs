@@ -7,7 +7,7 @@ namespace PilgrimOfSin
     /// <summary>
     /// 過場靜態圖片管理器。
     /// 掛在 ImageCutsceneScene 的 GameObject 上。
-    /// 根據 SceneTransitionManager.LastBossType 隨機選一張對應圖片，
+    /// 依累計通關的 Boss 組合選對應圖片，
     /// 淡入顯示 → 等待 → 淡出 → 回小木屋。
     ///
     /// 【Inspector 設定步驟】
@@ -23,10 +23,9 @@ namespace PilgrimOfSin
         [SerializeField] private Image _displayImage;
         [SerializeField] private CanvasGroup _fadeCanvasGroup;
 
-        [Header("各 Boss 過場圖（可指派多張，隨機選一）")]
-        [SerializeField] private Sprite[] _greedImages;    // 貪：建議 過場貪、過場全
-        [SerializeField] private Sprite[] _wrathImages;    // 嗔：建議 過場嗔、過場全
-        [SerializeField] private Sprite[] _foolishImages;  // 癡：建議 過場癡、過場全
+        [Header("依累計通關組合的過場圖（索引 = 貪1 + 嗔2 + 癡4 的位元組合）")]
+        [Tooltip("0未通關(不用) 1貪 2嗔 3貪嗔 4痴 5貪痴 6嗔痴 7全通關")]
+        [SerializeField] private Sprite[] _comboImages = new Sprite[8];
         [SerializeField] private Sprite[] _defaultImages;  // 找不到對應時的備用圖
 
         [Header("時間設定")]
@@ -38,24 +37,28 @@ namespace PilgrimOfSin
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
 
-            Sprite[] pool = SceneTransitionManager.LastBossType switch
-            {
-                SceneTransitionManager.BossType.Greed   => _greedImages,
-                SceneTransitionManager.BossType.Wrath   => _wrathImages,
-                SceneTransitionManager.BossType.Foolish => _foolishImages,
-                _                                        => _defaultImages,
-            };
+            Sprite sprite = GetComboSprite();
+            if (sprite == null && _defaultImages != null && _defaultImages.Length > 0)
+                sprite = _defaultImages[0];
 
-            if (pool == null || pool.Length == 0)
-                pool = _defaultImages;
-
-            if (pool != null && pool.Length > 0)
-                _displayImage.sprite = pool[Random.Range(0, pool.Length)];
+            if (sprite != null)
+                _displayImage.sprite = sprite;
             else
                 Debug.LogWarning("[ImageCutscene] 沒有可用的過場圖，請在 Inspector 指派 Sprite。");
 
             _fadeCanvasGroup.alpha = 1f;
             StartCoroutine(PlaySequence());
+        }
+
+        private Sprite GetComboSprite()
+        {
+            var gp = GameProgressManager.Instance;
+            if (gp == null || _comboImages == null) return null;
+
+            int mask = (gp.IsBossDefeated(SceneTransitionManager.BossType.Greed)   ? 1 : 0)
+                     | (gp.IsBossDefeated(SceneTransitionManager.BossType.Wrath)   ? 2 : 0)
+                     | (gp.IsBossDefeated(SceneTransitionManager.BossType.Foolish) ? 4 : 0);
+            return mask < _comboImages.Length ? _comboImages[mask] : null;
         }
 
         private IEnumerator PlaySequence()
