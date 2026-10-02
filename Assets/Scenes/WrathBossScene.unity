@@ -227,6 +227,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9177744291080752301, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 9177744291080752301, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 9214742660004753483, guid: 951cb0019413ccd4d8ef55c645fb0d6e, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1586,9 +1594,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.BossResultPortal
   _winDelay: 2.5
-  _loseDelay: 2
-  _restartOnLose: 1
+  _loseDelay: 4
   _levelClearNotification: {fileID: 1213331542}
+  _hudRootsToHideOnDefeat:
+  - {fileID: 199444072}
+  _hudFadeDuration: 0.5
 --- !u!4 &459720253
 Transform:
   m_ObjectHideFlags: 0

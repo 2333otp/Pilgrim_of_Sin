@@ -11,7 +11,6 @@ namespace PilgrimOfSin.StateMachine
     {
         protected GreedBossController Boss { get; }
         protected GreedBossStateMachine Machine { get; }
-        protected Animator Anim => Boss.Animator;
 
         public abstract GreedBossStateType StateType { get; }
 
@@ -28,8 +27,8 @@ namespace PilgrimOfSin.StateMachine
 
         protected void Go(GreedBossStateType next) => Machine.Request(next);
         protected void ForceGo(GreedBossStateType next) => Machine.Force(next);
-        protected void Trigger(string name) => Anim.SetTrigger(name);
-        protected void SetBool(string name, bool v) => Anim.SetBool(name, v);
+        /// <summary>依本狀態切換動畫（對應規則見 GreedBossController.SetAnimState）。</summary>
+        protected void PlayAnim() => Boss.SetAnimState(StateType);
     }
 
     // ════════════════════════════════════════════════════════════════

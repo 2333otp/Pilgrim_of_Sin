@@ -32,6 +32,13 @@ namespace PilgrimOfSin
         /// <summary>目前最後啟動的 Boss 場景（用於小木屋返回後記憶）</summary>
         public static BossType LastBossType { get; private set; } = BossType.None;
 
+        /// <summary>
+        /// 最近一次 Boss 戰是不是失敗收場（玩家死亡）。給過場圖場景判斷用：
+        /// 失敗時播完過場圖一律回小木屋，不接結局名單，停留時間也比較短。
+        /// 進入新的 Boss 場景、或 Boss 被擊敗時會清掉。
+        /// </summary>
+        public static bool LastBattleFailed { get; set; }
+
         // ── 生命週期 ─────────────────────────────────────────────────────
         private void Awake()
         {
@@ -155,6 +162,7 @@ namespace PilgrimOfSin
         {
             if (_isTransitioning) return;
             LastBossType = bossType;
+            LastBattleFailed = false;
             string sceneName = bossType switch
             {
                 BossType.Greed   => GREED_SCENE,
@@ -215,7 +223,15 @@ namespace PilgrimOfSin
 
         private IEnumerator FadeIn()
         {
-            if (_fadeCanvasGroup == null) yield break;
+            // 沒有淡入淡出用的 Canvas（例如小木屋場景的 TestBootstrap 管理器、或 Canvas 已隨場景被銷毀）時，
+            // 不能直接 yield break：_isTransitioning 是在這個協程「最後」才設回 false 的，
+            // 提早離開會讓它永遠卡在 true，之後所有 LoadXxx() 都被 `if (_isTransitioning) return;`
+            // 默默擋掉——表現就是「失敗/通關提示播完了，卻怎麼都不切到過場圖、停在原場景」。
+            if (_fadeCanvasGroup == null)
+            {
+                _isTransitioning = false;
+                yield break;
+            }
 
             float elapsed = 0f;
             _fadeCanvasGroup.alpha = 1f;

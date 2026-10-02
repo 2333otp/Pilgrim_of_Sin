@@ -56,7 +56,7 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 戰鬥參數 ─────────────────────────────────────────────────
         [Header("Combat")]
-        [SerializeField] private float _maxHp = 11000f;
+        [SerializeField] private float _maxHp = 9000f;
         [SerializeField] private float _stunDuration = 1.2f; // Damage_* 動畫實際長度 1.167s，留一點餘裕
         [SerializeField] private float _specialCd = 5f;
         [SerializeField] private float _weaponSwitchCd = 1.5f;

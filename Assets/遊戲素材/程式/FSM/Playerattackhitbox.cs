@@ -13,11 +13,22 @@ namespace PilgrimOfSin.StateMachine
         private float _damage;
         private readonly HashSet<IDamageable> _hitTargets = new HashSet<IDamageable>();
 
+        /// <summary>
+        /// 這一次揮擊是否已經打到 Boss（IBossHealth）。給天秤判斷用：同一次揮擊如果已經打到 Boss，
+        /// 就不該同時算成「攻擊天秤」，否則站在天秤旁邊打 Boss 會誤觸天秤重製。
+        /// </summary>
+        public bool HitBossThisSwing { get; private set; }
+
+        /// <summary>每次揮擊（Activate）加 1。讓「一次揮擊碰到多個碰撞體」的對象（例如天秤）能辨認同一擊、只處理一次。</summary>
+        public int SwingId { get; private set; }
+
         /// <summary>啟用前設定傷害值並清空命中記錄。</summary>
         public void Activate(float damage)
         {
             _damage = damage;
             _hitTargets.Clear();
+            HitBossThisSwing = false;
+            SwingId++;
             gameObject.SetActive(true);
         }
 
@@ -30,6 +41,7 @@ namespace PilgrimOfSin.StateMachine
             if (_hitTargets.Contains(target)) return;
 
             _hitTargets.Add(target);
+            if (target is IBossHealth) HitBossThisSwing = true;
             target.TakeDamage(_damage);
         }
 

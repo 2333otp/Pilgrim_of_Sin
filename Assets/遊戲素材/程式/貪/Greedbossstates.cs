@@ -16,7 +16,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _timer = Boss.IdleDuration;
-            Trigger("Idle");
+            PlayAnim();
         }
 
         public override void Update(float dt)
@@ -24,14 +24,16 @@ namespace PilgrimOfSin.StateMachine
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
             if (Boss.IsInBalanceWindow) return;
 
+            Boss.FacePlayer(dt);   // 待機時持續面向玩家，出招時才不會對著空氣揮
+
             _timer -= dt;
             if (_timer > 0f) return;
 
             float dist = Boss.DistanceToPlayer;
-            if (dist <= Boss.Attack1Range)           Go(GreedBossStateType.Attack1);
-            else if (dist <= Boss.Attack2Range)      Go(GreedBossStateType.Attack2);
-            else if (dist <= Boss.Attack3Range)      Go(GreedBossStateType.Attack3);
-            else                                     Go(GreedBossStateType.Move);
+            if (dist <= Boss.Attack1Range)                                   Go(GreedBossStateType.Attack1);
+            else if (Boss.UseAttack2And3 && dist <= Boss.Attack2Range)       Go(GreedBossStateType.Attack2);
+            else if (Boss.UseAttack2And3 && dist <= Boss.Attack3Range)       Go(GreedBossStateType.Attack3);
+            else                                                             Go(GreedBossStateType.Move);
         }
     }
 
@@ -46,7 +48,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Enter()
         {
-            Trigger("Move");
+            PlayAnim();
         }
 
         public override void FixedUpdate(float dt)
@@ -83,13 +85,7 @@ namespace PilgrimOfSin.StateMachine
         {
             _animDone = false;
             _fallbackTimer = 0f;
-            string triggerName = _type switch
-            {
-                GreedBossStateType.Attack1 => "Attack1",
-                GreedBossStateType.Attack2 => "Attack2",
-                _ => "Attack3",
-            };
-            Trigger(triggerName);
+            PlayAnim();
             Boss.OnAttackAnimEnd += HandleAnimEnd;
         }
 
@@ -97,6 +93,7 @@ namespace PilgrimOfSin.StateMachine
         {
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
             _fallbackTimer += dt;
+            if (_fallbackTimer < Boss.AttackTrackDuration) Boss.FacePlayer(dt);   // 前搖期間持續瞄準，砸下前鎖定方向
             if (_animDone || _fallbackTimer >= FallbackDuration) Go(GreedBossStateType.Idle);
         }
 
@@ -123,7 +120,7 @@ namespace PilgrimOfSin.StateMachine
         {
             _animDone = false;
             _fallbackTimer = 0f;
-            Trigger("KickScale");
+            PlayAnim();   // 目前沒有專屬踢天秤動畫 → 回到 Idle 姿勢（若從跑步中被強制打斷也會停下）
             Boss.OnKickScaleAnimEnd += HandleAnimEnd;
             Boss.PlayScaleBreak(); // 天秤播 Break 動畫 + 傷害碰撞體脈衝
         }
@@ -163,7 +160,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _timer = Boss.StaggerDuration;
-            Trigger("Stagger");
+            PlayAnim();
         }
 
         public override void Update(float dt)
@@ -185,7 +182,7 @@ namespace PilgrimOfSin.StateMachine
 
         public override void Enter()
         {
-            Trigger("Dead");
+            PlayAnim();
             Boss.OnDeath();
         }
     }

@@ -24,16 +24,24 @@ namespace PilgrimOfSin
         [SerializeField] private CanvasGroup _fadeCanvasGroup;
 
         [Header("依累計通關組合的過場圖（索引 = 貪1 + 嗔2 + 癡4 的位元組合）")]
-        [Tooltip("0未通關(不用) 1貪 2嗔 3貪嗔 4痴 5貪痴 6嗔痴 7全通關")]
+        [Tooltip("0全圖未通關 1貪 2嗔 3貪嗔 4痴 5貪痴 6嗔痴 7全通關。" +
+                 "失敗（玩家死亡）時也是顯示『目前進度』對應的這張，進度沒變所以畫面也不會讓人誤會。")]
         [SerializeField] private Sprite[] _comboImages = new Sprite[8];
         [SerializeField] private Sprite[] _defaultImages;  // 找不到對應時的備用圖
 
         [Header("時間設定")]
         [SerializeField] private float _displayDuration = 5f;  // 圖片停留秒數
+        [SerializeField] private float _failDisplayDuration = 3f;  // 失敗時圖片停留秒數（比勝利短，讓玩家快點回去再挑戰）
         [SerializeField] private float _fadeDuration = 1f;     // 淡入/淡出各幾秒
+
+        private bool _isFailure;
 
         private void Start()
         {
+            // 這次是不是失敗收場；讀完立刻清掉，避免下一次進來沿用舊狀態
+            _isFailure = SceneTransitionManager.LastBattleFailed;
+            SceneTransitionManager.LastBattleFailed = false;
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
 
@@ -64,11 +72,13 @@ namespace PilgrimOfSin
         private IEnumerator PlaySequence()
         {
             yield return StartCoroutine(Fade(1f, 0f));       // 淡入（黑→圖）
-            yield return new WaitForSeconds(_displayDuration);
+            yield return new WaitForSeconds(_isFailure ? _failDisplayDuration : _displayDuration);
             yield return StartCoroutine(Fade(0f, 1f));       // 淡出（圖→黑）
 
-            // 貪嗔癡三隻 Boss 皆已擊敗 → 接結局跑馬燈名單，否則照舊回小木屋
-            bool allDefeated = GameProgressManager.Instance != null
+            // 貪嗔癡三隻 Boss 皆已擊敗 → 接結局跑馬燈名單，否則照舊回小木屋。
+            // 失敗收場一律回小木屋（已通關後回來重打又輸了，不該再看一次結局名單）。
+            bool allDefeated = !_isFailure
+                                && GameProgressManager.Instance != null
                                 && GameProgressManager.Instance.AllBossesDefeated;
             string nextScene = allDefeated
                 ? SceneTransitionManager.CREDITS_SCENE

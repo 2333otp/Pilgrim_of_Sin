@@ -148,8 +148,18 @@ namespace PilgrimOfSin.StateMachine
                 if (p != null) p.OnModified += HandlePaintingModified;
         }
 
-        private void Update() => _fsm.Update(Time.deltaTime);
-        private void FixedUpdate() => _fsm.FixedUpdate(Time.fixedDeltaTime);
+        // 玩家已經死亡（失敗流程進行中）就停手，不要再追擊/攻擊倒下的玩家。
+        private void Update()
+        {
+            if (BossResultPortal.IsPlayerDefeated) return;
+            _fsm.Update(Time.deltaTime);
+        }
+
+        private void FixedUpdate()
+        {
+            if (BossResultPortal.IsPlayerDefeated) return;
+            _fsm.FixedUpdate(Time.fixedDeltaTime);
+        }
 
         private void OnDestroy()
         {

@@ -5745,7 +5745,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.6
+  m_Radius: 0.9
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &844033033569593325
 MonoBehaviour:
@@ -6172,7 +6172,7 @@ MonoBehaviour:
   _fallGravityScale: 1.8
   _maxFallSpeed: 20
   _jumpLaunchDelay: 0.22
-  _maxHp: 11000
+  _maxHp: 9000
   _stunDuration: 1.2
   _specialCd: 5
   _weaponSwitchCd: 1.5

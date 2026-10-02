@@ -13,6 +13,11 @@ namespace PilgrimOfSin.StateMachine
         // ── 數值 ──────────────────────────────────────────────────────
         public float Weight { get; private set; }
 
+        // ── 音效（把音檔拖進這個 SO 資產即可，不用改程式）──────────────
+        [Header("Sound Effects")]
+        [Tooltip("撿起錢袋時")]
+        [SerializeField] private SoundEffectData _pickupSfx;
+
         // ── 互動範圍 ──────────────────────────────────────────────────
         [Header("Interaction")]
         [SerializeField] private float _interactRadius = 2f;
@@ -39,6 +44,8 @@ namespace PilgrimOfSin.StateMachine
         private float _flyTimer;
         private Vector3 _flyStart;
         private Vector3 _flyEnd;
+        private Quaternion _flyStartRot;   // 打落時的角度（側躺在碗裡）
+        private Quaternion _flyEndRot;     // 落地角度：直立、隨機朝向
         private float _spawnY;          // 由 Spawner 傳入，不再是 SerializeField
         private int _slotIndex;       // 天秤右側排列用
 
@@ -166,6 +173,7 @@ namespace PilgrimOfSin.StateMachine
 
             _lastPickupFrame = Time.frameCount;
             CurrentState = BagState.OnScale;
+            _pickupSfx?.Play();
 
             if (_interactPromptUI) _interactPromptUI.SetActive(false);
             _playerNearby = false;
@@ -293,6 +301,11 @@ namespace PilgrimOfSin.StateMachine
             }
             _flyEnd = candidate;
 
+            // 在碗裡是側躺（PickUp 時轉了 90 度）。飛出去落地時必須轉回直立，否則錢袋會躺在地上、
+            // 一半插進地板（pivot 在底部，側躺時整顆往地板下沉）。朝向隨機，看起來比較自然。
+            _flyStartRot = transform.rotation;
+            _flyEndRot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+
             _flyTimer = 0f;
             _isFlying = true;
 
@@ -328,9 +341,13 @@ namespace PilgrimOfSin.StateMachine
             pos.y += _arcHeight * Mathf.Sin(Mathf.PI * t);
 
             transform.position = pos;
+            transform.rotation = Quaternion.Slerp(_flyStartRot, _flyEndRot, Mathf.SmoothStep(0f, 1f, t));
 
             if (t >= 1f)
+            {
+                transform.rotation = _flyEndRot;   // 精確落在直立
                 _isFlying = false;
+            }
         }
 
         // ════════════════════════════════════════════════════════════

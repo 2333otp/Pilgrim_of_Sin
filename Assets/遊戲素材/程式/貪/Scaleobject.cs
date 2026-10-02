@@ -35,6 +35,13 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _balanceMax = 40f; // 平衡上限（視窗寬15，較易達成）
         [SerializeField] private float _maxWeight = 50f; // 右側最大重量上限（Clamp 用）
 
+        // ── 音效（把音檔拖進這兩個 SO 資產即可，不用改程式）─────────────
+        [Header("Sound Effects")]
+        [Tooltip("攻擊天秤時（一次揮擊打到天秤只播一次）")]
+        [SerializeField] private SoundEffectData _hitSfx;
+        [Tooltip("天秤翻倒時（Boss 踢翻天秤、播 Break 動畫的瞬間；撞擊聲要對齊動畫可在 SO 設「延遲」）")]
+        [SerializeField] private SoundEffectData _breakSfx;
+
         // ── Break 動畫 ────────────────────────────────────────────────
         [Header("Break Animation")]
         [SerializeField] private float _breakDuration = 2.4f; // Break clip 長度，播完視為「踢翻完成」
@@ -55,6 +62,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 內部 ──────────────────────────────────────────────────────
         private float _rightWeight;
         private int _currentTilt = -1;
+        private int _lastHitSfxSwingId = -1;
         private int _hitCount; // 累積攻擊次數，達到 _config.HitsRequiredToTrigger 才觸發受擊+重製
 
         // ── 事件 ──────────────────────────────────────────────────────
@@ -100,14 +108,38 @@ namespace PilgrimOfSin.StateMachine
         //  踢翻動畫播放中（Kicked）不計入，避免跟 Break 動畫互相打斷。
         // ════════════════════════════════════════════════════════════
 
+        // 玩家的攻擊判定球變大後，站在天秤旁邊打 Boss 時，判定球常常同時碰到天秤的（很大的）觸發範圍。
+        // 同一次揮擊如果有打到 Boss，就以 Boss 為優先，不算攻擊天秤。但判定球碰到天秤跟碰到 Boss 的
+        // 先後順序不固定，所以先等一小段時間讓同一次揮擊的碰撞事件都到齊，再決定算不算。
+        private const float ScaleHitConfirmDelay = 0.12f;
+
         private void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponent<PlayerAttackHitbox>() == null) return;
+            var hitbox = other.GetComponent<PlayerAttackHitbox>();
+            if (hitbox == null) return;
             if (_bossController != null && _bossController.CurrentPhase == ScalePhase.Kicked) return;
+            if (hitbox.HitBossThisSwing) return;
+
+            StartCoroutine(ConfirmScaleHit(hitbox));
+        }
+
+        private System.Collections.IEnumerator ConfirmScaleHit(PlayerAttackHitbox hitbox)
+        {
+            yield return new WaitForSeconds(ScaleHitConfirmDelay);
+
+            if (hitbox == null || hitbox.HitBossThisSwing) yield break;
+            if (_bossController != null && _bossController.CurrentPhase == ScalePhase.Kicked) yield break;
+
+            // 攻擊天秤的音效：天秤有 3 個碰撞體，一次揮擊會進來好幾次，用 SwingId 確保同一擊只響一次。
+            if (hitbox.SwingId != _lastHitSfxSwingId)
+            {
+                _lastHitSfxSwingId = hitbox.SwingId;
+                _hitSfx?.Play();
+            }
 
             _hitCount++;
             int required = _config != null ? _config.HitsRequiredToTrigger : 1;
-            if (_hitCount < required) return;
+            if (_hitCount < required) yield break;
 
             _hitCount = 0;
             _bossController?.OnScaleAttacked();
@@ -148,6 +180,7 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>由 GreedBossController.PlayScaleBreak 呼叫：播 Break 動畫。</summary>
         public void PlayBreak()
         {
+            _breakSfx?.Play();
             if (_libraAnimator != null) _libraAnimator.SetTrigger(DoBreakHash);
             StopAllCoroutines();
             StartCoroutine(BreakRoutine());
