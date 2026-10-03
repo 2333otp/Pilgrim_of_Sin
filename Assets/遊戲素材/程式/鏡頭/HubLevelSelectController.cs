@@ -218,12 +218,23 @@ namespace PilgrimOfSin.StateMachine
             {
                 // 先看機制說明圖，玩家按跳過鍵（Options/ESC）才真正進關。
                 // 玩家看圖的時間拿來預載場景，按下跳過後才不用乾等載入。
-                SceneTransitionManager.Instance?.PreloadBossScene(entry.bossType);
+                // 預載一開始會讓主執行緒凍結一陣子，所以要等說明圖完整顯示出來之後才開始（見 PreloadAfterIntroShown）。
                 _introPanel.Show(entry.introImage, () => SceneTransitionManager.Instance?.LoadBossScene(entry.bossType));
+                StartCoroutine(PreloadAfterIntroShown(entry.bossType));
                 return;
             }
 
             SceneTransitionManager.Instance?.LoadBossScene(entry.bossType);
+        }
+
+        [Tooltip("說明圖開始顯示後，等這麼久才開始預載場景（要大於淡入時間，讓圖先完整出現）")]
+        [SerializeField] private float _preloadDelayAfterIntro = 0.8f;
+
+        private System.Collections.IEnumerator PreloadAfterIntroShown(SceneTransitionManager.BossType bossType)
+        {
+            yield return new WaitForSecondsRealtime(_preloadDelayAfterIntro);
+            if (_introPanel != null && _introPanel.IsShowing)
+                SceneTransitionManager.Instance?.PreloadBossScene(bossType);
         }
 
         // ── Blend ────────────────────────────────────────────────────

@@ -1,0 +1,278 @@
+{
+  "ExportTimestamp": "2026-10-03 11:37:55",
+  "Context": {
+    "sceneType": "editor",
+    "sceneName": "GreedBossScene",
+    "nodeCount": 21,
+    "maxDepth": 3
+  },
+  "Hierarchy": [
+    {
+      "sceneName": "GreedBossScene",
+      "stats": {
+        "rootCount": 1,
+        "nodeCount": 21,
+        "maxDepth": 3
+      },
+      "roots": [
+        {
+          "name": "Scale",
+          "isActive": true,
+          "components": [
+            "Transform",
+            "ScaleObject",
+            "BoxCollider",
+            "BoxCollider",
+            "BoxCollider"
+          ],
+          "siblingIndex": 4,
+          "tag": "Untagged",
+          "layer": 0,
+          "children": [
+            {
+              "name": "ScaleHitBox",
+              "isActive": true,
+              "components": [
+                "Transform",
+                "SphereCollider",
+                "ScaleHitbox"
+              ],
+              "siblingIndex": 0,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            },
+            {
+              "name": "Libra",
+              "isActive": true,
+              "components": [
+                "Transform",
+                "Animator"
+              ],
+              "siblingIndex": 1,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": [
+                {
+                  "name": "Base_low_geo.001",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer",
+                    "MeshCollider"
+                  ],
+                  "siblingIndex": 0,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Bow_low_geo.001",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 1,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Bowl_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer",
+                    "MeshCollider"
+                  ],
+                  "siblingIndex": 2,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "Muir@Plaster",
+                      "isActive": true,
+                      "components": [
+                        "Transform"
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "CrossBar_low_geo.001",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 3,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Diamond_low_geo.001",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 4,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Handcuffs_L_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 5,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Handcuffs_R_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 6,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Leaf_low_geo.001",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 7,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Libra_deform",
+                  "isActive": true,
+                  "components": [
+                    "Transform"
+                  ],
+                  "siblingIndex": 8,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": [
+                    {
+                      "name": "DEF-lever_L",
+                      "isActive": true,
+                      "components": [
+                        "Transform"
+                      ],
+                      "siblingIndex": 0,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "DEF-lever_R",
+                      "isActive": true,
+                      "components": [
+                        "Transform"
+                      ],
+                      "siblingIndex": 1,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    },
+                    {
+                      "name": "DEF-pillar",
+                      "isActive": true,
+                      "components": [
+                        "Transform"
+                      ],
+                      "siblingIndex": 2,
+                      "tag": "Untagged",
+                      "layer": 0,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Wing_01_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 9,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Wing_02_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 10,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Wing_03_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 11,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                },
+                {
+                  "name": "Wing_04_low_geo",
+                  "isActive": true,
+                  "components": [
+                    "Transform",
+                    "SkinnedMeshRenderer"
+                  ],
+                  "siblingIndex": 12,
+                  "tag": "Untagged",
+                  "layer": 0,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "MoneybagSlot_Right",
+              "isActive": true,
+              "components": [
+                "Transform",
+                "ScaleBowlAnchor"
+              ],
+              "siblingIndex": 2,
+              "tag": "Untagged",
+              "layer": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

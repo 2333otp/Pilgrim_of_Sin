@@ -69,6 +69,12 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>右側重量變化時觸發，傳出當前右側總重。</summary>
         public event Action<float> OnWeightChanged;
 
+        /// <summary>Break（踢翻）動畫開始時觸發（供雕像 ScaleStatue 準備被甩出去）。</summary>
+        public event Action OnBreakStarted;
+
+        /// <summary>受擊+重製動畫開始時觸發。</summary>
+        public event Action OnHitResetStarted;
+
         /// <summary>Break 動畫播完時觸發（供 GreedBossController 收尾用）。</summary>
         public event Action OnBreakComplete;
 
@@ -181,6 +187,7 @@ namespace PilgrimOfSin.StateMachine
         public void PlayBreak()
         {
             _breakSfx?.Play();
+            OnBreakStarted?.Invoke();
             if (_libraAnimator != null) _libraAnimator.SetTrigger(DoBreakHash);
             StopAllCoroutines();
             StartCoroutine(BreakRoutine());
@@ -199,6 +206,7 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>由 GreedBossController.OnScaleAttacked 呼叫：播受擊+重製動畫。</summary>
         public void PlayHitReset()
         {
+            OnHitResetStarted?.Invoke();
             if (_libraAnimator != null) _libraAnimator.SetTrigger(DoHitResetHash);
             StopAllCoroutines();
             StartCoroutine(HitResetRoutine());

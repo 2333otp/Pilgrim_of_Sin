@@ -69,6 +69,7 @@ namespace PilgrimOfSin
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            Application.backgroundLoadingPriority = ThreadPriority.BelowNormal;   // 還原預設（預載時會調低、跳過時會調高）
             bool needsCursor = scene.name == MAIN_SCENE;
             Cursor.lockState = needsCursor ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible   = needsCursor;
@@ -178,6 +179,8 @@ namespace PilgrimOfSin
         {
             if (_isTransitioning || _preloadOp != null) return;
             _preloadScene = BossSceneName(bossType);
+            // 背景載入的優先權調低：每幀只分給載入一小段主執行緒時間，不會一次凍結好幾秒。
+            Application.backgroundLoadingPriority = ThreadPriority.Low;
             _preloadOp = SceneManager.LoadSceneAsync(_preloadScene);
             _preloadOp.allowSceneActivation = false;
         }
@@ -218,6 +221,10 @@ namespace PilgrimOfSin
             if (_preloadOp != null && _preloadScene == targetScene)
             {
                 asyncLoad = _preloadOp;   // 已預載好（或載到一半），接手繼續
+                // 玩家已經在等了，剩下的盡快載完。優先權是綁在「那一次載入」上的（預載時用低優先權建立），
+                // 只改全域設定不會影響已經在跑的載入，所以要連同這次載入本身一起拉高。
+                Application.backgroundLoadingPriority = ThreadPriority.High;
+                asyncLoad.priority = (int)ThreadPriority.High;
             }
             else
             {
