@@ -58,6 +58,27 @@ namespace PilgrimOfSin.StateMachine
         protected void SetAnimBool(string paramName, bool value)
             => Anim.SetBool(paramName, value);
 
+        // 會經由 Any State 轉場消耗的一次性 Trigger（不含 Death，死亡不可被清掉）
+        private static readonly string[] ClearableTriggers =
+        {
+            "LightAttack", "HeavyAttack", "Combo1", "Combo2", "Combo3", "Combo4",
+            "SpecialSkill", "Roll", "Jump", "Fall", "Damaged",
+            "WeaponSwitch_1", "WeaponSwitch_2", "WeaponSwitch_3", "WeaponSwitch_4",
+        };
+
+        /// <summary>
+        /// 清掉所有殘留的 Animator Trigger。Any State 轉場（InterruptionSource=None）在任何轉場進行中
+        /// 都會被擋下，Trigger 因此留在 Animator 裡沒被消耗；之後某個無關時刻轉場結束，殘留 Trigger
+        /// 才突然觸發，把動畫拉進早已不屬於當前狀態的姿勢（例如被打斷的攻擊/受傷動畫），而這些
+        /// 動畫都沒有「出口」轉場，Animator 就卡在該姿勢、程式狀態卻已回到 Idle/Walk。
+        /// 另外，沒有對應轉場的武器（例如缺動畫的 Trigger）也會一直殘留。
+        /// 受傷打斷、離開技能時呼叫。
+        /// </summary>
+        protected void ClearPendingTriggers()
+        {
+            foreach (var t in ClearableTriggers) Anim.ResetTrigger(t);
+        }
+
         /// <summary>直接以狀態名稱切換 Animator（不經過 Transition 條件，適合依武器等資料切換待機姿勢）。</summary>
         protected void CrossFadeAnimation(string stateName, float duration = 0.15f)
             => Anim.CrossFade(stateName, duration);
@@ -147,6 +168,7 @@ namespace PilgrimOfSin.StateMachine
         {
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
+            ClearPendingTriggers(); // 見 ClearPendingTriggers：避免殘留 Trigger 在待機中途把動畫拉走
 
             int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
             if (weaponIndex >= 1 && weaponIndex < IdleStateNames.Length)
@@ -713,6 +735,7 @@ namespace PilgrimOfSin.StateMachine
         {
             Player.SetInvincible(false);
             Player.OnSpecialSkillAnimationEnd -= HandleAnimEnd;
+            Anim.ResetTrigger("SpecialSkill"); // 該武器沒有對應轉場時 Trigger 會一直殘留
             Player.Combat?.EndAttack();
             Player.StartSpecialSkillCooldown();
         }
@@ -807,7 +830,15 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _stunTimer = 0f;
-            PlayAnimation("Damaged");
+            // 見 LightAttackState.Enter() 註解：IsMoving 還是 true 會讓 Any State → Locomotion 把受傷動畫切掉。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
+            // 被打斷的攻擊/技能殘留的 Trigger 一併清掉，之後才不會冒出來把動畫拉走。
+            ClearPendingTriggers();
+            // 不用 Trigger：Any State 轉場在任何轉場進行中（Idle 的 CrossFade、技能收尾混合）都會被擋下，
+            // Trigger 會延遲到轉場結束才觸發，甚至硬直結束都還沒播到受傷動畫。CrossFade 直接打斷。
+            int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            CrossFadeAnimation("Damaged_" + WeaponSuffix(weaponIndex), 0.05f);
         }
 
         public override void Update(float dt)

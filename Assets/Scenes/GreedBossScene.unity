@@ -154,7 +154,7 @@ MonoBehaviour:
   _libraAnimator: {fileID: 1848753732}
   _bossController: {fileID: 942762637}
   _config: {fileID: 11400000, guid: 0951f9ab7b64fcf48a120023e12d2dd8, type: 2}
-  _statueSideIsScaleRight: 1
+  _statueSideIsScaleRight: 0
   _balanceMin: 25
   _balanceMax: 40
   _maxWeight: 50
@@ -3025,6 +3025,63 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1001 &1592745251
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
+      propertyPath: m_Name
+      value: Upper_low
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9c6647f34103d1c4e8fcbf0d38bb6be8, type: 3}
 --- !u!114 &1657360068 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2915690351312806181, guid: 04edd965990ef884db5c5417958ff154, type: 3}
@@ -4954,4 +5011,5 @@ SceneRoots:
   - {fileID: 746149755}
   - {fileID: 127794221}
   - {fileID: 951489320}
+  - {fileID: 1592745251}
   - {fileID: 1742285223}

@@ -705,7 +705,10 @@ namespace PilgrimOfSin.StateMachine
             StopAllCoroutines();                       // 結束進行中的天秤踢擊碰撞體脈衝
             if (_scaleHitbox) _scaleHitbox.enabled = false;
             if (_capsule) _capsule.enabled = false;    // 屍體不再擋路、不再被打
-            _spawner?.ClearAll();
+            try { _spawner?.ClearAll(); }
+            catch (System.Exception e) { Debug.LogError($"[Greed] 清除錢袋失敗，仍繼續通關流程：{e}"); }
+            if (BossResultPortal.Instance == null)
+                Debug.LogError("[Greed] 場景裡找不到 BossResultPortal，通關流程無法啟動！");
             BossResultPortal.Instance?.OnBossDefeated();
         }
 

@@ -9,7 +9,8 @@ namespace PilgrimOfSin.StateMachine
     /// <summary>
     /// HubScene 運鏡選關控制器。取代 CameraController 驅動 Main Camera：
     /// 場景載入後鏡頭自動從全景滑到第一個焦點，玩家上下切換三支煙囪（三個 Boss），
-    /// 按確認鍵直接進入對應 Boss 場景。沒有取消鍵，離開交給既有的 ESC 暫停選單。
+    /// 按確認鍵進入對應 Boss 場景（該關有設定 introImage 時，先顯示機制說明圖，按 Options/ESC 跳過才進關）。
+    /// 沒有取消鍵，離開交給既有的 ESC 暫停選單。
     /// </summary>
     public class HubLevelSelectController : MonoBehaviour
     {
@@ -20,6 +21,8 @@ namespace PilgrimOfSin.StateMachine
             [TextArea] public string description;
             public SceneTransitionManager.BossType bossType;
             public Transform focusPoint;
+            [Tooltip("進關前顯示的機制說明圖。留空 = 不顯示，確認後直接進關。")]
+            public Sprite introImage;
         }
 
         [Header("References")]
@@ -39,6 +42,7 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private GameObject _dividerRoot;
         [SerializeField] private GameObject _confirmHintRoot;
         [SerializeField] private GameObject _menuHintRoot;
+        [SerializeField] private LevelIntroPanel _introPanel;
 
         private int _currentIndex;
         private bool _inputLocked;
@@ -92,6 +96,9 @@ namespace PilgrimOfSin.StateMachine
         private void Update()
         {
             if (_isBlending) UpdateBlend();
+
+            // 機制說明圖顯示中（含跳過後載入場景的空檔）：Options/ESC 是「跳過」，不能同時開暫停選單。
+            if (_introPanel != null && _introPanel.IsShowing) return;
 
             // ── ESC 暫停選單：Hub 沒有玩家 FSM（沒有 PausedState），這裡自己接 ──
             // 手把直讀是必要的備援：手把第一次被摸到那一下，currentControlScheme 還沒切過去
@@ -205,7 +212,18 @@ namespace PilgrimOfSin.StateMachine
             if (_entries == null || _entries.Count == 0) return;
 
             _inputLocked = true;
-            SceneTransitionManager.Instance?.LoadBossScene(_entries[_currentIndex].bossType);
+
+            var entry = _entries[_currentIndex];
+            if (_introPanel != null && entry.introImage != null)
+            {
+                // 先看機制說明圖，玩家按跳過鍵（Options/ESC）才真正進關。
+                // 玩家看圖的時間拿來預載場景，按下跳過後才不用乾等載入。
+                SceneTransitionManager.Instance?.PreloadBossScene(entry.bossType);
+                _introPanel.Show(entry.introImage, () => SceneTransitionManager.Instance?.LoadBossScene(entry.bossType));
+                return;
+            }
+
+            SceneTransitionManager.Instance?.LoadBossScene(entry.bossType);
         }
 
         // ── Blend ────────────────────────────────────────────────────

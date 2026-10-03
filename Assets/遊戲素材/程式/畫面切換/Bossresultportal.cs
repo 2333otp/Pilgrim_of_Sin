@@ -72,9 +72,18 @@ namespace PilgrimOfSin
             // Boss 場景內，依場景名稱把 LastBossType 修正回正確值，下面用到它的地方都受惠。
             SceneTransitionManager.ResolveAndSyncCurrentBossType();
 
-            GameProgressManager.Instance?.MarkBossDefeated(SceneTransitionManager.LastBossType);
-            GameProgressManager.Instance?.Save();
-            PauseMenuUI.Instance?.NotifyBossDefeated();
+            // 進度存檔/選單通知出任何例外都不能擋住通關流程：之前這裡拋例外會讓下面的
+            // StartCoroutine(WinRoutine()) 整個被跳過，畫面就停在戰鬥裡，玩家還能繼續操作。
+            try
+            {
+                GameProgressManager.Instance?.MarkBossDefeated(SceneTransitionManager.LastBossType);
+                GameProgressManager.Instance?.Save();
+                PauseMenuUI.Instance?.NotifyBossDefeated();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[BossResultPortal] 記錄通關進度失敗，仍繼續通關流程：{e}");
+            }
             StartCoroutine(WinRoutine());
         }
 

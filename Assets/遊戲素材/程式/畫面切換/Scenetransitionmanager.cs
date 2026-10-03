@@ -157,20 +157,38 @@ namespace PilgrimOfSin
             return LastBossType;
         }
 
+        private static string BossSceneName(BossType bossType) => bossType switch
+        {
+            BossType.Greed   => GREED_SCENE,
+            BossType.Wrath   => WRATH_SCENE,
+            BossType.Foolish => FOOLISH_SCENE,
+            _                => HUB_SCENE
+        };
+
+        // 預載中的場景：已載到 90% 停住，等 LoadBossScene 同一關時直接啟用（見 PreloadBossScene）
+        private AsyncOperation _preloadOp;
+        private string _preloadScene;
+
+        /// <summary>
+        /// 先在背景把 Boss 場景載到 90% 停住（不啟用）。機制說明圖顯示期間呼叫，
+        /// 玩家看圖的時間就是載入時間，按下跳過後 LoadBossScene 同一關就幾乎立刻進場。
+        /// 只服務「預載之後一定會接著 LoadBossScene 同一關」的流程：停在 90% 的載入會擋住後面排隊的場景載入。
+        /// </summary>
+        public void PreloadBossScene(BossType bossType)
+        {
+            if (_isTransitioning || _preloadOp != null) return;
+            _preloadScene = BossSceneName(bossType);
+            _preloadOp = SceneManager.LoadSceneAsync(_preloadScene);
+            _preloadOp.allowSceneActivation = false;
+        }
+
         /// <summary>從小木屋進入 Boss 場景。</summary>
         public void LoadBossScene(BossType bossType)
         {
             if (_isTransitioning) return;
             LastBossType = bossType;
             LastBattleFailed = false;
-            string sceneName = bossType switch
-            {
-                BossType.Greed   => GREED_SCENE,
-                BossType.Wrath   => WRATH_SCENE,
-                BossType.Foolish => FOOLISH_SCENE,
-                _                => HUB_SCENE
-            };
-            StartCoroutine(TransitionRoutine(sceneName));
+            StartCoroutine(TransitionRoutine(BossSceneName(bossType)));
         }
 
         /// <summary>從 Boss 場景回到小木屋（贏或輸）。</summary>
@@ -196,8 +214,18 @@ namespace PilgrimOfSin
             if (_fadeCanvasGroup == null || _fadeCanvasGroup.alpha < 1f)
                 yield return StartCoroutine(FadeOut());
 
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);
-            asyncLoad.allowSceneActivation = false;
+            AsyncOperation asyncLoad;
+            if (_preloadOp != null && _preloadScene == targetScene)
+            {
+                asyncLoad = _preloadOp;   // 已預載好（或載到一半），接手繼續
+            }
+            else
+            {
+                asyncLoad = SceneManager.LoadSceneAsync(targetScene);
+                asyncLoad.allowSceneActivation = false;
+            }
+            _preloadOp = null;
+            _preloadScene = null;
 
             while (asyncLoad.progress < 0.9f)
                 yield return null;
