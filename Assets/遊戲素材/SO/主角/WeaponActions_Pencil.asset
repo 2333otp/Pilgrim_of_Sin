@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49409119a4eb65641a80856b6d81875a, type: 3}
+  m_Name: WeaponActions_Pencil
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.WeaponActionSet
+  weaponSuffix: Pencil
+  actions:
+  - stateName: Idle_Pencil
+    action: 0
+    clip: {fileID: 4092577202917834126, guid: 971b1de7683b9fc43895126f59f0738c, type: 3}
+    baseClip: {fileID: 4092577202917834126, guid: 971b1de7683b9fc43895126f59f0738c, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Locomotion_Pencil
+    action: 1
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: LightAttack_Pencil
+    action: 2
+    clip: {fileID: -1737058342776193595, guid: 79cd60c0c0c63cc47a79efb4734a1c55, type: 3}
+    baseClip: {fileID: -1737058342776193595, guid: 79cd60c0c0c63cc47a79efb4734a1c55, type: 3}
+    endPadding: 0
+    fallbackDuration: 2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: HeavyAttack_Pencil
+    action: 3
+    clip: {fileID: 8792108949395766243, guid: 247c146ed66c82043899d6240da6d211, type: 3}
+    baseClip: {fileID: 8792108949395766243, guid: 247c146ed66c82043899d6240da6d211, type: 3}
+    endPadding: 0
+    fallbackDuration: 2.9
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo1_Pencil
+    action: 4
+    clip: {fileID: 1852036535344300042, guid: 8de8f2f51eec081469d0f3fa09a148b5, type: 3}
+    baseClip: {fileID: 1852036535344300042, guid: 8de8f2f51eec081469d0f3fa09a148b5, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo2_Pencil
+    action: 5
+    clip: {fileID: -155649369509506866, guid: e2be1bc259d10804b8a820ea80310ee8, type: 3}
+    baseClip: {fileID: -155649369509506866, guid: e2be1bc259d10804b8a820ea80310ee8, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo3_Pencil
+    action: 6
+    clip: {fileID: 6047905469508889618, guid: d662b020051629b4387f0ea67e4ed707, type: 3}
+    baseClip: {fileID: 6047905469508889618, guid: d662b020051629b4387f0ea67e4ed707, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo4_Pencil
+    action: 7
+    clip: {fileID: 5111207982417698249, guid: fcc657b311b34d140a8e098c492e4a34, type: 3}
+    baseClip: {fileID: 5111207982417698249, guid: fcc657b311b34d140a8e098c492e4a34, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: SpecialSkill_Pencil
+    action: 8
+    clip: {fileID: -3637806333674401820, guid: 6d732e151bebadd48bd23ef4565b4bb8, type: 3}
+    baseClip: {fileID: -3637806333674401820, guid: 6d732e151bebadd48bd23ef4565b4bb8, type: 3}
+    endPadding: 0
+    fallbackDuration: 5.4
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: WeaponSwitch_Pencil
+    action: 9
+    clip: {fileID: 9164733575357102754, guid: caf5a3605ea2dea428ae47253c0804dd, type: 3}
+    baseClip: {fileID: 9164733575357102754, guid: caf5a3605ea2dea428ae47253c0804dd, type: 3}
+    endPadding: 0
+    fallbackDuration: 2.2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Damaged_Pencil
+    action: 10
+    clip: {fileID: 8609646543237159578, guid: de394db64da64334ea205f95487c8540, type: 3}
+    baseClip: {fileID: 8609646543237159578, guid: de394db64da64334ea205f95487c8540, type: 3}
+    endPadding: 0.0333333
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Jump_Pencil
+    action: 11
+    clip: {fileID: -5013186000938531054, guid: 87e5ba111bc2afb4796cc15cac457823, type: 3}
+    baseClip: {fileID: -5013186000938531054, guid: 87e5ba111bc2afb4796cc15cac457823, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Fall_Pencil
+    action: 12
+    clip: {fileID: 8661732390782477863, guid: 13d8ef86c68206c4f9e448d87831aa6c, type: 3}
+    baseClip: {fileID: 8661732390782477863, guid: 13d8ef86c68206c4f9e448d87831aa6c, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []

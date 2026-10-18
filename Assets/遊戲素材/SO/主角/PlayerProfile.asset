@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39a19a1f8a2d89a419626675c28cb378, type: 3}
+  m_Name: PlayerProfile
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.PlayerProfile
+  pencil: {fileID: 11400000, guid: 5c35bfdad7656ef42bf8bde24104b9c1, type: 2}
+  brush: {fileID: 11400000, guid: 825ffe17b38f7ce468d029a75418835e, type: 2}
+  paintKnife: {fileID: 11400000, guid: 174aaed822c785b43b738fcb00f370eb, type: 2}
+  palette: {fileID: 11400000, guid: 3df873a39a5df4440aab655dd7f31714, type: 2}
+  sharedActions:
+  - stateName: Roll
+    action: 13
+    clip: {fileID: -3504344979855549675, guid: 88fe911e6dd07ee4a9a8d507a631a648, type: 3}
+    baseClip: {fileID: -3504344979855549675, guid: 88fe911e6dd07ee4a9a8d507a631a648, type: 3}
+    endPadding: 0.0333333
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Death
+    action: 14
+    clip: {fileID: 3172917416190620396, guid: 4f14797f90346c140bf327d5de9ce241, type: 3}
+    baseClip: {fileID: 3172917416190620396, guid: 4f14797f90346c140bf327d5de9ce241, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []

@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: d99dcd5162ca3504cb30b6765a8ddeeb
+guid: 4fe5d00434efd6944b733d8469088314
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BuildingUpper_Mat.001
+    second: {fileID: 2100000, guid: 4b829a6999a30aa40a05d2be58d9f93e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: InsideWindow_Mat.001
+    second: {fileID: 2100000, guid: 28bfe11271c046941b8af956310113ce, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SquarePainting_Mat.001
+    second: {fileID: 2100000, guid: de6e4162d876a8c4ea03cbf845596b30, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

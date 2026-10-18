@@ -29,6 +29,17 @@ namespace PilgrimOfSin.StateMachine
         // 第一次操作手把時，才呼叫 PerformPairingWithDevice 觸發配對＋切換 Scheme。
         private PlayerInput _playerInput;
 
+        // ── 暫停備援鍵 ───────────────────────────────────────────────
+        // 預設按鍵本身集中在 PlayerInputActions.inputactions（改鍵請改那裡）。
+        // 這兩個是「直接讀裝置」的暫停備援（見 PlayerState.ShouldPause），要跟 Actions 的 Pause 綁定保持一致。
+        [Header("暫停備援（直接讀裝置，需與 PlayerInputActions 的 Pause 綁定一致）")]
+        [SerializeField] private Key _pauseFallbackKey = Key.Escape;
+        [SerializeField] private bool _enableGamepadStartFallback = true;
+
+        public bool PauseFallbackKeyPressed => Keyboard.current?[_pauseFallbackKey].wasPressedThisFrame ?? false;
+        public bool PauseFallbackStartPressed
+            => _enableGamepadStartFallback && (Gamepad.current?.startButton.wasPressedThisFrame ?? false);
+
         private void Awake() => _playerInput = GetComponent<PlayerInput>();
 
         private void OnEnable()

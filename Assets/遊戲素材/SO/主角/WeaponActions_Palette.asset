@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49409119a4eb65641a80856b6d81875a, type: 3}
+  m_Name: WeaponActions_Palette
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.WeaponActionSet
+  weaponSuffix: Palette
+  actions:
+  - stateName: Idle_Palette
+    action: 0
+    clip: {fileID: -8654668641216257015, guid: de459df74840061438338ef02911e3dc, type: 3}
+    baseClip: {fileID: -8654668641216257015, guid: de459df74840061438338ef02911e3dc, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Locomotion_Palette
+    action: 1
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: LightAttack_Palette
+    action: 2
+    clip: {fileID: 3060610079319413300, guid: 6557c06e28db57a4380e91a407c9b84d, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 6557c06e28db57a4380e91a407c9b84d, type: 3}
+    endPadding: 0
+    fallbackDuration: 2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: HeavyAttack_Palette
+    action: 3
+    clip: {fileID: 3060610079319413300, guid: 53b7ee3b0e4334e4eab3994fb77ece55, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 53b7ee3b0e4334e4eab3994fb77ece55, type: 3}
+    endPadding: 0
+    fallbackDuration: 2.9
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo1_Palette
+    action: 4
+    clip: {fileID: 3060610079319413300, guid: edffae77c96c9934fb678e65e32f9b44, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: edffae77c96c9934fb678e65e32f9b44, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo2_Palette
+    action: 5
+    clip: {fileID: 3060610079319413300, guid: 82cb426eee465d9469d2a90750cdafe4, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 82cb426eee465d9469d2a90750cdafe4, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo3_Palette
+    action: 6
+    clip: {fileID: 3060610079319413300, guid: c0863be4590efe643a31015291658bdf, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: c0863be4590efe643a31015291658bdf, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo4_Palette
+    action: 7
+    clip: {fileID: 3060610079319413300, guid: 1d2b21d9cc35bc845b2cae2b40c48522, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 1d2b21d9cc35bc845b2cae2b40c48522, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: SpecialSkill_Palette
+    action: 8
+    clip: {fileID: -1091808796093709682, guid: 3c7b7ebae618a174989954495cb91cba, type: 3}
+    baseClip: {fileID: -1091808796093709682, guid: 3c7b7ebae618a174989954495cb91cba, type: 3}
+    endPadding: 0
+    fallbackDuration: 5.4
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: WeaponSwitch_Palette
+    action: 9
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 2.2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Damaged_Palette
+    action: 10
+    clip: {fileID: -5531731615513821827, guid: c5b5f4d821955ec4489e8ccc4926dee6, type: 3}
+    baseClip: {fileID: -5531731615513821827, guid: c5b5f4d821955ec4489e8ccc4926dee6, type: 3}
+    endPadding: 0.0333333
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Jump_Palette
+    action: 11
+    clip: {fileID: -5013186000938531054, guid: f9444d2532b3fbb43816daf83d772f91, type: 3}
+    baseClip: {fileID: -5013186000938531054, guid: f9444d2532b3fbb43816daf83d772f91, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Fall_Palette
+    action: 12
+    clip: {fileID: 8661732390782477863, guid: 065699c12bc88db4b800d69074620adf, type: 3}
+    baseClip: {fileID: 8661732390782477863, guid: 065699c12bc88db4b800d69074620adf, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []

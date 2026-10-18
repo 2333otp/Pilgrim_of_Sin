@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49409119a4eb65641a80856b6d81875a, type: 3}
+  m_Name: WeaponActions_Brush
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.WeaponActionSet
+  weaponSuffix: Brush
+  actions:
+  - stateName: Idle_Brush
+    action: 0
+    clip: {fileID: -5541688262517941442, guid: 68036c712b291d2479f95e9edcb95758, type: 3}
+    baseClip: {fileID: -5541688262517941442, guid: 68036c712b291d2479f95e9edcb95758, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Locomotion_Brush
+    action: 1
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: LightAttack_Brush
+    action: 2
+    clip: {fileID: 6891604360456981407, guid: 025f2aba7cb81ed48942854d9e5b8003, type: 3}
+    baseClip: {fileID: 6891604360456981407, guid: 025f2aba7cb81ed48942854d9e5b8003, type: 3}
+    endPadding: 0
+    fallbackDuration: 2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: HeavyAttack_Brush
+    action: 3
+    clip: {fileID: 5596564542830253340, guid: 5a29850e609951d40be1d233b24f8e9b, type: 3}
+    baseClip: {fileID: 5596564542830253340, guid: 5a29850e609951d40be1d233b24f8e9b, type: 3}
+    endPadding: 0
+    fallbackDuration: 2.9
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo1_Brush
+    action: 4
+    clip: {fileID: -9166611953226907152, guid: 33c1c134b68fb1a4fbe5856c05b37221, type: 3}
+    baseClip: {fileID: -9166611953226907152, guid: 33c1c134b68fb1a4fbe5856c05b37221, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo2_Brush
+    action: 5
+    clip: {fileID: 7412560428338610560, guid: 934451058699cc64da2b5ed19ea2da25, type: 3}
+    baseClip: {fileID: 7412560428338610560, guid: 934451058699cc64da2b5ed19ea2da25, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo3_Brush
+    action: 6
+    clip: {fileID: 6217840864344893800, guid: ab6560cc38e94f040b2d04f8f873928d, type: 3}
+    baseClip: {fileID: 6217840864344893800, guid: ab6560cc38e94f040b2d04f8f873928d, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo4_Brush
+    action: 7
+    clip: {fileID: 3060610079319413300, guid: bfbbf8de6bb37fa41a1cfdced2c6c9d4, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: bfbbf8de6bb37fa41a1cfdced2c6c9d4, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: SpecialSkill_Brush
+    action: 8
+    clip: {fileID: 8537244719217602241, guid: db0c3c6e06aa9364c93c4faa1a7a269e, type: 3}
+    baseClip: {fileID: 8537244719217602241, guid: db0c3c6e06aa9364c93c4faa1a7a269e, type: 3}
+    endPadding: 0
+    fallbackDuration: 5.4
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: WeaponSwitch_Brush
+    action: 9
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 2.2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Damaged_Brush
+    action: 10
+    clip: {fileID: -5321148424175413148, guid: daa81d22c16557d4bab1d774b100c6a0, type: 3}
+    baseClip: {fileID: -5321148424175413148, guid: daa81d22c16557d4bab1d774b100c6a0, type: 3}
+    endPadding: 0.0333333
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Jump_Brush
+    action: 11
+    clip: {fileID: -5013186000938531054, guid: e14bbe90d32d6fa46a85e3138e6e0db9, type: 3}
+    baseClip: {fileID: -5013186000938531054, guid: e14bbe90d32d6fa46a85e3138e6e0db9, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Fall_Brush
+    action: 12
+    clip: {fileID: 8661732390782477863, guid: 5b55e2ebcccce4c4b8da4167ace7b605, type: 3}
+    baseClip: {fileID: 8661732390782477863, guid: 5b55e2ebcccce4c4b8da4167ace7b605, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []

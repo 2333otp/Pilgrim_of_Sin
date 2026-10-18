@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49409119a4eb65641a80856b6d81875a, type: 3}
+  m_Name: WeaponActions_PaintKnife
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.WeaponActionSet
+  weaponSuffix: PaintKnife
+  actions:
+  - stateName: Idle_PaintKnife
+    action: 0
+    clip: {fileID: -8487832934833709244, guid: b5d9744f32b3305429b218d2c30204c6, type: 3}
+    baseClip: {fileID: -8487832934833709244, guid: b5d9744f32b3305429b218d2c30204c6, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Locomotion_PaintKnife
+    action: 1
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: LightAttack_PaintKnife
+    action: 2
+    clip: {fileID: 3060610079319413300, guid: cb5b292789072ba4493eb8607b1c353d, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: cb5b292789072ba4493eb8607b1c353d, type: 3}
+    endPadding: 0
+    fallbackDuration: 2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: HeavyAttack_PaintKnife
+    action: 3
+    clip: {fileID: 3060610079319413300, guid: 7cbf52a0c0fd1094ea43a153ef244faa, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 7cbf52a0c0fd1094ea43a153ef244faa, type: 3}
+    endPadding: 0
+    fallbackDuration: 2.9
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo1_PaintKnife
+    action: 4
+    clip: {fileID: 3060610079319413300, guid: e1a4dfcceeef5fc4b96ddfaaeccc6440, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: e1a4dfcceeef5fc4b96ddfaaeccc6440, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo2_PaintKnife
+    action: 5
+    clip: {fileID: 3060610079319413300, guid: 6853bbd8444adb94a9fd247aa896bb04, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 6853bbd8444adb94a9fd247aa896bb04, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo3_PaintKnife
+    action: 6
+    clip: {fileID: 3060610079319413300, guid: 431857372ea9c60469c7d57d058067bd, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 431857372ea9c60469c7d57d058067bd, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Combo4_PaintKnife
+    action: 7
+    clip: {fileID: 3060610079319413300, guid: 98b1c413d1c041c4abc784dc0af144f1, type: 3}
+    baseClip: {fileID: 3060610079319413300, guid: 98b1c413d1c041c4abc784dc0af144f1, type: 3}
+    endPadding: 0
+    fallbackDuration: 6.5
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: SpecialSkill_PaintKnife
+    action: 8
+    clip: {fileID: 2274099441720513296, guid: 9ba45c64540eaab44b04ad7f95db4f58, type: 3}
+    baseClip: {fileID: 2274099441720513296, guid: 9ba45c64540eaab44b04ad7f95db4f58, type: 3}
+    endPadding: 0
+    fallbackDuration: 5.4
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: WeaponSwitch_PaintKnife
+    action: 9
+    clip: {fileID: 0}
+    baseClip: {fileID: 0}
+    endPadding: 0
+    fallbackDuration: 2.2
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Damaged_PaintKnife
+    action: 10
+    clip: {fileID: -2505081720294060647, guid: dea7e18c63256cd44ac08c13a99a7872, type: 3}
+    baseClip: {fileID: -2505081720294060647, guid: dea7e18c63256cd44ac08c13a99a7872, type: 3}
+    endPadding: 0.0333333
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Jump_PaintKnife
+    action: 11
+    clip: {fileID: -5013186000938531054, guid: 5ac458e96b42e944fa1c796ccdb6708f, type: 3}
+    baseClip: {fileID: -5013186000938531054, guid: 5ac458e96b42e944fa1c796ccdb6708f, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []
+  - stateName: Fall_PaintKnife
+    action: 12
+    clip: {fileID: 8661732390782477863, guid: 63251a2fd6b98af419f15112ce5bbb25, type: 3}
+    baseClip: {fileID: 8661732390782477863, guid: 63251a2fd6b98af419f15112ce5bbb25, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    voice: []
+    vfx: []

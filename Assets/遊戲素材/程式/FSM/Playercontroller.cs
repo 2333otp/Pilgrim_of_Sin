@@ -52,7 +52,21 @@ namespace PilgrimOfSin.StateMachine
 
         public float WalkSpeed => _walkSpeed;
         public float SprintSpeed => _sprintSpeed;
-        public float RollDuration => _rollDuration;
+        // 有在 PlayerProfile 放 Roll 動畫時，翻滾時間跟著 Clip 長度走；沒放就用上面的 _rollDuration
+        public float RollDuration
+            => Feedback != null && Feedback.TryGetDuration("Roll", out float d) ? d : _rollDuration;
+
+        /// <summary>素材總表的執行元件（音效 / 配音 / 特效 / 動畫換 Clip）。沒掛就是 null，所有呼叫端都要容許。</summary>
+        public PlayerActionFeedback Feedback
+        {
+            get
+            {
+                if (_feedback == null) _feedback = GetComponent<PlayerActionFeedback>();
+                // 編輯器裡 GetComponent 找不到時回傳的是「假 null」，呼叫端的 ?. 會判斷不出來，所以這裡統一轉成真 null
+                return _feedback != null ? _feedback : null;
+            }
+        }
+        private PlayerActionFeedback _feedback;
 
         // ── 戰鬥參數 ─────────────────────────────────────────────────
         [Header("Combat")]
@@ -66,7 +80,9 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _groundCheckDistance = 0.6f; // 依角色高度調整
         [SerializeField] private LayerMask _groundLayer = ~0;       // 預設偵測所有層
 
-        public float StunDuration => _stunDuration;
+        // 同上：有放該武器的 Damaged 動畫就跟 Clip 長度走
+        public float StunDuration
+            => Feedback != null && Feedback.TryGetCurrentWeaponDuration("Damaged", out float d) ? d : _stunDuration;
 
         public float CurrentHp { get; private set; }
         public float MaxHp => _maxHp;
@@ -133,6 +149,9 @@ namespace PilgrimOfSin.StateMachine
 
             ComboBuffer = new ComboBuffer();
             CurrentHp = _maxHp;
+
+            // 要在下面設定 Animator 參數之前：套用 Profile 換掉的 Clip 會換 Controller，參數會被重置
+            Feedback?.Initialize(Animator);
 
             BuildStateMachine();
 

@@ -52,7 +52,10 @@ namespace PilgrimOfSin.StateMachine
 
         /// <summary>播放 Animator 參數（Trigger）。</summary>
         protected void PlayAnimation(string triggerName)
-            => Anim.SetTrigger(triggerName);
+        {
+            Anim.SetTrigger(triggerName);
+            Player.Feedback?.NotifyTrigger(triggerName); // 音效 / 配音 / 特效（沒設定就什麼都不做）
+        }
 
         /// <summary>設定 Animator Bool 參數。</summary>
         protected void SetAnimBool(string paramName, bool value)
@@ -81,7 +84,10 @@ namespace PilgrimOfSin.StateMachine
 
         /// <summary>直接以狀態名稱切換 Animator（不經過 Transition 條件，適合依武器等資料切換待機姿勢）。</summary>
         protected void CrossFadeAnimation(string stateName, float duration = 0.15f)
-            => Anim.CrossFade(stateName, duration);
+        {
+            Anim.CrossFade(stateName, duration);
+            Player.Feedback?.NotifyState(stateName);
+        }
 
         /// <summary>依 Combat.CurrentWeaponIndex（1~4）對應到 Animator 裡武器後綴，跟各 state 命名一致。</summary>
         protected static string WeaponSuffix(int weaponIndex) => weaponIndex switch
@@ -107,6 +113,15 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         protected float ResolveDuration(ref float cachedLength, string expectedStateName, float fallback)
         {
+            // PlayerProfile 有放這個 state 的 Clip：直接用 Clip 長度（換不同長度的動畫會自動對齊）。
+            // 沒放就走下面原本的邏輯，Profile 可自訂保險時間。
+            var feedback = Player.Feedback;
+            if (feedback != null)
+            {
+                if (feedback.TryGetDuration(expectedStateName, out float clipDuration)) return clipDuration;
+                fallback = feedback.GetFallback(expectedStateName, fallback);
+            }
+
             if (cachedLength < 0f)
             {
                 if (Anim.IsInTransition(0)) return fallback;
@@ -127,8 +142,8 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         protected bool ShouldPause()
             => Input.PausePressed
-               || (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
-               || (Gamepad.current?.startButton.wasPressedThisFrame ?? false);
+               || Input.PauseFallbackKeyPressed
+               || Input.PauseFallbackStartPressed;
 
         /// <summary>
         /// 攻擊/技能/切換武器結束時用這個決定回哪個狀態，取代直接 RequestTransition(Idle)。
@@ -910,8 +925,8 @@ namespace PilgrimOfSin.StateMachine
             // 手把 Options（start）與鍵盤 Esc 分開處理：
             //  · Options：操作說明頁／確認框不作用（只有 ✕ 能退）；其他情況直接關閉整個選單。
             //  · Esc：維持「先退一層子面板，沒有才恢復遊戲」（鍵盤沒有 ✕）。
-            bool startPressed = Gamepad.current?.startButton.wasPressedThisFrame ?? false;
-            bool keyboardPause = (Keyboard.current?[Key.Escape].wasPressedThisFrame ?? false)
+            bool startPressed = Input.PauseFallbackStartPressed;
+            bool keyboardPause = Input.PauseFallbackKeyPressed
                                  || (Input.PausePressed && !startPressed);
 
             if (startPressed && PilgrimOfSin.PauseMenuUI.Instance != null &&
