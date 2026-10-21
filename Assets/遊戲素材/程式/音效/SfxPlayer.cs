@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 namespace PilgrimOfSin
 {
@@ -30,6 +31,14 @@ namespace PilgrimOfSin
         {
             if (data == null) return;
             if (!data.TryPick(out AudioClip clip, out float volume, out float pitch)) return;
+            PlayClip(clip, volume, pitch, data.MixerGroup, data.SpatialBlend, position, data.Delay);
+        }
+
+        /// <summary>直接播一個 AudioClip（給主角素材總表這類「直接拖音檔」的欄位用）。clip 為空就什麼都不做。</summary>
+        public static void PlayClip(AudioClip clip, float volume = 1f, float pitch = 1f,
+            AudioMixerGroup mixerGroup = null, float spatialBlend = 0f, Vector3? position = null, float delay = 0f)
+        {
+            if (clip == null) return;
 
             int index = Acquire();
             AudioSource source = _pool[index];
@@ -37,14 +46,14 @@ namespace PilgrimOfSin
             source.clip = clip;
             source.volume = volume;
             source.pitch = pitch;
-            source.outputAudioMixerGroup = data.MixerGroup;
-            source.spatialBlend = data.SpatialBlend;
+            source.outputAudioMixerGroup = mixerGroup;
+            source.spatialBlend = spatialBlend;
             source.transform.position = position ?? Vector3.zero;
 
-            if (data.Delay > 0f) source.PlayDelayed(data.Delay);
+            if (delay > 0f) source.PlayDelayed(delay);
             else source.Play();
 
-            _busyUntil[index] = Time.realtimeSinceStartup + data.Delay + clip.length / Mathf.Max(0.01f, pitch);
+            _busyUntil[index] = Time.realtimeSinceStartup + delay + clip.length / Mathf.Max(0.01f, pitch);
         }
 
         private static int Acquire()

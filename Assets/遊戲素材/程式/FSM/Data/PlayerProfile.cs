@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace PilgrimOfSin.StateMachine
 {
@@ -18,6 +19,10 @@ namespace PilgrimOfSin.StateMachine
 
         [Header("共用動作（翻滾、死亡等與武器無關的動作）")]
         public List<PlayerActionEntry> sharedActions = new List<PlayerActionEntry>();
+
+        [Header("音訊輸出")]
+        [Tooltip("音效與配音要輸出到哪個 Mixer 群組（預設指到 SFX，會跟著遊戲設定裡的音效音量走）。")]
+        public AudioMixerGroup mixerGroup;
 
         public WeaponActionSet GetSet(int weaponIndex) => weaponIndex switch
         {

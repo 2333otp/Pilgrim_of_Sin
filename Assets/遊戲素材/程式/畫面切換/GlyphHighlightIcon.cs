@@ -51,7 +51,19 @@ namespace PilgrimOfSin
         private static readonly System.Collections.Generic.Dictionary<Transform, FrontState> s_front =
             new System.Collections.Generic.Dictionary<Transform, FrontState>();
 
-        private void SetFront(bool front)
+        // 在 OnDisable 裡（面板正被關閉）Unity 不允許改兄弟排序，會噴
+        // "Cannot change the sibling position ... while activating or deactivating the parent"。
+        // 所以停用時只先記下要還原的順序，等任一顆圖示重新啟用後在 Update 才實際還原。
+        private static readonly System.Collections.Generic.Dictionary<Transform, System.Collections.Generic.List<Transform>> s_pendingRestore =
+            new System.Collections.Generic.Dictionary<Transform, System.Collections.Generic.List<Transform>>();
+
+        private static void RestoreOrder(System.Collections.Generic.List<Transform> order)
+        {
+            for (int i = 0; i < order.Count; i++)
+                if (order[i] != null) order[i].SetSiblingIndex(i);
+        }
+
+        private void SetFront(bool front, bool deferRestore = false)
         {
             if (!_bringToFrontWhenPressed || front == _isFront) return;
             Transform parent = transform.parent;
@@ -59,6 +71,11 @@ namespace PilgrimOfSin
 
             if (front)
             {
+                if (s_pendingRestore.TryGetValue(parent, out var pending))
+                {
+                    RestoreOrder(pending);
+                    s_pendingRestore.Remove(parent);
+                }
                 if (!s_front.TryGetValue(parent, out FrontState st))
                 {
                     st = new FrontState { order = new System.Collections.Generic.List<Transform>() };
@@ -74,9 +91,9 @@ namespace PilgrimOfSin
                 _isFront = false;
                 if (s_front.TryGetValue(parent, out FrontState st) && --st.count <= 0)
                 {
-                    for (int i = 0; i < st.order.Count; i++)
-                        if (st.order[i] != null) st.order[i].SetSiblingIndex(i);
                     s_front.Remove(parent);
+                    if (deferRestore) s_pendingRestore[parent] = st.order;
+                    else RestoreOrder(st.order);
                 }
             }
         }
@@ -112,7 +129,7 @@ namespace PilgrimOfSin
 
         private void OnDisable()
         {
-            SetFront(false);
+            SetFront(false, deferRestore: true);
             UnsubscribeCurrent();
         }
 
@@ -138,6 +155,13 @@ namespace PilgrimOfSin
 
         private void Update()
         {
+            if (s_pendingRestore.Count > 0 && transform.parent != null &&
+                s_pendingRestore.TryGetValue(transform.parent, out var pendingOrder))
+            {
+                RestoreOrder(pendingOrder);
+                s_pendingRestore.Remove(transform.parent);
+            }
+
             string scheme = _playerInput != null ? _playerInput.currentControlScheme : null;
             if (scheme != _lastScheme)
             {

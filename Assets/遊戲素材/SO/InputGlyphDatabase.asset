@@ -15,16 +15,16 @@ MonoBehaviour:
   _gamepadEntries:
   - controlPath: <Gamepad>/buttonSouth
     sprite: {fileID: 21300000, guid: 5623dad896c31af479119a6ad6312263, type: 3}
-    pressedSprite: {fileID: 21300000, guid: e6c9987b9a5d7eb4bb6748fac9cc0eac, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 6d7243b734ec8f54bbb430955dfb5c4d, type: 3}
   - controlPath: <Gamepad>/buttonEast
     sprite: {fileID: 21300000, guid: d11cbbce2f3dcfb48a85ae7c825b9d6b, type: 3}
-    pressedSprite: {fileID: 21300000, guid: fa14858e8f75ee3498060c93250f4b0e, type: 3}
+    pressedSprite: {fileID: 21300000, guid: 01e8326371682f34093bc588cd0de046, type: 3}
   - controlPath: <Gamepad>/buttonWest
     sprite: {fileID: 21300000, guid: fc0a3df5f0698f34eb6fe30302c8e3dc, type: 3}
-    pressedSprite: {fileID: 21300000, guid: b879c88ff299d9149a303290ac044b8c, type: 3}
+    pressedSprite: {fileID: 21300000, guid: f3770a5047e9f8e41a21a4e9e23cf478, type: 3}
   - controlPath: <Gamepad>/buttonNorth
     sprite: {fileID: 21300000, guid: 747cb9381c9ac2341b4b7f445cf5dbb2, type: 3}
-    pressedSprite: {fileID: 21300000, guid: fa7a0f27efdeccd4bae966baa2c15d07, type: 3}
+    pressedSprite: {fileID: 21300000, guid: ec0bd1ad47df8214985a0c57e448abf6, type: 3}
   - controlPath: <Gamepad>/leftShoulder
     sprite: {fileID: 21300000, guid: b1f984e49e0835c4e85e77680b33f7a2, type: 3}
     pressedSprite: {fileID: 21300000, guid: 48ac3121ed7890f47a09c1b7af10ef1c, type: 3}
@@ -57,5 +57,5 @@ MonoBehaviour:
     pressedSprite: {fileID: 21300000, guid: 434e90e5640da8d45aedac8db788f977, type: 3}
   - controlPath: <Gamepad>/start
     sprite: {fileID: 21300000, guid: 3b9b41347f721454b86741d36f4509ad, type: 3}
-    pressedSprite: {fileID: 21300000, guid: 44e8da73490934643bf3c338acf6761d, type: 3}
+    pressedSprite: {fileID: 21300000, guid: f5e4b3f5e20a6454eb7b6074b15cff9f, type: 3}
   _keyboardEntries: []

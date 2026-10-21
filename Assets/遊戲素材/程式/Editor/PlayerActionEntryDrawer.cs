@@ -15,9 +15,12 @@ namespace PilgrimOfSin.StateMachine.EditorTools
         private static readonly (string field, string label)[] Main =
         {
             ("clip", "動畫 Clip"),
-            ("sfx", "音效（隨機播一個）"),
+            ("sfx", "音效（可直接拖音檔，隨機播一個）"),
+            ("sfxVolume", "音效音量"),
             ("sfxNormalizedTime", "音效時間點 (0~1)"),
-            ("voice", "配音（隨機播一個）"),
+            ("voiceEnglish", "配音 - 英文（隨機播一個）"),
+            ("voiceTaiwanese", "配音 - 台語（隨機播一個）"),
+            ("voiceVolume", "配音音量"),
             ("voiceNormalizedTime", "配音時間點 (0~1)"),
             ("vfx", "特效"),
         };

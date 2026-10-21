@@ -116,8 +116,9 @@ namespace PilgrimOfSin.StateMachine
         {
             float length = entry.HasClipDuration ? entry.ClipDuration : 0f;
 
-            Schedule(entry.sfxNormalizedTime * length, () => PlayRandom(entry.sfx, transform.position));
-            Schedule(entry.voiceNormalizedTime * length, () => PlayRandom(entry.voice, transform.position));
+            Schedule(entry.sfxNormalizedTime * length, () => PlayRandom(entry.sfx, entry.sfxVolume));
+            // 配音依目前語言取清單，在觸發的當下才決定（中途切換語言也會立刻生效）
+            Schedule(entry.voiceNormalizedTime * length, () => PlayRandom(entry.GetVoice(GameLanguage.Current), entry.voiceVolume));
 
             if (entry.vfx == null) return;
             foreach (var v in entry.vfx)
@@ -141,17 +142,28 @@ namespace PilgrimOfSin.StateMachine
             action();
         }
 
-        private static void PlayRandom(SoundEffectData[] list, Vector3 pos)
+        // 每份清單上次抽到第幾個，有 2 個以上音檔時避免連續兩次播到同一個
+        private readonly Dictionary<AudioClip[], int> _lastPick = new Dictionary<AudioClip[], int>();
+
+        /// <summary>從清單隨機播一個音檔（跳過空格，空清單什麼都不做）。</summary>
+        private void PlayRandom(AudioClip[] list, float volume)
         {
             if (list == null || list.Length == 0) return;
             int count = 0;
-            foreach (var s in list) if (s != null) count++;
+            foreach (var c in list) if (c != null) count++;
             if (count == 0) return;
+
             int pick = Random.Range(0, count);
-            foreach (var s in list)
+            if (count > 1 && _lastPick.TryGetValue(list, out int last) && pick == last)
+                pick = (pick + 1 + Random.Range(0, count - 1)) % count;
+            _lastPick[list] = pick;
+
+            foreach (var c in list)
             {
-                if (s == null) continue;
-                if (pick-- == 0) { s.PlayAt(pos); return; }
+                if (c == null) continue;
+                if (pick-- != 0) continue;
+                SfxPlayer.PlayClip(c, volume, 1f, _profile != null ? _profile.mixerGroup : null, 0f, transform.position);
+                return;
             }
         }
 

@@ -467,6 +467,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe26a2656b6254408a983d128246161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.PlayerInputReader
+  _pauseFallbackKey: 60
+  _enableGamepadStartFallback: 1
 --- !u!114 &322137773
 MonoBehaviour:
   m_ObjectHideFlags: 0

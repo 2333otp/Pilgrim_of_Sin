@@ -69,15 +69,26 @@ namespace PilgrimOfSin.StateMachine
         [Tooltip("保險時間（秒）：Animator 讀不到這個動作的動畫（例如還沒做動畫的武器）時使用。0 = 用程式內建值。")]
         public float fallbackDuration;
 
-        [Tooltip("音效清單，可任意增減，每次隨機播放其中一個。留空 = 不播。")]
-        public SoundEffectData[] sfx = new SoundEffectData[0];
+        [Tooltip("音效音檔，直接把 wav / ogg / mp3 拖進來。可任意增減，每次隨機播放其中一個。留空 = 不播。")]
+        public AudioClip[] sfx = new AudioClip[0];
+
+        [Range(0f, 1f)]
+        [Tooltip("音效音量。")]
+        public float sfxVolume = 1f;
 
         [Range(0f, 1f)]
         [Tooltip("音效播放時間點：動作開始後經過動畫長度的比例。0 = 動作一開始就播，0.3 = 動畫播到 30% 才播。沒有動畫長度可參考時視為立刻播。")]
         public float sfxNormalizedTime;
 
-        [Tooltip("配音清單，可任意增減，每次隨機播放其中一個。留空 = 不播。")]
-        public SoundEffectData[] voice = new SoundEffectData[0];
+        [Tooltip("配音（英文版）音檔，直接拖進來。可放多個，每次隨機播放其中一個。語言設為英文時才會播。留空 = 不播。")]
+        public AudioClip[] voiceEnglish = new AudioClip[0];
+
+        [Tooltip("配音（台語版）音檔，直接拖進來。可放多個，每次隨機播放其中一個。語言設為台語時才會播。留空 = 不播。")]
+        public AudioClip[] voiceTaiwanese = new AudioClip[0];
+
+        [Range(0f, 1f)]
+        [Tooltip("配音音量（英文、台語共用）。")]
+        public float voiceVolume = 1f;
 
         [Range(0f, 1f)]
         [Tooltip("配音播放時間點，用法同音效。")]
@@ -85,6 +96,10 @@ namespace PilgrimOfSin.StateMachine
 
         [Tooltip("特效清單，可多個；Prefab 留空 = 不生成。")]
         public PlayerVfxEntry[] vfx = new PlayerVfxEntry[0];
+
+        /// <summary>依語言取得配音清單（只取該語言的，不會跨語言替補）。</summary>
+        public AudioClip[] GetVoice(VoiceLanguage language)
+            => language == VoiceLanguage.English ? voiceEnglish : voiceTaiwanese;
 
         /// <summary>有放 Clip 且 Animator 裡確實有這個 state，才能用 Clip 長度決定動作時間。</summary>
         public bool HasClipDuration => clip != null && baseClip != null;

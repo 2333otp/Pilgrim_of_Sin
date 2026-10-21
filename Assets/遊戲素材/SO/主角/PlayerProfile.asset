@@ -24,7 +24,12 @@ MonoBehaviour:
     endPadding: 0.0333333
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Death
     action: 14
@@ -33,5 +38,11 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
+  mixerGroup: {fileID: 4853816048678867972, guid: 3bc653d8ce919474a911bcf516d5d417, type: 2}
