@@ -21,7 +21,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Locomotion_PaintKnife
     action: 1
@@ -30,7 +35,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: LightAttack_PaintKnife
     action: 2
@@ -39,7 +49,16 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: HeavyAttack_PaintKnife
     action: 3
@@ -48,7 +67,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.9
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo1_PaintKnife
     action: 4
@@ -57,7 +83,16 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ec90b3ebb97877d418c95b6a052c3381, type: 3}
+    - {fileID: 8300000, guid: 8599191482131c64a9beab7510cf81c7, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: ec90b3ebb97877d418c95b6a052c3381, type: 3}
+    - {fileID: 8300000, guid: 8599191482131c64a9beab7510cf81c7, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo2_PaintKnife
     action: 5
@@ -66,7 +101,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 1fa780beee71c1d4e9e1e5bb8c4910f3, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 2c81f92203427004bb1883076992373b, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo3_PaintKnife
     action: 6
@@ -75,7 +117,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: e37b6fafd98bc6f42ac76cd1bcc7ce54, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 2fb14ffcdc429bf49a60723f03564e8a, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo4_PaintKnife
     action: 7
@@ -84,7 +133,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ade3e501b58fe6d4fa3f24c63403b015, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: bbf8fcab2cf12434f8275c50e4a39435, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: SpecialSkill_PaintKnife
     action: 8
@@ -93,7 +149,15 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 5.4
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 7ca20287652710a49abc81d7726a6db2, type: 3}
+    - {fileID: 8300000, guid: 671854f9398b925449994e1f811454f7, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 98a7b53416ad30b4ba7ce1c6df41c7ee, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: WeaponSwitch_PaintKnife
     action: 9
@@ -102,7 +166,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Damaged_PaintKnife
     action: 10
@@ -111,7 +180,16 @@ MonoBehaviour:
     endPadding: 0.0333333
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 6f90f57bd712ae8459c012fddd1a8987, type: 3}
+    - {fileID: 8300000, guid: c28573b12b6c64a4583945904ff4f5a5, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: bfd32cf6b152bd540a947ac5821a0352, type: 3}
+    - {fileID: 8300000, guid: 9d500384d3993f64b9dd4bd4d0d7538c, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Jump_PaintKnife
     action: 11
@@ -120,7 +198,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Fall_PaintKnife
     action: 12
@@ -129,5 +212,10 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []

@@ -21,7 +21,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Locomotion_Pencil
     action: 1
@@ -30,70 +35,134 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: LightAttack_Pencil
     action: 2
-    clip: {fileID: -1737058342776193595, guid: 79cd60c0c0c63cc47a79efb4734a1c55, type: 3}
+    clip: {fileID: 7400000, guid: f810ad2d9a0c95740b0b23bad991607f, type: 2}
     baseClip: {fileID: -1737058342776193595, guid: 79cd60c0c0c63cc47a79efb4734a1c55, type: 3}
     endPadding: 0
     fallbackDuration: 2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: HeavyAttack_Pencil
     action: 3
     clip: {fileID: 8792108949395766243, guid: 247c146ed66c82043899d6240da6d211, type: 3}
-    baseClip: {fileID: 8792108949395766243, guid: 247c146ed66c82043899d6240da6d211, type: 3}
+    baseClip: {fileID: 7400000, guid: b8757c8c6b8b42840b0a59e0af11a0e4, type: 2}
     endPadding: 0
     fallbackDuration: 2.9
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo1_Pencil
     action: 4
-    clip: {fileID: 1852036535344300042, guid: 8de8f2f51eec081469d0f3fa09a148b5, type: 3}
-    baseClip: {fileID: 1852036535344300042, guid: 8de8f2f51eec081469d0f3fa09a148b5, type: 3}
+    clip: {fileID: 7400000, guid: 6181fbc908fc07744a40a989be5067c5, type: 2}
+    baseClip: {fileID: 7400000, guid: 6181fbc908fc07744a40a989be5067c5, type: 2}
     endPadding: 0
-    fallbackDuration: 6.5
+    fallbackDuration: 3
     sfx: []
-    voice: []
-    vfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: c7a83d27045eaa84983bf8a7d651f51c, type: 3}
+    - {fileID: 8300000, guid: 7b875b4bfd0030a4580b4f8fd1cb76fc, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: c7a83d27045eaa84983bf8a7d651f51c, type: 3}
+    - {fileID: 8300000, guid: 7b875b4bfd0030a4580b4f8fd1cb76fc, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx:
+    - prefab: {fileID: 7629284104318295746, guid: b0c651a4715af8e42a6b026cecc85ae1, type: 3}
+      boneName: 
+      positionOffset: {x: 0, y: 0.5, z: 0}
+      rotationOffset: {x: 0, y: 0, z: 0}
+      normalizedTime: 0
+      followBone: 0
+      lifetime: 0
   - stateName: Combo2_Pencil
     action: 5
-    clip: {fileID: -155649369509506866, guid: e2be1bc259d10804b8a820ea80310ee8, type: 3}
-    baseClip: {fileID: -155649369509506866, guid: e2be1bc259d10804b8a820ea80310ee8, type: 3}
+    clip: {fileID: 7400000, guid: 25efe65514d04324fbdfbe114c361aa7, type: 2}
+    baseClip: {fileID: 7400000, guid: 25efe65514d04324fbdfbe114c361aa7, type: 2}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 3385d0a774f919b46a4669b740156ca2, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 8fb615ecdbb03f841b997e63de31b963, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo3_Pencil
     action: 6
-    clip: {fileID: 6047905469508889618, guid: d662b020051629b4387f0ea67e4ed707, type: 3}
-    baseClip: {fileID: 6047905469508889618, guid: d662b020051629b4387f0ea67e4ed707, type: 3}
+    clip: {fileID: 7400000, guid: 074a0b52fee7acd4e93c65f4352fb3be, type: 2}
+    baseClip: {fileID: 7400000, guid: 074a0b52fee7acd4e93c65f4352fb3be, type: 2}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 16e9c79bd952ab2489be5c2fbc20cb09, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: c7016ee3b41bcdc46b534e787c96dd71, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo4_Pencil
     action: 7
-    clip: {fileID: 5111207982417698249, guid: fcc657b311b34d140a8e098c492e4a34, type: 3}
-    baseClip: {fileID: 5111207982417698249, guid: fcc657b311b34d140a8e098c492e4a34, type: 3}
+    clip: {fileID: 7400000, guid: cbb6c71ab46632140bc62bb905827006, type: 2}
+    baseClip: {fileID: 7400000, guid: cbb6c71ab46632140bc62bb905827006, type: 2}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: SpecialSkill_Pencil
     action: 8
-    clip: {fileID: -3637806333674401820, guid: 6d732e151bebadd48bd23ef4565b4bb8, type: 3}
-    baseClip: {fileID: -3637806333674401820, guid: 6d732e151bebadd48bd23ef4565b4bb8, type: 3}
+    clip: {fileID: 7400000, guid: 51b2d39a26f06774689d870299abf9b1, type: 2}
+    baseClip: {fileID: 7400000, guid: 51b2d39a26f06774689d870299abf9b1, type: 2}
     endPadding: 0
     fallbackDuration: 5.4
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 267b0ce656d40e94e989b5a259801d41, type: 3}
+    - {fileID: 8300000, guid: 616c6abda31e879418dea040247671c3, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 1ba69e30b9f8a9e4f87618c3ae339071, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: WeaponSwitch_Pencil
     action: 9
@@ -102,7 +171,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Damaged_Pencil
     action: 10
@@ -111,7 +185,16 @@ MonoBehaviour:
     endPadding: 0.0333333
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 6f90f57bd712ae8459c012fddd1a8987, type: 3}
+    - {fileID: 8300000, guid: 9d500384d3993f64b9dd4bd4d0d7538c, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: bfd32cf6b152bd540a947ac5821a0352, type: 3}
+    - {fileID: 8300000, guid: d4ae58c1b1a513d4b9c2587e93201820, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Jump_Pencil
     action: 11
@@ -120,7 +203,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Fall_Pencil
     action: 12
@@ -129,5 +217,10 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []

@@ -21,7 +21,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Locomotion_Palette
     action: 1
@@ -30,7 +35,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: LightAttack_Palette
     action: 2
@@ -39,7 +49,16 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: HeavyAttack_Palette
     action: 3
@@ -48,7 +67,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.9
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo1_Palette
     action: 4
@@ -57,7 +83,15 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ac79b8b9f3f38724f9ec66d6242366eb, type: 3}
+    - {fileID: 8300000, guid: 17772e8d74223cd4f8f03f8f4344b4bb, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: a883142d70fb71c498ddd8e5a978aa57, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo2_Palette
     action: 5
@@ -66,7 +100,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 037f8dc880202ac42b9148e326625d07, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 81153965fd8497146b15f92e37b7707a, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo3_Palette
     action: 6
@@ -75,7 +116,15 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 7eee000b71b606248891deb71da8a0c7, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: c8255ad33d2211d4191805f8e96465a0, type: 3}
+    - {fileID: 8300000, guid: 41fda7506fa7607489d8701f4b2b8c5a, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo4_Palette
     action: 7
@@ -84,7 +133,15 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ce3f51bb91eb4c0488fc79391726493e, type: 3}
+    - {fileID: 8300000, guid: f6639d28c8b8624409626f46d08c72f4, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 7fd5d073f55858842b22b00243c09acd, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: SpecialSkill_Palette
     action: 8
@@ -93,7 +150,16 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 5.4
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 767081c19bb1ad141aa9984edfb1fe2b, type: 3}
+    - {fileID: 8300000, guid: ae59131f99cc70b42ac1792a2bc25e0a, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 797261cfb2315724381e235c915450a9, type: 3}
+    - {fileID: 8300000, guid: 8eaa3f1bde970104ead8ca177a459b89, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: WeaponSwitch_Palette
     action: 9
@@ -102,7 +168,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Damaged_Palette
     action: 10
@@ -111,7 +182,16 @@ MonoBehaviour:
     endPadding: 0.0333333
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 6f90f57bd712ae8459c012fddd1a8987, type: 3}
+    - {fileID: 8300000, guid: dd73148d277ccc34c90f704a344e664a, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: bfd32cf6b152bd540a947ac5821a0352, type: 3}
+    - {fileID: 8300000, guid: d4ae58c1b1a513d4b9c2587e93201820, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Jump_Palette
     action: 11
@@ -120,7 +200,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Fall_Palette
     action: 12
@@ -129,5 +214,10 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []

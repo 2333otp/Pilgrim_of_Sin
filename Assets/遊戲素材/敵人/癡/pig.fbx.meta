@@ -3,7 +3,47 @@ guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: body_mat
+    second: {fileID: 2100000, guid: f8389677bd5afb84ea00b6fc359eabe6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: eyes_mat
+    second: {fileID: 2100000, guid: 183224a998dadf145811aa5b603b7124, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: face_mat
+    second: {fileID: 2100000, guid: a5423dc4e547e004180830a5abb18040, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair_mat
+    second: {fileID: 2100000, guid: 511056cd3201c9145acb109fe4b8ee60, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metallic_mat
+    second: {fileID: 2100000, guid: c502edc8329697d47adf38f5cd399595, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mouth_mat
+    second: {fileID: 2100000, guid: 82a8327988a0e7c428248c2528102dfd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pocket_mat
+    second: {fileID: 2100000, guid: 46ffe98f281525347967d21d50825ff5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: rope_mat
+    second: {fileID: 2100000, guid: e5ad423b6df3543439199b3ac1358e1f, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

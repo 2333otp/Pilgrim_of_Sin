@@ -21,7 +21,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Locomotion_Brush
     action: 1
@@ -30,7 +35,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: LightAttack_Brush
     action: 2
@@ -39,7 +49,16 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 2865b3fa1feec9047ac4ced6c61835a1, type: 3}
+    - {fileID: 8300000, guid: 460e320892b4fa04cb23191089ebfe1b, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: HeavyAttack_Brush
     action: 3
@@ -48,7 +67,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.9
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: ce4df526b7c786142b3df93b53026bb9, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo1_Brush
     action: 4
@@ -56,9 +82,26 @@ MonoBehaviour:
     baseClip: {fileID: -9166611953226907152, guid: 33c1c134b68fb1a4fbe5856c05b37221, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
-    sfx: []
-    voice: []
-    vfx: []
+    sfx:
+    - {fileID: 0}
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: d1969a18202454d438bb72878546bb27, type: 3}
+    - {fileID: 8300000, guid: be2e970487b634e469734cff84434dc5, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: d1969a18202454d438bb72878546bb27, type: 3}
+    - {fileID: 8300000, guid: be2e970487b634e469734cff84434dc5, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx:
+    - prefab: {fileID: 0}
+      boneName: 
+      positionOffset: {x: 0, y: 0, z: 0}
+      rotationOffset: {x: 0, y: 0, z: 0}
+      normalizedTime: 0
+      followBone: 0
+      lifetime: 0
   - stateName: Combo2_Brush
     action: 5
     clip: {fileID: 7412560428338610560, guid: 934451058699cc64da2b5ed19ea2da25, type: 3}
@@ -66,7 +109,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 1ba1b8bf06956f34e903643bf35f4f5f, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 48ffaf7e86c574149b5f950bbe50b3e6, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo3_Brush
     action: 6
@@ -75,7 +125,14 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 7242c2902d82ac94ba9f172b6ab8594f, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: c26dfe0cea6af584aa174eaf932920c9, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Combo4_Brush
     action: 7
@@ -84,7 +141,15 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 19efcc1d8f1a71544a6d18049d7b2d64, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 6c2831caa5c6bfb40b8c00c3e942224d, type: 3}
+    - {fileID: 8300000, guid: c1944c990af1616409ea981dc28c4454, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: SpecialSkill_Brush
     action: 8
@@ -93,7 +158,15 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 5.4
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 5a4fd2ef2d2ce004ea99db01f9f30031, type: 3}
+    - {fileID: 8300000, guid: ff8bb5ffd09906b4b8fce02620403250, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: 96784651b41870f4ca5622766287d269, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: WeaponSwitch_Brush
     action: 9
@@ -102,7 +175,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 2.2
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Damaged_Brush
     action: 10
@@ -111,7 +189,16 @@ MonoBehaviour:
     endPadding: 0.0333333
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish:
+    - {fileID: 8300000, guid: 6f90f57bd712ae8459c012fddd1a8987, type: 3}
+    - {fileID: 8300000, guid: 89bd687d8449f7c48a35300483b89ec2, type: 3}
+    voiceTaiwanese:
+    - {fileID: 8300000, guid: bfd32cf6b152bd540a947ac5821a0352, type: 3}
+    - {fileID: 8300000, guid: d4ae58c1b1a513d4b9c2587e93201820, type: 3}
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Jump_Brush
     action: 11
@@ -120,7 +207,12 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
   - stateName: Fall_Brush
     action: 12
@@ -129,5 +221,10 @@ MonoBehaviour:
     endPadding: 0
     fallbackDuration: 0
     sfx: []
-    voice: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
     vfx: []
