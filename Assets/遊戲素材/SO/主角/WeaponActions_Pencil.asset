@@ -195,7 +195,14 @@ MonoBehaviour:
     - {fileID: 8300000, guid: d4ae58c1b1a513d4b9c2587e93201820, type: 3}
     voiceVolume: 1
     voiceNormalizedTime: 0
-    vfx: []
+    vfx:
+    - prefab: {fileID: 2045826760702146929, guid: aaa39c69d8aad644781983490e5f0832, type: 3}
+      boneName: 
+      positionOffset: {x: 0, y: 0.6, z: 0}
+      rotationOffset: {x: 0, y: 0, z: 0}
+      normalizedTime: 0
+      followBone: 0
+      lifetime: 0
   - stateName: Jump_Pencil
     action: 11
     clip: {fileID: -5013186000938531054, guid: 87e5ba111bc2afb4796cc15cac457823, type: 3}

@@ -44,5 +44,12 @@ MonoBehaviour:
     voiceTaiwanese: []
     voiceVolume: 1
     voiceNormalizedTime: 0
-    vfx: []
+    vfx:
+    - prefab: {fileID: 2045826760702146929, guid: 7ce64f4e68ed8be46b816dcd05daac3d, type: 3}
+      boneName: 
+      positionOffset: {x: 0, y: 0.5, z: 0}
+      rotationOffset: {x: 0, y: 0, z: 0}
+      normalizedTime: 0
+      followBone: 0
+      lifetime: 0
   mixerGroup: {fileID: 4853816048678867972, guid: 3bc653d8ce919474a911bcf516d5d417, type: 2}

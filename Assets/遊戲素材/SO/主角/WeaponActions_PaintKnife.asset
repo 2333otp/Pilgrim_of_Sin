@@ -190,7 +190,14 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 9d500384d3993f64b9dd4bd4d0d7538c, type: 3}
     voiceVolume: 1
     voiceNormalizedTime: 0
-    vfx: []
+    vfx:
+    - prefab: {fileID: 2045826760702146929, guid: aaa39c69d8aad644781983490e5f0832, type: 3}
+      boneName: 
+      positionOffset: {x: 0, y: 0.5, z: 0}
+      rotationOffset: {x: 0, y: 0, z: 0}
+      normalizedTime: 0
+      followBone: 0
+      lifetime: 0
   - stateName: Jump_PaintKnife
     action: 11
     clip: {fileID: -5013186000938531054, guid: 5ac458e96b42e944fa1c796ccdb6708f, type: 3}
