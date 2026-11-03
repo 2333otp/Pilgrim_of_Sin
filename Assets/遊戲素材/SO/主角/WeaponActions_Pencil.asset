@@ -166,7 +166,7 @@ MonoBehaviour:
     vfx: []
   - stateName: WeaponSwitch_Pencil
     action: 9
-    clip: {fileID: 9164733575357102754, guid: caf5a3605ea2dea428ae47253c0804dd, type: 3}
+    clip: {fileID: 7400000, guid: 700a451ad87448340a1270a4f3670cda, type: 2}
     baseClip: {fileID: 9164733575357102754, guid: caf5a3605ea2dea428ae47253c0804dd, type: 3}
     endPadding: 0
     fallbackDuration: 2.2

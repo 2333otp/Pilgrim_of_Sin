@@ -44,7 +44,7 @@ MonoBehaviour:
     vfx: []
   - stateName: LightAttack_Brush
     action: 2
-    clip: {fileID: 6891604360456981407, guid: 025f2aba7cb81ed48942854d9e5b8003, type: 3}
+    clip: {fileID: 7400000, guid: b2714ad1e00b7d6488a7c040c5ecd348, type: 2}
     baseClip: {fileID: 6891604360456981407, guid: 025f2aba7cb81ed48942854d9e5b8003, type: 3}
     endPadding: 0
     fallbackDuration: 2
@@ -62,7 +62,7 @@ MonoBehaviour:
     vfx: []
   - stateName: HeavyAttack_Brush
     action: 3
-    clip: {fileID: 5596564542830253340, guid: 5a29850e609951d40be1d233b24f8e9b, type: 3}
+    clip: {fileID: 7400000, guid: d5e3df8bfaf241c4e870751409ac18ac, type: 2}
     baseClip: {fileID: 5596564542830253340, guid: 5a29850e609951d40be1d233b24f8e9b, type: 3}
     endPadding: 0
     fallbackDuration: 2.9
@@ -78,7 +78,7 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo1_Brush
     action: 4
-    clip: {fileID: -9166611953226907152, guid: 33c1c134b68fb1a4fbe5856c05b37221, type: 3}
+    clip: {fileID: 7400000, guid: 64f3ecc217402474dbe0d96fc8aa981a, type: 2}
     baseClip: {fileID: -9166611953226907152, guid: 33c1c134b68fb1a4fbe5856c05b37221, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
@@ -104,7 +104,7 @@ MonoBehaviour:
       lifetime: 0
   - stateName: Combo2_Brush
     action: 5
-    clip: {fileID: 7412560428338610560, guid: 934451058699cc64da2b5ed19ea2da25, type: 3}
+    clip: {fileID: 7400000, guid: a9ff671c47bcc8844b5b781e39c9bcc1, type: 2}
     baseClip: {fileID: 7412560428338610560, guid: 934451058699cc64da2b5ed19ea2da25, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
@@ -120,7 +120,7 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo3_Brush
     action: 6
-    clip: {fileID: 6217840864344893800, guid: ab6560cc38e94f040b2d04f8f873928d, type: 3}
+    clip: {fileID: 7400000, guid: 2586308acdf7a214c9012c8135a8b07c, type: 2}
     baseClip: {fileID: 6217840864344893800, guid: ab6560cc38e94f040b2d04f8f873928d, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
@@ -136,7 +136,7 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo4_Brush
     action: 7
-    clip: {fileID: 3060610079319413300, guid: bfbbf8de6bb37fa41a1cfdced2c6c9d4, type: 3}
+    clip: {fileID: 7400000, guid: b980177b595cfba4f9bca4aea3e802eb, type: 2}
     baseClip: {fileID: 3060610079319413300, guid: bfbbf8de6bb37fa41a1cfdced2c6c9d4, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
@@ -153,7 +153,7 @@ MonoBehaviour:
     vfx: []
   - stateName: SpecialSkill_Brush
     action: 8
-    clip: {fileID: 8537244719217602241, guid: db0c3c6e06aa9364c93c4faa1a7a269e, type: 3}
+    clip: {fileID: 7400000, guid: 3a375e5dc67398e4289188c0f8686f25, type: 2}
     baseClip: {fileID: 8537244719217602241, guid: db0c3c6e06aa9364c93c4faa1a7a269e, type: 3}
     endPadding: 0
     fallbackDuration: 5.4
@@ -170,8 +170,8 @@ MonoBehaviour:
     vfx: []
   - stateName: WeaponSwitch_Brush
     action: 9
-    clip: {fileID: 0}
-    baseClip: {fileID: 0}
+    clip: {fileID: 7400000, guid: d34f8a3b7994f3449958d3aaee5f155e, type: 2}
+    baseClip: {fileID: 7400000, guid: d34f8a3b7994f3449958d3aaee5f155e, type: 2}
     endPadding: 0
     fallbackDuration: 2.2
     sfx: []
