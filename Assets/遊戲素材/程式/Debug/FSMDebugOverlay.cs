@@ -16,8 +16,15 @@ namespace PilgrimOfSin.StateMachine
             "FoolishBossScene",
         };
 
-        private const float PanelWidth  = 240f;
+        private const float PanelWidth  = 300f;
         private const float CacheInterval = 1.5f;
+
+        // 版面依畫面高度縮放：Game 視窗解析度越高，面板越大（450px 高 = 1 倍，限制 1~4 倍）
+        private float _scale = 1f;
+        private float _styleScale = -1f;
+        private float PanelW => PanelWidth * _scale;
+        private float TitleBarStep => 24f * _scale;
+        private float RowH => 20f * _scale;
 
         private bool _visible = true;
 
@@ -131,16 +138,19 @@ namespace PilgrimOfSin.StateMachine
         private void OnGUI()
         {
             if (!_visible) return;
+
+            _scale = Mathf.Clamp(Screen.height / 450f, 1f, 4f);
             EnsureStyles();
 
-            float y = 10f;
+            float x = 10f * _scale;
+            float y = 10f * _scale;
 
             if (_player != null)
-                y = DrawPlayerPanel(10f, y) + 5f;
+                y = DrawPlayerPanel(x, y) + 5f * _scale;
 
-            if      (_greed   != null) DrawGreedPanel(10f, y);
-            else if (_wrath   != null) DrawWrathPanel(10f, y);
-            else if (_foolish != null) DrawFoolishPanel(10f, y);
+            if      (_greed   != null) DrawGreedPanel(x, y);
+            else if (_wrath   != null) DrawWrathPanel(x, y);
+            else if (_foolish != null) DrawFoolishPanel(x, y);
         }
 
         // ── Player 面板：State / Weapon / HP ─────────────────────────
@@ -148,7 +158,7 @@ namespace PilgrimOfSin.StateMachine
         private float DrawPlayerPanel(float x, float y)
         {
             DrawTitleBar(x, y, "Player [Muir]   F1 切換");
-            y += 24f;
+            y += TitleBarStep;
 
             float hp    = _player.CurrentHp;
             float maxHp = _player.MaxHp;
@@ -181,7 +191,7 @@ namespace PilgrimOfSin.StateMachine
         private void DrawGreedPanel(float x, float y)
         {
             DrawTitleBar(x, y, "Boss [貪]");
-            y += 24f;
+            y += TitleBarStep;
 
             float hp    = _greed.CurrentHp;
             float maxHp = _greed.MaxHp;
@@ -200,7 +210,7 @@ namespace PilgrimOfSin.StateMachine
         private void DrawWrathPanel(float x, float y)
         {
             DrawTitleBar(x, y, "Boss [嗔]");
-            y += 24f;
+            y += TitleBarStep;
 
             float hp    = _wrath.CurrentHp;
             float maxHp = _wrath.MaxHp;
@@ -218,7 +228,7 @@ namespace PilgrimOfSin.StateMachine
         private void DrawFoolishPanel(float x, float y)
         {
             DrawTitleBar(x, y, "Boss [癡]");
-            y += 24f;
+            y += TitleBarStep;
 
             float hp    = _foolish.CurrentHp;
             float maxHp = _foolish.MaxHp;
@@ -227,22 +237,24 @@ namespace PilgrimOfSin.StateMachine
             {
                 $"State  : {_foolish.CurrentStateType}",
                 $"HP     : {hp:F0} / {maxHp:F0}  ({hp / maxHp:P0})",
-                $"Phase  : {_foolish.CurrentPhase}",
-                $"Timer  : {_foolishTimer:F1} s",
+                $"Phase  : {_foolish.CurrentPhase}  /  {_foolish.CyclePhase}",
+                $"Left   : {_foolish.PhaseTimeRemaining:F1} s",
+                $"Safe   : {_foolish.ActiveSafeZoneCount} 個{(_foolish.SafeZonesArePreview ? "（預告）" : "")}   玩家在善區：{(_foolish.PlayerInSafeZone ? "是" : "否")}",
+                $"Evil   : {(_foolish.EvilZoneDamaging ? "生效" : "無")}  {_foolish.CurrentEvilDps:F0}/s",
             });
         }
 
         // ── 共用繪製輔助 ─────────────────────────────────────────────
 
         private void DrawTitleBar(float x, float y, string title)
-            => GUI.Box(new Rect(x, y, PanelWidth, 22f), title, _titleStyle);
+            => GUI.Box(new Rect(x, y, PanelW, 22f * _scale), title, _titleStyle);
 
         private float DrawRows(float x, float y, string[] rows)
         {
-            float h = rows.Length * 20f + 8f;
-            GUI.Box(new Rect(x, y, PanelWidth, h), "", _boxStyle);
+            float h = rows.Length * RowH + 8f * _scale;
+            GUI.Box(new Rect(x, y, PanelW, h), "", _boxStyle);
             for (int i = 0; i < rows.Length; i++)
-                GUI.Label(new Rect(x + 8f, y + 4f + i * 20f, PanelWidth - 16f, 20f), rows[i], _rowStyle);
+                GUI.Label(new Rect(x + 8f * _scale, y + 4f * _scale + i * RowH, PanelW - 16f * _scale, RowH), rows[i], _rowStyle);
             return y + h;
         }
 
@@ -261,8 +273,10 @@ namespace PilgrimOfSin.StateMachine
 
         private void EnsureStyles()
         {
-            if (_stylesReady) return;
+            // 縮放倍率改變（例如調整 Game 視窗大小）時重建字級
+            if (_stylesReady && Mathf.Approximately(_styleScale, _scale)) return;
             _stylesReady = true;
+            _styleScale = _scale;
 
             _boxStyle = new GUIStyle(GUI.skin.box)
             {
@@ -274,15 +288,15 @@ namespace PilgrimOfSin.StateMachine
                 normal   = { background = MakeTex(new Color(0.08f, 0.08f, 0.38f, 0.88f)),
                              textColor  = Color.white },
                 alignment = TextAnchor.MiddleLeft,
-                padding   = new RectOffset(8, 0, 0, 0),
+                padding   = new RectOffset(Mathf.RoundToInt(8f * _scale), 0, 0, 0),
                 fontStyle = FontStyle.Bold,
-                fontSize  = 12,
+                fontSize  = Mathf.RoundToInt(12f * _scale),
             };
 
             _rowStyle = new GUIStyle(GUI.skin.label)
             {
                 normal  = { textColor = Color.white },
-                fontSize = 11,
+                fontSize = Mathf.RoundToInt(11f * _scale),
             };
         }
 

@@ -26,8 +26,16 @@ namespace PilgrimOfSin.StateMachine
 
         protected void Go(FoolishBossStateType next) => Machine.Request(next);
         protected void ForceGo(FoolishBossStateType next) => Machine.Force(next);
-        protected void Trigger(string name) => Anim.SetTrigger(name);
-        protected void SetBool(string name, bool v) => Anim.SetBool(name, v);
+        // 癡還沒綁 Animator Controller（暫時是膠囊）時直接略過，避免每次切換狀態都洗 "Animator is not playing an AnimatorController" 警告
+        protected void Trigger(string name)
+        {
+            if (Anim.runtimeAnimatorController != null) Anim.SetTrigger(name);
+        }
+
+        protected void SetBool(string name, bool v)
+        {
+            if (Anim.runtimeAnimatorController != null) Anim.SetBool(name, v);
+        }
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -101,6 +109,7 @@ namespace PilgrimOfSin.StateMachine
     {
         private readonly FoolishBossStateType _type;
         private bool _animDone;
+        private float _fallbackTimer;
 
         public override FoolishBossStateType StateType => _type;
 
@@ -113,6 +122,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             _animDone = false;
+            _fallbackTimer = Boss.AttackFallbackDuration;
             string triggerName = _type switch
             {
                 FoolishBossStateType.Attack1 => "Attack1",
@@ -120,12 +130,21 @@ namespace PilgrimOfSin.StateMachine
                 _ => "Attack3",
             };
             Trigger(triggerName);
+            Boss.Voice?.PlayAttack(_type);
             Boss.OnAttackAnimEnd += HandleAnimEnd;
         }
 
         public override void Update(float dt)
         {
             if (Boss.IsDead) { ForceGo(FoolishBossStateType.Dead); return; }
+
+            // 還沒綁 Animator Controller 時不會有動畫事件，靠保險計時結束，避免卡在攻擊狀態
+            if (Anim.runtimeAnimatorController == null)
+            {
+                _fallbackTimer -= dt;
+                if (_fallbackTimer <= 0f) _animDone = true;
+            }
+
             if (_animDone) Go(FoolishBossStateType.Idle);
         }
 
@@ -171,6 +190,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             Trigger("Dead");
+            Boss.Voice?.Play(FoolishVoiceId.Dead);
             Boss.OnDeath();
         }
     }

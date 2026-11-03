@@ -56,8 +56,18 @@ namespace PilgrimOfSin.StateMachine
 
             var swaps = new Dictionary<AnimationClip, AnimationClip>();
             foreach (var e in _profile.AllEntries())
+            {
+                if (e.clip != null && e.baseClip == null)
+                {
+                    // 沒有 baseClip 就不知道要替換 Animator 裡的哪個 Clip，整筆會被略過（例如 Locomotion 是 BlendTree、
+                    // 或該 state 在 Animator Controller 裡不存在）。用「PilgrimOfSin/主角/檢查素材總表」查原因。
+                    Debug.LogWarning($"[PlayerActionFeedback] 「{e.stateName}」放了 Clip 但沒有 baseClip，動畫不會被替換。" +
+                                     "請用選單 PilgrimOfSin/主角/檢查素材總表 檢查。", _profile);
+                    continue;
+                }
                 if (e.clip != null && e.baseClip != null && e.clip != e.baseClip)
                     swaps[e.baseClip] = e.clip;
+            }
             if (swaps.Count == 0) return;
 
             var overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);

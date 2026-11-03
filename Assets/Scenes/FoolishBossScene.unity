@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 315583153}
   - component: {fileID: 315583152}
   - component: {fileID: 315583154}
+  - component: {fileID: 315583155}
   m_Layer: 0
   m_Name: FoolishBoss
   m_TagString: Untagged
@@ -150,7 +151,8 @@ Transform:
   m_LocalPosition: {x: 2.4358, y: 0, z: -3.97725}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 800000010}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &315583152
@@ -221,6 +223,7 @@ MonoBehaviour:
   - {fileID: 928633700}
   - {fileID: 2119207014}
   - {fileID: 1989710203}
+  _displayName: "\u5FC3\u9B54-\u7661"
   _maxHp: 10000
   _moveSpeed: 3.5
   _idleDuration: 1
@@ -230,11 +233,58 @@ MonoBehaviour:
   _attack1Range: 3
   _attack2Range: 6
   _attack3Range: 10
-  _evadeRoundDuration: 5
-  _evadeRoundsPerCycle: 2
-  _battleDuration: 10
+  _attackFallbackDuration: 1.5
+  _autoFitModel: 0
+  _modelTargetHeight: 3
+  _autoFitCollider: 1
+  _arena:
+    zoneShowDuration: 7
+    bufferDuration: 3.5
+    zoneRounds: 2
+    battleDuration: 10
+    roarDuration: 1
+    spreadDuration: 4
+    battleEarlyEndHpRatio: 0.4
+    vulnerableOutsideBattle: 0
+    tierHighHpRatio: 0.5
+    tierMidHpRatio: 0.25
+    dpsHigh: 280
+    dpsMid: 200
+    dpsLow: 120
+    safeZoneMin: 1
+    safeZoneMax: 3
+    maxSameCountStreak: 2
+    safeZoneBaseRadius: 0
+    safeZoneExtraRadiusAtZeroHp: 4
+    safeZoneGap: 2
+    arenaCenter: {x: 0, y: 0}
+    arenaHalfSize: 35
+    edgeMargin: 5
   enableStagger: 0
   StaggerDuration: 0.5
+--- !u!136 &315583155
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315583150}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1 &532691101
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +456,112 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!1001 &800000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 800000010}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+      propertyPath: m_Name
+      value: PigModel
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+--- !u!4 &800000002 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1cb80d0fceb5d474899bcc2c0c6e6cb9, type: 3}
+  m_PrefabInstance: {fileID: 800000001}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &800000010
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800000011}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 800000002}
+  m_Father: {fileID: 315583151}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &800000011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 800000010}
+  m_Layer: 0
+  m_Name: Visual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &928633699
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,6 +594,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0cd0fcad00ab3499b5bf54e070cfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.SafeZone
+  _height: 0.07
+  _thickness: 0.04
+  _color: {r: 1, g: 0.86, b: 0.4, a: 1}
 --- !u!135 &928633701
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -712,9 +871,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 518e37d872c90f24195126c68e5c9b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.EvilZone
-  _maxRadius: 30
-  _damagePerSec: 200
-  _damageInterval: 1
+  _thickness: 0.04
+  _height: 0.03
+  _color: {r: 0.07, g: 0, b: 0.12, a: 1}
 --- !u!1001 &1077318753
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -955,6 +1114,82 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.38736072, y: 0.012996432, z: -0.0054607796, w: -0.9218205}
   m_LocalPosition: {x: 0, y: 1.5035291, z: -4.7685847}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1228231003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1228231005}
+  - component: {fileID: 1228231004}
+  m_Layer: 0
+  m_Name: FoolishVoice
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1228231004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228231003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34f4d81c557cde14881bcdf5069031db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.FoolishVoice
+  _mixerGroup: {fileID: 0}
+  _roar:
+    voiceEnglish: []
+    voiceTaiwanese: []
+    volume: 1
+    delay: 0
+  _attack1:
+    voiceEnglish: []
+    voiceTaiwanese: []
+    volume: 1
+    delay: 0
+  _attack2:
+    voiceEnglish: []
+    voiceTaiwanese: []
+    volume: 1
+    delay: 0
+  _attack3:
+    voiceEnglish: []
+    voiceTaiwanese: []
+    volume: 1
+    delay: 0
+  _hurt:
+    voiceEnglish: []
+    voiceTaiwanese: []
+    volume: 1
+    delay: 0
+  _dead:
+    voiceEnglish: []
+    voiceTaiwanese: []
+    volume: 1
+    delay: 0
+  _hurtMinInterval: 1.5
+--- !u!4 &1228231005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228231003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.5, y: 1.39769, z: 0.37269}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1287,6 +1522,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0cd0fcad00ab3499b5bf54e070cfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.SafeZone
+  _height: 0.07
+  _thickness: 0.04
+  _color: {r: 1, g: 0.86, b: 0.4, a: 1}
 --- !u!135 &1525585894
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1847,6 +2085,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0cd0fcad00ab3499b5bf54e070cfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.SafeZone
+  _height: 0.07
+  _thickness: 0.04
+  _color: {r: 1, g: 0.86, b: 0.4, a: 1}
 --- !u!135 &1989710204
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1972,6 +2213,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0cd0fcad00ab3499b5bf54e070cfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.SafeZone
+  _height: 0.07
+  _thickness: 0.04
+  _color: {r: 1, g: 0.86, b: 0.4, a: 1}
 --- !u!135 &2119207015
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2070,9 +2314,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1178746361}
+  - {fileID: 315583151}
   - {fileID: 1591782632}
   - {fileID: 1983858046}
-  - {fileID: 315583151}
   - {fileID: 1068650151}
   - {fileID: 1525585897}
   - {fileID: 928633704}
@@ -2087,3 +2331,4 @@ SceneRoots:
   - {fileID: 1241687399}
   - {fileID: 1339583492}
   - {fileID: 946317063}
+  - {fileID: 1228231005}

@@ -16,11 +16,24 @@
     }
 
     /// <summary>
-    /// 場地機制相位。
+    /// 場地機制相位（粗分：給癡的 AI 判斷用）。
     /// </summary>
     public enum FoolishPhase
     {
-        Evade,      // 躲避階段：善惡區交替，玩家須待在善區；Boss 無敵
-        Battle,     // 打Boss階段：10秒，Boss 可受傷，可攻擊
+        Evade,      // 躲避階段（善惡區、緩衝、嘶吼、擴散）：癡預設無敵
+        Battle,     // 打鬥窗口：10秒，Boss 可受傷，可攻擊
+    }
+
+    /// <summary>
+    /// 場地循環的細部階段。一個大循環：
+    /// ZoneShow → Buffer → ZoneShow → Buffer → Battle → Roar → Spread → 回到 ZoneShow
+    /// </summary>
+    public enum FoolishCyclePhase
+    {
+        ZoneShow,   // 善/惡區出現：惡區生效（善區內不扣血）
+        Buffer,     // 正常地板緩衝：沒有善惡區
+        Battle,     // 打鬥窗口：沒有善惡區，癡可被打
+        Roar,       // 癡嘶吼（惡區即將重新出現的信號）
+        Spread,     // 地面從邊緣擴散變黑（還不扣血）
     }
 }

@@ -235,8 +235,10 @@ namespace PilgrimOfSin.StateMachine
             _pendingRootMotion = Vector3.zero;
             if (delta.sqrMagnitude < 1e-10f) return;
 
+            // 只吃水平位移。Y 軸交給重力與碰撞處理：換進來的新動畫如果 FBX 沒勾「Bake Into Pose: Root Transform
+            // Position (Y)」，動畫的根高度曲線會被當成位移累加進來，角色就會一路沉進地板（遁地）或飄起來。
             Vector3 horizontal = new Vector3(delta.x, 0f, delta.z);
-            Vector3 move = new Vector3(0f, delta.y, 0f);
+            Vector3 move = Vector3.zero;
 
             // 最多掃兩輪：第一輪撞到就貼著障礙停下，剩餘位移沿碰撞面滑開再掃一次
             for (int i = 0; i < 2 && horizontal.sqrMagnitude > 1e-8f; i++)
@@ -407,6 +409,21 @@ namespace PilgrimOfSin.StateMachine
             // 透過 RequestTransition 讓 DamagableStates 白名單生效
             // SpecialSkill / Roll / WeaponSwitch / Paused 下會被白名單擋住，不進入 Damaged
             _stateMachine.RequestTransition(PlayerStateType.Damaged);
+        }
+
+        /// <summary>
+        /// 環境持續傷害（癡的惡區）。與 TakeDamage 的差別：
+        ///   · 不會進入 Damaged 受擊硬直（每幀小量扣血不該一直打斷玩家動作）。
+        ///   · 翻滾/特殊招式的動作幀無敵擋不住，避免靠連續翻滾穿越惡區。
+        ///   · 善區的判斷由呼叫端（FoolishBossController）負責，站在善區內就不要呼叫。
+        /// </summary>
+        public void TakeEnvironmentDamage(float amount)
+        {
+            if (IsDead || amount <= 0f) return;
+
+            CurrentHp = Mathf.Max(0f, CurrentHp - amount * _incomingDamageMultiplier);
+            if (CurrentHp <= 0f)
+                _stateMachine.ForceTransition(PlayerStateType.Dead);
         }
 
         /// <summary>
