@@ -44,8 +44,8 @@ MonoBehaviour:
     vfx: []
   - stateName: LightAttack_PaintKnife
     action: 2
-    clip: {fileID: 3060610079319413300, guid: cb5b292789072ba4493eb8607b1c353d, type: 3}
-    baseClip: {fileID: 3060610079319413300, guid: cb5b292789072ba4493eb8607b1c353d, type: 3}
+    clip: {fileID: -7241783472766842207, guid: 13649ce082ad8fc4eb631660615becd7, type: 3}
+    baseClip: {fileID: -7241783472766842207, guid: 13649ce082ad8fc4eb631660615becd7, type: 3}
     endPadding: 0
     fallbackDuration: 2
     sfx: []
@@ -62,8 +62,8 @@ MonoBehaviour:
     vfx: []
   - stateName: HeavyAttack_PaintKnife
     action: 3
-    clip: {fileID: 3060610079319413300, guid: 7cbf52a0c0fd1094ea43a153ef244faa, type: 3}
-    baseClip: {fileID: 3060610079319413300, guid: 7cbf52a0c0fd1094ea43a153ef244faa, type: 3}
+    clip: {fileID: 4720275915632916084, guid: 4d60a31b0512a6c4c88c6187eda2515d, type: 3}
+    baseClip: {fileID: 4720275915632916084, guid: 4d60a31b0512a6c4c88c6187eda2515d, type: 3}
     endPadding: 0
     fallbackDuration: 2.9
     sfx: []
@@ -78,8 +78,8 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo1_PaintKnife
     action: 4
-    clip: {fileID: 3060610079319413300, guid: e1a4dfcceeef5fc4b96ddfaaeccc6440, type: 3}
-    baseClip: {fileID: 3060610079319413300, guid: e1a4dfcceeef5fc4b96ddfaaeccc6440, type: 3}
+    clip: {fileID: 3709914251868800647, guid: 7cbef0495563e7041ab3d39c678705ed, type: 3}
+    baseClip: {fileID: 3709914251868800647, guid: 7cbef0495563e7041ab3d39c678705ed, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
@@ -96,8 +96,8 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo2_PaintKnife
     action: 5
-    clip: {fileID: 3060610079319413300, guid: 6853bbd8444adb94a9fd247aa896bb04, type: 3}
-    baseClip: {fileID: 3060610079319413300, guid: 6853bbd8444adb94a9fd247aa896bb04, type: 3}
+    clip: {fileID: -2058039885033681104, guid: 837deba425d1c654a92e11d703563d35, type: 3}
+    baseClip: {fileID: -2058039885033681104, guid: 837deba425d1c654a92e11d703563d35, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
@@ -112,8 +112,8 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo3_PaintKnife
     action: 6
-    clip: {fileID: 3060610079319413300, guid: 431857372ea9c60469c7d57d058067bd, type: 3}
-    baseClip: {fileID: 3060610079319413300, guid: 431857372ea9c60469c7d57d058067bd, type: 3}
+    clip: {fileID: -3203263029206315836, guid: 917f6a628ca148446ba74b2c6f9900e7, type: 3}
+    baseClip: {fileID: -3203263029206315836, guid: 917f6a628ca148446ba74b2c6f9900e7, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
@@ -128,8 +128,8 @@ MonoBehaviour:
     vfx: []
   - stateName: Combo4_PaintKnife
     action: 7
-    clip: {fileID: 3060610079319413300, guid: 98b1c413d1c041c4abc784dc0af144f1, type: 3}
-    baseClip: {fileID: 3060610079319413300, guid: 98b1c413d1c041c4abc784dc0af144f1, type: 3}
+    clip: {fileID: 3061505505740887088, guid: 9c5b9ca6da1b9004d93b690998aa0ad3, type: 3}
+    baseClip: {fileID: 3061505505740887088, guid: 9c5b9ca6da1b9004d93b690998aa0ad3, type: 3}
     endPadding: 0
     fallbackDuration: 6.5
     sfx: []
@@ -144,8 +144,8 @@ MonoBehaviour:
     vfx: []
   - stateName: SpecialSkill_PaintKnife
     action: 8
-    clip: {fileID: 2274099441720513296, guid: 9ba45c64540eaab44b04ad7f95db4f58, type: 3}
-    baseClip: {fileID: 2274099441720513296, guid: 9ba45c64540eaab44b04ad7f95db4f58, type: 3}
+    clip: {fileID: 3061505505740887088, guid: 96553dd66bcc7624b9a8d3fcbbc1f735, type: 3}
+    baseClip: {fileID: 3061505505740887088, guid: 96553dd66bcc7624b9a8d3fcbbc1f735, type: 3}
     endPadding: 0
     fallbackDuration: 5.4
     sfx: []
@@ -161,8 +161,8 @@ MonoBehaviour:
     vfx: []
   - stateName: WeaponSwitch_PaintKnife
     action: 9
-    clip: {fileID: 0}
-    baseClip: {fileID: 0}
+    clip: {fileID: 5996610230699778667, guid: ce76a708ecdd3ba43a14a86a4abc6804, type: 3}
+    baseClip: {fileID: 5996610230699778667, guid: ce76a708ecdd3ba43a14a86a4abc6804, type: 3}
     endPadding: 0
     fallbackDuration: 2.2
     sfx: []
