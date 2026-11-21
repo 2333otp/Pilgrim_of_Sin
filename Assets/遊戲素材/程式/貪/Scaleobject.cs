@@ -121,7 +121,8 @@ namespace PilgrimOfSin.StateMachine
 
         private void OnTriggerEnter(Collider other)
         {
-            var hitbox = other.GetComponent<PlayerAttackHitbox>();
+            // GetComponentInParent：主角的判定可能開在 AttackHitBox 底下的「判定槽」子物件上（出招表的形狀判定）
+            var hitbox = other.GetComponentInParent<PlayerAttackHitbox>();
             if (hitbox == null) return;
             if (_bossController != null && _bossController.CurrentPhase == ScalePhase.Kicked) return;
             if (hitbox.HitBossThisSwing) return;

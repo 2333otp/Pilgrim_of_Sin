@@ -1,0 +1,236 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5892d20e4685a641b68e800bde4a297, type: 3}
+  m_Name: ComboSliceTable
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::PilgrimOfSin.StateMachine.EditorTools.ComboSliceTable
+  sources:
+  - label: "\u925B\u7B46 Combo1"
+    weapon: Pencil
+    source: {fileID: 7400000, guid: 7c67266840207474a9ef42355193b85d, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u63EE\u64CA\u9AD8\u5CF0 0.75 / 1.03 / 1.55 \u79D2\u30020.88 \u79D2\u8655\u505C\u9813\u4E0D\u660E\u986F\uFF0C\u53EA\u5728
+      1.37 \u79D2\u5207\u4E00\u5200\u3002"
+    segments:
+    - name: combo1_pencil_s1
+      startFrame: 0
+      endFrame: 33
+    - name: combo1_pencil_s2
+      startFrame: 33
+      endFrame: 44
+  - label: "\u925B\u7B46 Combo2"
+    weapon: Pencil
+    source: {fileID: 7400000, guid: d2dc43cfaa10a99409f8138f1b84ab12, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u56DB\u4E0B\u63EE\u64CA\u3001\u505C\u9813\u975E\u5E38\u4E7E\u6DE8\uFF08\u4E09\u500B\u5207\u9EDE\u901F\u5EA6\u90FD\u53EA\u6709
+      3~4%\uFF09\uFF0C\u6700\u9069\u5408\u7576\u666E\u653B\u93C8\u3002"
+    segments:
+    - name: combo2_pencil_s1
+      startFrame: 0
+      endFrame: 19
+    - name: combo2_pencil_s2
+      startFrame: 19
+      endFrame: 30
+    - name: combo2_pencil_s3
+      startFrame: 30
+      endFrame: 55
+  - label: "\u925B\u7B46 Combo3"
+    weapon: Pencil
+    source: {fileID: 7400000, guid: 8f52eedaeeda4624782237a0ceb2863d, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u3010\u6536\u62DB\u3011s1\uFF08\u539F s1+s2\uFF09\u7576\u6536\u62DB\u7528\uFF08\u6392\u5217\u6642\u653E\u5728\u9023\u6BB5\u6700\u5F8C\uFF09\u3002\u7B2C\u4E00\u6BB5\u5F88\u9577\uFF080~1.87
+      \u79D2\u53EA\u6709 0.53 \u79D2\u4E00\u500B\u9AD8\u5CF0\uFF0C\u5F8C\u9762\u53EF\u80FD\u662F\u84C4\u529B\u6216\u4F4D\u79FB\uFF09\u3002"
+    segments:
+    - name: combo3_pencil_s1
+      startFrame: 0
+      endFrame: 64
+    - name: combo3_pencil_s2
+      startFrame: 64
+      endFrame: 75
+  - label: "\u925B\u7B46 Combo4"
+    weapon: Pencil
+    source: {fileID: 7400000, guid: fe8ad29e02d86ed48bda609b15f43bff, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u63EE\u64CA\u9AD8\u5CF0 0.20 / 0.75 / 1.15 / 1.40 / 1.67 / 2.28 \u79D2\uFF1B1.00~1.53
+      \u4E4B\u9593\u662F\u9023\u7E8C\u5FEB\u6253\uFF0C\u5408\u6210\u4E00\u6BB5\u3002"
+    segments:
+    - name: combo4_pencil_s1
+      startFrame: 0
+      endFrame: 24
+    - name: combo4_pencil_s2
+      startFrame: 24
+      endFrame: 50
+    - name: combo4_pencil_s3
+      startFrame: 50
+      endFrame: 70
+  - label: "\u6C34\u5F69\u7B46 Combo1"
+    weapon: Brush
+    source: {fileID: 7400000, guid: 2fc062f363895944eaedd5c77995bbb0, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "0.58 \u79D2\u8655\u505C\u9813\u4E0D\u660E\u986F\uFF0847%\uFF09\uFF0C\u4E0D\u5207\u3002"
+    segments:
+    - name: combo1_brush_s1
+      startFrame: 0
+      endFrame: 24
+    - name: combo1_brush_s2
+      startFrame: 24
+      endFrame: 62
+  - label: "\u6C34\u5F69\u7B46 Combo2\uFF08\u672A\u5207\uFF09"
+    weapon: Brush
+    source: {fileID: 7400000, guid: 68388e246a8de984f80f3ac651801bfa, type: 2}
+    enabled: 0
+    bakeRootY: 0
+    note: "\u26A0 \u53EA\u6709 0.65 \u79D2\u4E00\u500B\u63EE\u64CA\uFF0C0.95 \u79D2\u5F8C\u624B\u5E7E\u4E4E\u4E0D\u52D5\u3001\u4F46\u52D5\u756B\u9577
+      4.00 \u79D2\u3002\u53EF\u80FD\u662F\u4F01\u5283\u5BEB\u7684\u300C\u9577\u6309\u8F49\u5708\u300D\uFF0C\u6216\u5C3E\u5DF4\u592A\u9577\uFF0C\u8ACB\u52D5\u756B\u7D44\u78BA\u8A8D\u3002\u66AB\u4E0D\u5207\u3002"
+    segments:
+    - name: combo2_brush_s1
+      startFrame: 0
+      endFrame: 96
+  - label: "\u6C34\u5F69\u7B46 Combo3"
+    weapon: Brush
+    source: {fileID: 7400000, guid: 499af5784f41d7f478a1336b05908a64, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u4E5D\u500B\u9AD8\u5CF0\uFF0C\u524D 1.1 \u79D2\u662F\u9023\u7E8C\u5FEB\u6253\uFF1B\u5207\u6210\u4E94\u6BB5\u3002"
+    segments:
+    - name: combo3_brush_s1
+      startFrame: 0
+      endFrame: 40
+    - name: combo3_brush_s2
+      startFrame: 40
+      endFrame: 71
+    - name: combo3_brush_s3
+      startFrame: 71
+      endFrame: 104
+  - label: "\u6C34\u5F69\u7B46 Combo4"
+    weapon: Brush
+    source: {fileID: 7400000, guid: e2f7b5b39c6cc3342b4e06608c903151, type: 2}
+    enabled: 1
+    bakeRootY: 0
+    note: "1.82 / 2.13 \u79D2\u8655\u505C\u9813\u4E0D\u660E\u986F\uFF0C1.42~2.68
+      \u5408\u6210\u4E00\u6BB5\u3002"
+    segments:
+    - name: combo4_brush_s1
+      startFrame: 0
+      endFrame: 34
+    - name: combo4_brush_s2
+      startFrame: 34
+      endFrame: 64
+    - name: combo4_brush_s3
+      startFrame: 64
+      endFrame: 77
+  - label: "\u756B\u5200 Combo1"
+    weapon: PaintKnife
+    source: {fileID: 3709914251868800647, guid: 7cbef0495563e7041ab3d39c678705ed, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "0.58 \u79D2\u8655\u505C\u9813\u4E0D\u660E\u986F\uFF0844%\uFF09\uFF0C\u53EA\u5728
+      1.15 \u79D2\u5207\u3002"
+    segments:
+    - name: combo1_paintKnife_s1
+      startFrame: 0
+      endFrame: 28
+    - name: combo1_paintKnife_s2
+      startFrame: 28
+      endFrame: 50
+  - label: "\u756B\u5200 Combo2"
+    weapon: PaintKnife
+    source: {fileID: -2058039885033681104, guid: 837deba425d1c654a92e11d703563d35, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u4F9D\u4F01\u5283\u6307\u5B9A\u5728\u7B2C 20 \u683C\u5207\u958B\u3002\uFF08\u81EA\u52D5\u5206\u6790\uFF1A\u63EE\u64CA\u9AD8\u5CF0\u7D04
+      0.18s / 0.83s\u2248\u7B2C 20 \u683C\uFF0C1.33s \u5F8C\u5E7E\u4E4E\u975C\u6B62\uFF09"
+    segments:
+    - name: combo2_paintKnife_s1
+      startFrame: 0
+      endFrame: 20
+    - name: combo2_paintKnife_s2
+      startFrame: 20
+      endFrame: 64
+  - label: "\u756B\u5200 Combo3"
+    weapon: PaintKnife
+    source: {fileID: -3203263029206315836, guid: 917f6a628ca148446ba74b2c6f9900e7, type: 3}
+    enabled: 1
+    bakeRootY: 1
+    note: "0.63 \u79D2\u8655\u505C\u9813\u4E0D\u660E\u986F\uFF0829%\uFF09\uFF0C\u53EA\u5728
+      1.47 \u79D2\u5207\u3002\n2026-11-21\uFF1A\u9019\u662F\u5927\u8DF3\u8E8D\u653B\u64CA\uFF08\u6839\u5F80\u4E0A\u7D04
+      3.5 m\uFF09\uFF0C\u52FE\u9078 bakeRootY \u8B93\u89D2\u8272\u771F\u7684\u8DF3\u8D77\u4F86\u3002"
+    segments:
+    - name: combo3_paintKnife_s1
+      startFrame: 0
+      endFrame: 68
+  - label: "\u756B\u5200 Combo4"
+    weapon: PaintKnife
+    source: {fileID: 3061505505740887088, guid: 9c5b9ca6da1b9004d93b690998aa0ad3, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u4E94\u4E0B\u63EE\u64CA\uFF0C\u5207\u6210\u4E94\u6BB5\uFF08\u7B2C 2 \u6BB5\u53EA\u6709
+      0.38 \u79D2\uFF0C\u662F\u5FEB\u901F\u7684\u4E00\u5200\uFF09\u3002"
+    segments:
+    - name: combo4_paintKnife_s1
+      startFrame: 0
+      endFrame: 31
+    - name: combo4_paintKnife_s2
+      startFrame: 32
+      endFrame: 80
+  - label: "\u8ABF\u8272\u76E4 Combo1"
+    weapon: Palette
+    source: {fileID: 8111623483096193758, guid: 37ffba99bf2a3194f90484cf90d61865, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u3010\u6536\u62DB\u3011\u6574\u6BB5\u7576\u6536\u62DB\u7528\uFF08\u6392\u5217\u6642\u653E\u5728\u9023\u6BB5\u6700\u5F8C\uFF09\u3002\u7B2C\u4E00\u6BB5\u9577
+      2.05 \u79D2\uFF080.75 \u79D2\u4E00\u500B\u9AD8\u5CF0\u5F8C\u6709\u9577\u505C\u9813\uFF0C\u53EF\u80FD\u662F\u7784\u6E96/\u84C4\u529B\uFF09\u3002\u6700\u5F8C
+      0.3 \u79D2\u4F75\u5165\u7B2C\u4E8C\u6BB5\u3002"
+    segments:
+    - name: combo1_palette_s1
+      startFrame: 0
+      endFrame: 68
+  - label: "\u8ABF\u8272\u76E4 Combo2"
+    weapon: Palette
+    source: {fileID: 2190130269113757690, guid: bfbe84bc2e831a640a291152196f59f3, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u4E09\u4E0B\u63EE\u64CA\uFF0C\u505C\u9813\u4E7E\u6DE8\u3002"
+    segments:
+    - name: combo2_palette_s1
+      startFrame: 0
+      endFrame: 32
+    - name: combo2_palette_s2
+      startFrame: 32
+      endFrame: 79
+  - label: "\u8ABF\u8272\u76E4 Combo3"
+    weapon: Palette
+    source: {fileID: -4847612553916064684, guid: 170ad4dc33d88bc409e6abff2f9e14bf, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u524D 1.3 \u79D2\u5E7E\u4E4E\u6C92\u6709\u63EE\u64CA\uFF08\u8D77\u624B\u5F88\u9577\uFF09\u3002"
+    segments:
+    - name: combo3_palette_s1
+      startFrame: 0
+      endFrame: 59
+    - name: combo3_palette_s2
+      startFrame: 59
+      endFrame: 77
+  - label: "\u8ABF\u8272\u76E4 Combo4"
+    weapon: Palette
+    source: {fileID: -7022722912792910179, guid: fa6002e171c32b14a85630671f9a95af, type: 3}
+    enabled: 1
+    bakeRootY: 0
+    note: "\u4E09\u6BB5\uFF0C\u505C\u9813\u4E7E\u6DE8\u3002"
+    segments:
+    - name: combo4_palette_s1
+      startFrame: 0
+      endFrame: 48

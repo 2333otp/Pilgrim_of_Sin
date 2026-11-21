@@ -6184,6 +6184,11 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 4294967231
+  _enableAttackCancel: 1
+  _lightCancelRatio: 0.45
+  _heavyCancelRatio: 0.5
+  _comboCancelRatio: 0.7
+  _moveCancelRatio: 0.85
 --- !u!114 &8835730596755047717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6239,15 +6244,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.PlayerWeaponVisual
   _pencilPrefab: {fileID: 919132149155446097, guid: fad7c71b40212ef42b73cf910b49c169, type: 3}
   _brushPrefab: {fileID: 919132149155446097, guid: 654dcab23f59e244dbd506f9045f807b, type: 3}
-  _paintKnifePrefab: {fileID: 919132149155446097, guid: 9b736d839c0d8f54db28940602197d0b, type: 3}
+  _paintKnifePrefab: {fileID: 919132149155446097, guid: 858fceecb5b8afc4ca76c432785d26e4, type: 3}
   _palettePrefab: {fileID: 919132149155446097, guid: b1d49cf0469296044b04e4929b9dd7f7, type: 3}
   _handAttachLeftBoneName: DEF-hand_attach.L
   _handAttachRightBoneName: DEF-hand_attach.R
   _pencilRotationOffset: {x: 0, y: 180, z: 0}
   _brushRotationOffset: {x: 0, y: 180, z: 0}
-  _paintKnifeRotationOffsetRight: {x: 180, y: 0, z: 0}
-  _paintKnifeRotationOffsetLeft: {x: 338.63, y: 181.58, z: 179.7}
+  _paintKnifeRotationOffsetRight: {x: 323.4, y: 10.5, z: 329}
+  _paintKnifeRotationOffsetLeft: {x: 323.5, y: 349.6, z: 30.9}
   _paletteRotationOffset: {x: 0, y: 0, z: 0}
+  _pencilGripPoint: {x: 0, y: 0, z: 0}
+  _brushGripPoint: {x: 0, y: 0, z: 0}
+  _paintKnifeGripPoint: {x: 0, y: 0.476, z: 0}
+  _paletteGripPoint: {x: 0, y: 0, z: 0}
+  _pencilFollowWrist: 0
+  _brushFollowWrist: 0
+  _paintKnifeFollowWrist: 1
+  _paletteFollowWrist: 0
 --- !u!114 &887541780736691224
 MonoBehaviour:
   m_ObjectHideFlags: 0

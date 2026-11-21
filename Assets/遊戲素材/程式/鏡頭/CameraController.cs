@@ -44,6 +44,17 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _collisionRadius = 0.3f;   // SphereCast 半徑，避免鏡頭貼到牆面
         [SerializeField] private float _collisionBuffer = 0.2f;   // 撞到牆後，鏡頭往前多留的緩衝距離
 
+        // 跳躍類攻擊（例如畫刀 C3）把上下位移烘進姿勢：角色身體飛上去、根留在地面。
+        // 鏡頭原本跟著根走，角色會飛出畫面上緣，所以額外把鏡頭往上抬「骨盆超出站立高度」的那一段。
+        [Header("跟隨身體高度（跳躍攻擊）")]
+        [SerializeField] private bool _followBodyHeight = true;
+        [SerializeField] private float _bodyHeightMargin = 0.15f;   // 骨盆超出站立高度這麼多以上才開始跟（蹲下、小起伏不動）
+        [SerializeField] private float _bodyHeightSmoothTime = 0.12f;
+
+        private Transform _hips;
+        private float _standingHipsHeight;
+        private float _bodyLift, _bodyLiftVelocity;
+
         // ── 公開狀態 ─────────────────────────────────────────────────
         public bool IsLockedOn { get; private set; }
         public Transform LockTarget { get; private set; }
@@ -70,7 +81,28 @@ namespace PilgrimOfSin.StateMachine
             {
                 _yaw = _player.eulerAngles.y;
                 _pitch = 15f;
+
+                // 站立時骨盆高度 = Avatar 的 humanScale（Humanoid 預設姿勢的骨盆高度）
+                var anim = _player.GetComponentInChildren<Animator>();
+                if (anim != null && anim.isHuman)
+                {
+                    _hips = anim.GetBoneTransform(HumanBodyBones.Hips);
+                    _standingHipsHeight = anim.humanScale;
+                }
             }
+        }
+
+        /// <summary>骨盆超出站立高度的部分（平滑過）；沒有跳起來時是 0。</summary>
+        private float UpdateBodyLift()
+        {
+            float target = 0f;
+            if (_followBodyHeight && _hips != null)
+            {
+                float above = _hips.position.y - _player.position.y - _standingHipsHeight - _bodyHeightMargin;
+                target = Mathf.Max(0f, above);
+            }
+            _bodyLift = Mathf.SmoothDamp(_bodyLift, target, ref _bodyLiftVelocity, _bodyHeightSmoothTime);
+            return _bodyLift;
         }
 
         private void Update()
@@ -138,7 +170,7 @@ namespace PilgrimOfSin.StateMachine
         {
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
-            Vector3 playerMid = _player.position + Vector3.up * (_height * 0.5f);
+            Vector3 playerMid = _player.position + Vector3.up * (_height * 0.5f + UpdateBodyLift());
             Vector3 pivot = playerMid + Vector3.up * _height * 0.5f;
             Vector3 desiredPos = pivot - rotation * Vector3.forward * _distance;
 

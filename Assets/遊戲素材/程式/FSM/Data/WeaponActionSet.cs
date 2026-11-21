@@ -14,5 +14,9 @@ namespace PilgrimOfSin.StateMachine
         public string weaponSuffix = "Pencil";
 
         public List<PlayerActionEntry> actions = new List<PlayerActionEntry>();
+
+        [Header("出招表（無雙式連段，研究中）")]
+        [Tooltip("勾選「Enabled」後，這把武器在地面上的攻擊改用這裡的出招表；放哪段動畫就播多長。")]
+        public ComboMoveSet combo = new ComboMoveSet();
     }
 }

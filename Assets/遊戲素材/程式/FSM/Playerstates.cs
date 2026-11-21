@@ -82,6 +82,66 @@ namespace PilgrimOfSin.StateMachine
             foreach (var t in ClearableTriggers) Anim.ResetTrigger(t);
         }
 
+        /// <summary>
+        /// 攻擊動畫改用「狀態名稱 + 武器後綴」直接 CrossFade，不走 Trigger + Any State。
+        /// 原因：Any State → 攻擊的轉場設定為 Can Transition To Self = false、Interruption = None，
+        /// 攻擊播到一半（取消時間點）要接「同一種攻擊」時，Trigger 不會重播，還會殘留在 Animator 裡；
+        /// CrossFade 直接指定狀態，同一個攻擊也能從頭重播。音效/特效走 NotifyState，
+        /// 名稱與原本 NotifyTrigger 換算出來的一致（例：LightAttack → LightAttack_Pencil）。
+        /// Animator 裡沒有這個 state 時（例如之後新增武器還沒做動畫）退回原本的 Trigger 寫法。
+        /// </summary>
+        protected void PlayAttackAnimation(string actionPrefix, float crossFadeSeconds = 0.1f)
+        {
+            int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            string stateName = actionPrefix + "_" + WeaponSuffix(weaponIndex);
+            if (!Anim.HasState(0, Animator.StringToHash(stateName)))
+            {
+                PlayAnimation(actionPrefix);
+                return;
+            }
+            ClearPendingTriggers();
+            Anim.CrossFadeInFixedTime(stateName, crossFadeSeconds, 0);
+            Player.Feedback?.NotifyState(stateName);
+        }
+
+        protected enum AttackCancel
+        {
+            None,        // 還不能取消，或沒有要取消的輸入：照常播下去
+            NextAttack,  // 已到取消時間點且有下一個攻擊輸入：呼叫端立刻接下一招
+            Exited,      // 已經切到翻滾 / 移動，呼叫端直接 return
+        }
+
+        /// <summary>
+        /// 攻擊取消時間點的共用判斷（輕攻擊、重攻擊、連段共用）。
+        /// 播到 cancelRatio 之後：先看翻滾（翻滾取消收招），再看下一個攻擊；
+        /// 播到 PlayerController.MoveCancelRatio 之後，推搖桿就直接離開攻擊。
+        /// 翻滾優先級（3）比攻擊（2）低，一般 RequestTransition 會被擋，所以只在取消時間點之後用 ForceTransition 放行。
+        /// </summary>
+        protected AttackCancel CheckAttackCancel(float elapsed, float duration, float cancelRatio,
+                                                 bool attackBuffered, bool rollBuffered)
+        {
+            if (!Player.EnableAttackCancel || duration <= 0f) return AttackCancel.None;
+
+            float progress = elapsed / duration;
+            if (progress < cancelRatio) return AttackCancel.None;
+
+            if (rollBuffered)
+            {
+                Player.ComboBuffer.Reset();
+                Machine.ForceTransition(PlayerStateType.Roll);
+                return AttackCancel.Exited;
+            }
+            if (attackBuffered) return AttackCancel.NextAttack;
+
+            if (progress >= Player.MoveCancelRatio && Input.MoveInput.sqrMagnitude > 0.01f)
+            {
+                Player.ComboBuffer.Reset();
+                RequestIdleOrWalk();
+                return AttackCancel.Exited;
+            }
+            return AttackCancel.None;
+        }
+
         /// <summary>直接以狀態名稱切換 Animator（不經過 Transition 條件，適合依武器等資料切換待機姿勢）。</summary>
         protected void CrossFadeAnimation(string stateName, float duration = 0.15f)
         {
@@ -158,6 +218,21 @@ namespace PilgrimOfSin.StateMachine
                 ? PlayerStateType.Walk
                 : PlayerStateType.Idle);
         }
+
+        /// <summary>
+        /// 地面攻擊入口（Idle / Walk / Sprint 用）：目前武器有勾選出招表就走 MoveAttack，
+        /// 否則維持舊的輕／重攻擊狀態。空中攻擊（Jump / Fall）不走這裡，仍用舊狀態。
+        /// </summary>
+        protected void RequestGroundAttack(bool heavy)
+        {
+            if (Player.CurrentComboSet != null)
+            {
+                Player.PendingAttackHeavy = heavy;
+                RequestTransition(PlayerStateType.MoveAttack);
+                return;
+            }
+            RequestTransition(heavy ? PlayerStateType.HeavyAttack : PlayerStateType.LightAttack);
+        }
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -215,8 +290,8 @@ namespace PilgrimOfSin.StateMachine
             // 翻滾
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
             // 攻擊
-            if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
-            if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
+            if (Input.LightAttackPressed) { RequestGroundAttack(false); return; }
+            if (Input.HeavyAttackPressed) { RequestGroundAttack(true); return; }
             // 移動
             if (Input.MoveInput.sqrMagnitude > 0.01f)
             { RequestTransition(PlayerStateType.Walk); return; }
@@ -262,8 +337,8 @@ namespace PilgrimOfSin.StateMachine
             if (Input.WeaponSwitchPressed) { Player.RequestWeaponSwitch(Input.WeaponSwitchIndex); return; }
             if (Input.JumpPressed && Player.CanJump) { RequestTransition(PlayerStateType.Jump); return; }
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
-            if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
-            if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
+            if (Input.LightAttackPressed) { RequestGroundAttack(false); return; }
+            if (Input.HeavyAttackPressed) { RequestGroundAttack(true); return; }
 
             if (Input.MoveInput.sqrMagnitude < 0.01f)
             {
@@ -307,8 +382,8 @@ namespace PilgrimOfSin.StateMachine
             if (Input.WeaponSwitchPressed) { Player.RequestWeaponSwitch(Input.WeaponSwitchIndex); return; }
             if (Input.JumpPressed && Player.CanJump) { RequestTransition(PlayerStateType.Jump); return; }
             if (Input.RollPressed) { RequestTransition(PlayerStateType.Roll); return; }
-            if (Input.LightAttackPressed) { RequestTransition(PlayerStateType.LightAttack); return; }
-            if (Input.HeavyAttackPressed) { RequestTransition(PlayerStateType.HeavyAttack); return; }
+            if (Input.LightAttackPressed) { RequestGroundAttack(false); return; }
+            if (Input.HeavyAttackPressed) { RequestGroundAttack(true); return; }
 
             if (Input.MoveInput.sqrMagnitude < 0.01f)
                 RequestTransition(PlayerStateType.Walk);
@@ -462,6 +537,7 @@ namespace PilgrimOfSin.StateMachine
         private float _elapsed;
         private float _clipLength;
         private bool _nextInputBuffered; // 動畫中提前輸入的緩衝
+        private bool _rollBuffered;      // 動畫中按了翻滾，到取消時間點才執行
 
         // SoftAttack_pencil=1.70s、SoftAttack_Brush=1.93s；實際長度改由 ResolveDuration 動態讀取，這只是兩者都讀不到時的保險值
         private const float FallbackDuration = 2.0f;
@@ -474,13 +550,14 @@ namespace PilgrimOfSin.StateMachine
             _elapsed = 0f;
             _clipLength = -1f;
             _nextInputBuffered = false;
+            _rollBuffered = false;
             // 移動中攻擊會卡住的根因：Animator 有「Any State -> 移動 BlendTree」轉場，條件只看
             // IsMoving==true，沒有 Exit Time、每幀重判。若不在這裡關掉 IsMoving，攻擊動畫播下一幀
             // 就被拉回 Locomotion，ResolveDuration() 永遠比對不到攻擊動畫名稱，只能用保底時間鎖住
             // 操作，表現就是移動時攻擊卡住不動、要等保底時間到才恢復。
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
-            PlayAnimation("LightAttack");
+            PlayAttackAnimation("LightAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
             Player.Combat?.StartLightAttack();
             Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
@@ -511,11 +588,18 @@ namespace PilgrimOfSin.StateMachine
                     Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
                     _nextInputBuffered = true;
                 }
+                if (Input.RollPressed) _rollBuffered = true;
+
+                switch (CheckAttackCancel(_elapsed, duration, Player.LightCancelRatio, _nextInputBuffered, _rollBuffered))
+                {
+                    case AttackCancel.Exited: return;
+                    case AttackCancel.NextAttack: _animDone = true; break; // 提前進入下面的連段判斷
+                }
                 if (_elapsed >= duration) _animDone = true;
-                else return;
+                if (!_animDone) return;
             }
 
-            // 動畫結束：判斷是否觸發連段
+            // 動畫結束（或到了取消時間點且有下一個輸入）：判斷是否觸發連段
             if (Player.ComboBuffer.TryGetCombo(out _))
             {
                 RequestTransition(PlayerStateType.ComboAttack);
@@ -558,6 +642,7 @@ namespace PilgrimOfSin.StateMachine
         private float _elapsed;
         private float _clipLength;
         private bool _nextInputBuffered;
+        private bool _rollBuffered;
         // HardAttack_pencil=2.80s、HardAttack_Brush=2.10s；實際長度改由 ResolveDuration 動態讀取，這只是保險值
         private const float FallbackDuration = 2.9f;
 
@@ -569,10 +654,11 @@ namespace PilgrimOfSin.StateMachine
             _elapsed = 0f;
             _clipLength = -1f;
             _nextInputBuffered = false;
+            _rollBuffered = false;
             // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
-            PlayAnimation("HeavyAttack");
+            PlayAttackAnimation("HeavyAttack");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
             Player.Combat?.StartHeavyAttack();
             Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Heavy);
@@ -602,8 +688,15 @@ namespace PilgrimOfSin.StateMachine
                     Player.ComboBuffer.AddInput(ComboBuffer.AttackInput.Light);
                     _nextInputBuffered = true;
                 }
+                if (Input.RollPressed) _rollBuffered = true;
+
+                switch (CheckAttackCancel(_elapsed, duration, Player.HeavyCancelRatio, _nextInputBuffered, _rollBuffered))
+                {
+                    case AttackCancel.Exited: return;
+                    case AttackCancel.NextAttack: _animDone = true; break;
+                }
                 if (_elapsed >= duration) _animDone = true;
-                else return;
+                if (!_animDone) return;
             }
 
             if (Player.ComboBuffer.TryGetCombo(out _))
@@ -645,6 +738,10 @@ namespace PilgrimOfSin.StateMachine
         private float _elapsed;
         private float _clipLength;
         private int _comboIndex;
+        // 連段收招後提前按下的下一個攻擊（開始新的一輪），以及翻滾取消
+        private bool _nextAttackBuffered;
+        private ComboBuffer.AttackInput _nextAttack;
+        private bool _rollBuffered;
         // Combo1~4 × 鉛筆/畫筆最長是 Combo3_Brush = 6.43s；實際長度改由 ResolveDuration 依當下
         // 播的是哪個 Combo{n}_武器 動態讀取，這只是完全讀不到時的保險值
         private const float FallbackDuration = 6.5f;
@@ -656,11 +753,13 @@ namespace PilgrimOfSin.StateMachine
             _animDone = false;
             _elapsed = 0f;
             _clipLength = -1f;
+            _nextAttackBuffered = false;
+            _rollBuffered = false;
             _comboIndex = Player.ComboBuffer.CurrentComboIndex;
             // 見 LightAttackState.Enter() 註解：移動中攻擊卡住的根因同一套，這裡同樣要關掉。
             SetAnimBool("IsMoving", false);
             SetAnimBool("IsSprinting", false);
-            PlayAnimation($"Combo{_comboIndex}");
+            PlayAttackAnimation($"Combo{_comboIndex}");
             Player.OnAttackAnimationEnd += HandleAnimEnd;
             Player.Combat?.StartComboAttack(_comboIndex);
         }
@@ -677,11 +776,30 @@ namespace PilgrimOfSin.StateMachine
                 _elapsed += dt;
                 int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
                 float duration = ResolveDuration(ref _clipLength, $"Combo{_comboIndex}_" + WeaponSuffix(weaponIndex), FallbackDuration);
+
+                // 連段播放中提前按的攻擊：記住最後一個，取消時間點到了就從它開始新的一輪
+                if (Input.HeavyAttackPressed) { _nextAttack = ComboBuffer.AttackInput.Heavy; _nextAttackBuffered = true; }
+                else if (Input.LightAttackPressed) { _nextAttack = ComboBuffer.AttackInput.Light; _nextAttackBuffered = true; }
+                if (Input.RollPressed) _rollBuffered = true;
+
+                switch (CheckAttackCancel(_elapsed, duration, Player.ComboCancelRatio, _nextAttackBuffered, _rollBuffered))
+                {
+                    case AttackCancel.Exited: return;
+                    case AttackCancel.NextAttack: _animDone = true; break;
+                }
                 if (_elapsed >= duration) _animDone = true;
-                else return;
+                if (!_animDone) return;
             }
 
             Player.ComboBuffer.Reset();
+            if (_nextAttackBuffered)
+            {
+                // 連段結束後接新的一輪：交給輕/重攻擊狀態，它們的 Enter() 會把這一下記進連段緩衝
+                RequestTransition(_nextAttack == ComboBuffer.AttackInput.Heavy
+                    ? PlayerStateType.HeavyAttack
+                    : PlayerStateType.LightAttack);
+                return;
+            }
             RequestIdleOrWalk();
         }
 
@@ -693,6 +811,299 @@ namespace PilgrimOfSin.StateMachine
         }
 
         private void HandleAnimEnd() => _animDone = true;
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    //  MoveAttackState（出招表：無雙式連段研究）
+    //
+    //  依目前武器 WeaponActions 的「出招表」出招：
+    //    ⬜ 連按：N1 → N2 → N3 → N4（N4 之後再按 ⬜ 從 N1 重新開始）
+    //    🔺：直接按 = C1；第 k 下一般攻擊後按 = C(k+1)；強攻擊之後再按 🔺 = C1
+    //  惡魔獵人分支（有放動畫才會啟用）：
+    //    停頓連打：在第 pauseAfterNormal 下一般攻擊（預設 N2）的「取消時間點 → 播完 + 停頓寬限」之間按 ⬜。
+    //              取消時間點之前就按 ⬜ = 一般連段的下一下；寬限也過了才按 = 從 N1 重新開始。
+    //    蓄力：🔺 按住超過 chargeHoldSeconds 出蓄力；更早放開出原本該出的 C。
+    //          按住的時間從按下那一刻算（預輸入時就開始計），所以在連段中提早按住不會多等。
+    //    停頓連打 / 蓄力之後再按 ⬜ = N1、🔺 = C1。
+    //  每一招播的就是出招表裡放的那段動畫（AttackClipPlayer 疊在 Animator 上播），
+    //  進度直接讀「這段動畫實際播到哪」，所以動畫換長換短都不會被提早切掉或卡住。
+    //  播到這一招的取消時間點之後：已按下的下一招立刻接上 / 可翻滾取消；
+    //  播到 MoveCancelRatio 之後推搖桿可直接移動。整段播完回 Idle / Walk。
+    // ════════════════════════════════════════════════════════════════
+    public class MoveAttackState : PlayerState
+    {
+        public override PlayerStateType StateType => PlayerStateType.MoveAttack;
+
+        /// <summary>目前這一招屬於出招表的哪一排。</summary>
+        public enum MoveKind { Normal, Strong, Pause, Hold }
+
+        private ComboMoveSet _set;
+        private ComboMoveEntry _move;
+        private MoveKind _kind;
+        private int _index;            // 一般攻擊：0 = N1；強攻擊：0 = C1；分支招固定 0
+        private bool _bufferedLight;
+        private bool _bufferedHeavy;
+        private bool _bufferedPause;
+        private bool _bufferedRoll;
+        private float _elapsed;        // 這一招已播的動畫時間（保險計時）
+        private float _graceTimer;     // 停頓寬限：這一招播完之後又等了多久
+
+        // 命中區間：每一下各開一次攻擊判定
+        private float _moveDamage;     // 整招傷害
+        private int _activeWindow = -1;
+
+        // 🔺 長按判斷
+        private float _heavyPressTime;
+        private bool _heavyReleased;   // 這次按下的 🔺 已經放開過
+        private bool _awaitingHold;    // 正在等「放開 → C」或「按滿 → 蓄力」
+        private int _pendingStrongIndex;
+
+        // ── 唯讀狀態（給 F1 開發者面板顯示連段進度用，不影響邏輯） ──
+        public ComboMoveEntry CurrentMove => _move;
+        public MoveKind Kind => _kind;
+        public bool IsCharge => _kind == MoveKind.Strong;
+        public int MoveIndex => _index;
+        /// <summary>目前這一招播到動畫的比例（0~1，停頓寬限中會超過 1）。</summary>
+        public float Progress { get; private set; }
+        public bool BufferedLight => _bufferedLight;
+        public bool BufferedHeavy => _bufferedHeavy;
+        public bool BufferedPause => _bufferedPause;
+        public bool BufferedRoll => _bufferedRoll;
+        public bool AwaitingHold => _awaitingHold;
+        public int PendingStrongIndex => _pendingStrongIndex;
+        /// <summary>目前開著的命中區間（-1 = 沒有；這一招沒設命中區間時整招都算 0）。</summary>
+        public int ActiveHitWindow => _activeWindow;
+        /// <summary>目前這一招之後可以接停頓連打（取消時間點之後按 ⬜ 就是停頓連打）。</summary>
+        public bool PauseEligible =>
+            _move != null && _set != null && _kind == MoveKind.Normal &&
+            _index == _set.pauseAfterNormal - 1 && _set.pauseCombo != null && _set.pauseCombo.IsValid;
+        public string SlotName => _kind switch
+        {
+            MoveKind.Normal => "N" + (_index + 1),
+            MoveKind.Strong => "C" + (_index + 1),
+            MoveKind.Pause => "停頓連打",
+            _ => "蓄力",
+        };
+
+        public MoveAttackState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
+
+        public override void Enter()
+        {
+            _move = null;
+            _awaitingHold = false;
+            _set = Player.CurrentComboSet;
+            if (_set == null) return;   // 出招表剛好被關掉：Update 會直接回 Idle/Walk
+
+            // 見 LightAttackState.Enter() 註解：IsMoving 不關掉，Any State → Locomotion 會把底下的 Animator 拉去跑步。
+            SetAnimBool("IsMoving", false);
+            SetAnimBool("IsSprinting", false);
+            ClearPendingTriggers();
+            // 底下的 Animator 先回待機姿勢：攻擊結束淡出時銜接待機，而不是露出進攻擊前的跑步姿勢
+            int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            string idle = "Idle_" + WeaponSuffix(weaponIndex);
+            if (Anim.HasState(0, Animator.StringToHash(idle))) Anim.CrossFadeInFixedTime(idle, 0.1f, 0);
+
+            Player.ComboBuffer.Reset();
+            if (Player.PendingAttackHeavy)
+            {
+                BeginHeavyTracking();
+                QueueStrong(0);   // 有蓄力動畫時會先等一下看是不是長按
+            }
+            else
+            {
+                StartNormal(0);
+            }
+        }
+
+        public override void Update(float dt)
+        {
+            if (ShouldPause()) { RequestTransition(PlayerStateType.Paused); return; }
+            if (Player.IsDead) { RequestTransition(PlayerStateType.Dead); return; }
+            if (_move == null && !_awaitingHold) { RequestIdleOrWalk(); return; }
+            if (Input.SpecialPressed && Player.CanUseSpecial)
+            { RequestTransition(PlayerStateType.SpecialSkill); return; }
+
+            if (!Input.HeavyAttackHeld) _heavyReleased = true;
+
+            // 正在判斷 🔺 是短按還是長按：上一招照常播（播完就停在最後一格），等判斷完才出下一招
+            if (_awaitingHold)
+            {
+                ResolveHold();
+                return;
+            }
+
+            // 進度以「動畫實際播到哪」為準；另外自己用遊戲時間計一份，取較大者當保險——
+            // 播放器萬一沒在走（例如 Play 中途重新編譯），也保證會播完離開，不會卡死在攻擊裡。
+            _elapsed += Time.deltaTime * Mathf.Max(0.1f, _move.speed);
+            float length = _move.clip.length;
+            float progress = length > 0f
+                ? Mathf.Max(Player.ClipPlayer.CurrentClipTime, _elapsed) / length
+                : 1f;
+            Progress = progress;
+            UpdateHitWindows(progress);
+            bool pauseEligible = PauseEligible;
+
+            // 預輸入：只有播到「接收開始」之後按的鍵才算，而且只認第一個（⬜ / 🔺 / 翻滾 都算一個指令）。
+            // 接收開始之前按的直接忽略；收到第一個之後，這一招剩下的時間再按什麼都不改。
+            // 可以接停頓連打的那一招：取消時間點之後才按的 ⬜ 算停頓連打。
+            bool alreadyBuffered = _bufferedLight || _bufferedHeavy || _bufferedPause || _bufferedRoll;
+            if (!alreadyBuffered && progress >= _move.inputStartRatio)
+            {
+                if (Input.RollPressed) _bufferedRoll = true;
+                else if (Input.HeavyAttackPressed) { _bufferedHeavy = true; BeginHeavyTracking(); }
+                else if (Input.LightAttackPressed)
+                {
+                    if (pauseEligible && progress >= _move.cancelRatio) _bufferedPause = true;
+                    else _bufferedLight = true;
+                }
+            }
+
+            bool canCancel = Player.EnableAttackCancel ? progress >= _move.cancelRatio : progress >= 1f;
+            if (canCancel)
+            {
+                if (_bufferedRoll)
+                {
+                    Machine.ForceTransition(PlayerStateType.Roll);   // 翻滾優先級較低，只在取消點之後強制放行
+                    return;
+                }
+                if (_bufferedPause)
+                {
+                    if (!StartPause()) StartNormal(0);
+                    return;
+                }
+                if (_bufferedLight)
+                {
+                    // 一般攻擊接下一下；強攻擊／分支招之後或 N4 之後從 N1 重新開始
+                    if (_kind != MoveKind.Normal || !StartNormal(_index + 1)) StartNormal(0);
+                    return;
+                }
+                if (_bufferedHeavy)
+                {
+                    // 第 k 下一般攻擊後 → C(k+1)；強攻擊／分支招之後、或停頓寬限中（已經播完）→ C1
+                    int target = _kind == MoveKind.Normal && progress < 1f ? _index + 1 : 0;
+                    QueueStrong(target);
+                    return;
+                }
+                if (Player.EnableAttackCancel && progress >= Player.MoveCancelRatio && Input.MoveInput.sqrMagnitude > 0.01f)
+                {
+                    RequestIdleOrWalk();
+                    return;
+                }
+            }
+
+            if (progress >= 1f)
+            {
+                // 可以接停頓連打：播完後再留一小段寬限，讓「停半拍」再按的 ⬜ 還接得到
+                if (pauseEligible)
+                {
+                    _graceTimer += dt;
+                    if (_graceTimer <= _set.pauseGraceSeconds) return;
+                }
+                RequestIdleOrWalk();
+            }
+        }
+
+        public override void Exit()
+        {
+            Player.ClipPlayer.Stop(0.15f);
+            Player.Combat?.EndAttack();
+            _move = null;
+            _awaitingHold = false;
+        }
+
+        // ── 🔺 長按判斷 ────────────────────────────────────────────────
+        private void BeginHeavyTracking()
+        {
+            _heavyPressTime = Time.time;
+            _heavyReleased = !Input.HeavyAttackHeld;
+        }
+
+        private bool HasHoldMove => _set != null && _set.chargeHold != null && _set.chargeHold.IsValid;
+
+        private bool HeldLongEnough => !_heavyReleased && Time.time - _heavyPressTime >= _set.chargeHoldSeconds;
+
+        /// <summary>要出強攻擊 C(target)：有蓄力動畫就先判斷是不是長按，沒有就立刻出。</summary>
+        private void QueueStrong(int target)
+        {
+            _bufferedHeavy = false;
+            if (!HasHoldMove || _heavyReleased) { StartStrongOrFallback(target); return; }
+            if (HeldLongEnough) { StartHold(); return; }
+
+            _awaitingHold = true;
+            _pendingStrongIndex = target;
+        }
+
+        private void ResolveHold()
+        {
+            if (_heavyReleased) { _awaitingHold = false; StartStrongOrFallback(_pendingStrongIndex); }
+            else if (HeldLongEnough) { _awaitingHold = false; StartHold(); }
+        }
+
+        /// <summary>出 C(target)；沒有就出 C1；連 C1 都沒有而且手上沒招在播，至少出 N1。</summary>
+        private void StartStrongOrFallback(int target)
+        {
+            if (StartStrong(target) || StartStrong(0)) return;
+            if (_move == null) StartNormal(0);
+        }
+
+        // ── 出招 ───────────────────────────────────────────────────────
+        private bool StartNormal(int index) => Begin(_set?.GetNormal(index), MoveKind.Normal, index);
+        private bool StartStrong(int index) => Begin(_set?.GetCharge(index), MoveKind.Strong, index);
+        private bool StartPause() => Begin(_set?.pauseCombo, MoveKind.Pause, 0);
+        private bool StartHold() => Begin(_set?.chargeHold, MoveKind.Hold, 0);
+
+        private bool Begin(ComboMoveEntry move, MoveKind kind, int index)
+        {
+            if (move == null || !move.IsValid) return false;
+
+            _move = move;
+            _kind = kind;
+            _index = index;
+            _elapsed = 0f;
+            _graceTimer = 0f;
+            Progress = 0f;
+            _bufferedLight = _bufferedHeavy = _bufferedPause = _bufferedRoll = false;
+
+            Player.ClipPlayer.Play(move.clip, move.speed, 0.1f);
+            Player.Feedback?.FireMove(move);
+
+            _activeWindow = -1;
+            if (Player.Combat != null)
+            {
+                Player.Combat.EndAttack();
+                _moveDamage = move.damage > 0f ? move.damage
+                    : kind == MoveKind.Pause ? Player.Combat.GetDefaultBranchMoveDamage(false)
+                    : kind == MoveKind.Hold ? Player.Combat.GetDefaultBranchMoveDamage(true)
+                    : Player.Combat.GetDefaultMoveDamage(kind == MoveKind.Strong, index);
+                // 沒設命中區間：整招只算一下（舊行為），一出招就開判定
+                if (!move.HasHitWindows)
+                {
+                    Player.Combat.StartMoveAttack(_moveDamage, _set.ResolveHitbox(null, move.customHitbox, move.hitbox), move.Duration);
+                    _activeWindow = 0;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 依動畫進度開關攻擊判定：進入一個命中區間就重新開一次（命中記錄清空，同一個敵人可以再被打一次），
+        /// 離開區間就關掉。區間沒填傷害時平分整招傷害。
+        /// </summary>
+        private void UpdateHitWindows(float progress)
+        {
+            if (_move == null || !_move.HasHitWindows || Player.Combat == null) return;
+            int w = _move.GetWindowAt(progress);
+            if (w == _activeWindow) return;
+            _activeWindow = w;
+            if (w >= 0)
+            {
+                var window = _move.hitWindows[w];
+                var shape = _set.ResolveHitbox(window, _move.customHitbox, _move.hitbox);
+                float seconds = (window.end - window.start) * _move.Duration;
+                Player.Combat.StartMoveAttack(_move.GetWindowDamage(w, _moveDamage), shape, seconds);
+            }
+            else Player.Combat.EndAttack();
+        }
     }
 
 
@@ -709,6 +1120,15 @@ namespace PilgrimOfSin.StateMachine
         private const float FallbackDuration = 5.4f; // SP_skill_pencil 實際長度 5.27s，讀不到動畫長度時的保險值
         private const float InvincibleEndPercent = 0.8f; // 前80%有無敵幀
 
+        // 命中區間（出招表的「秘劍」欄）：每一下各開一次判定；沒設就整招一下（舊行為）
+        private System.Collections.Generic.List<HitWindow> _windows;
+        private int _activeWindow = -1;
+
+        /// <summary>給 F1 面板：秘劍有幾下、目前第幾下（-1 = 判定關著）、播到哪。</summary>
+        public int HitCount => _windows != null ? _windows.Count : 0;
+        public int ActiveHitWindow => _activeWindow;
+        public float Progress { get; private set; }
+
         public SpecialSkillState(PlayerController p, PlayerStateMachine m) : base(p, m) { }
 
         public override void Enter()
@@ -723,8 +1143,24 @@ namespace PilgrimOfSin.StateMachine
             Player.SetInvincible(true);
             PlayAnimation("SpecialSkill");
             Player.OnSpecialSkillAnimationEnd += HandleAnimEnd;
-            Player.Combat?.StartSpecialAttack();
+
+            int weapon = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
+            _set = Player.Feedback?.GetComboSet(weapon);
+            var windows = _set?.specialHitWindows;
+            _windows = windows != null && windows.Count > 0 ? windows : null;
+            _activeWindow = -1;
+            Progress = 0f;
+            if (_windows == null)
+            {
+                // 沒設命中區間：整招一下（舊行為）；有設判定形狀就用形狀
+                var shape = _set?.ResolveHitbox(null, _set.specialCustomHitbox, _set.specialHitbox);
+                if (shape == null) Player.Combat?.StartSpecialAttack();
+                else Player.Combat?.StartMoveAttack(Player.Combat.SpecialDamage, shape, FallbackDuration);
+            }
+            else Player.Combat?.EndAttack();
         }
+
+        private ComboMoveSet _set;
 
         public override void Update(float dt)
         {
@@ -734,8 +1170,12 @@ namespace PilgrimOfSin.StateMachine
             _timer += dt;
             int weaponIndex = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
             float duration = ResolveDuration(ref _clipLength, "SpecialSkill_" + WeaponSuffix(weaponIndex), FallbackDuration);
+            Progress = duration > 0f ? _timer / duration : 1f;
+            UpdateHitWindows(Progress, duration);
 
-            // 前80%有無敵，後20%移除（模擬末尾幾幀無無敵）
+            // 前80%有無敵，後20%移除（模擬末尾幾幀無無敵）。
+            // 無敵拿掉之後被打會扣血，但不會被打斷：SpecialSkill 不在 PlayerStateMachine.DamagableStates 白名單，
+            // 被打時進不了 Damaged（霸體），秘劍一定會放完；只有血量歸零會直接死亡。
             if (_timer >= duration * InvincibleEndPercent)
                 Player.SetInvincible(false);
 
@@ -756,6 +1196,23 @@ namespace PilgrimOfSin.StateMachine
         }
 
         private void HandleAnimEnd() => _animDone = true;
+
+        /// <summary>進入一個命中區間就重新開一次判定（每個敵人每一下各打一次），離開就關掉。</summary>
+        private void UpdateHitWindows(float progress, float duration)
+        {
+            if (_windows == null || Player.Combat == null) return;
+            int w = HitWindow.IndexAt(_windows, progress);
+            if (w == _activeWindow) return;
+            _activeWindow = w;
+            if (w >= 0)
+            {
+                var window = _windows[w];
+                var shape = _set?.ResolveHitbox(window, _set.specialCustomHitbox, _set.specialHitbox);
+                Player.Combat.StartMoveAttack(HitWindow.DamageAt(_windows, w, Player.Combat.SpecialDamage), shape,
+                                              (window.end - window.start) * duration);
+            }
+            else Player.Combat.EndAttack();
+        }
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -967,7 +1424,8 @@ namespace PilgrimOfSin.StateMachine
             return state != PlayerStateType.Damaged
                 && state != PlayerStateType.Dead
                 && state != PlayerStateType.Paused
-                && state != PlayerStateType.SpecialSkillCooldown;
+                && state != PlayerStateType.SpecialSkillCooldown
+                && state != PlayerStateType.MoveAttack;   // 出招表：恢復時重進會自動再出一招，改回 Idle
         }
     }
 

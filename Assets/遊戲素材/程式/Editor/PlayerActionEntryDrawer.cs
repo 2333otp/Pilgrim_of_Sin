@@ -148,6 +148,12 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             EditorGUILayout.PropertyField(serializedObject.FindProperty("weaponSuffix"),
                 new GUIContent("武器後綴（程式用）"));
 
+            DrawComboMoveSet(serializedObject.FindProperty("combo"));
+            DrawHitWindowButtons();
+
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("動作清單（舊連段、空中攻擊、受擊等）", EditorStyles.largeLabel);
+
             var actions = serializedObject.FindProperty("actions");
 
             foreach (var (title, ids) in Groups)
@@ -166,6 +172,96 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             }
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        // ── 出招表（無雙式連段研究） ──────────────────────────────────
+        private static readonly (string field, string label)[] ComboSlots =
+        {
+            ("n1", "N1  ⬜"), ("n2", "N2  ⬜⬜"), ("n3", "N3  ⬜⬜⬜"), ("n4", "N4  ⬜⬜⬜⬜"),
+            ("c1", "C1  🔺"), ("c2", "C2  ⬜🔺"), ("c3", "C3  ⬜⬜🔺"), ("c4", "C4  ⬜⬜⬜🔺"),
+            ("pauseCombo", "停頓連打  ⬜⬜（停）⬜"), ("chargeHold", "蓄力  🔺長按"),
+        };
+
+        private void DrawHitWindowButtons()
+        {
+            EditorGUILayout.Space(4);
+            if (GUILayout.Button("開啟攻擊判定編輯器（在 Scene 視窗拖拉判定形狀）")) HitboxEditorWindow.Open();
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                bool fillEmpty = GUILayout.Button("自動抓命中區間（只填還沒設的招）");
+                bool overwrite = GUILayout.Button("全部重抓");
+                if (!fillEmpty && !overwrite) return;
+                if (overwrite && !EditorUtility.DisplayDialog("自動抓命中區間",
+                        "這把武器所有招式的命中區間都會重抓，手動調過的會被蓋掉。確定嗎？", "全部重抓", "取消"))
+                    return;
+
+                serializedObject.ApplyModifiedProperties();
+                Debug.Log(ComboHitWindowAnalyzer.RunOne((WeaponActionSet)target, overwrite));
+                serializedObject.Update();
+                GUIUtility.ExitGUI();
+            }
+        }
+
+        private static void DrawComboMoveSet(SerializedProperty combo)
+        {
+            if (combo == null) return;
+
+            EditorGUILayout.Space(6);
+            EditorGUILayout.LabelField("出招表（無雙式連段，研究中）", EditorStyles.largeLabel);
+            EditorGUILayout.HelpBox(
+                "勾選「使用出招表」後，地面攻擊改用下面的招式；空中攻擊仍用下方動作清單。\n" +
+                "放哪段動畫就播哪段，動作長度 = 動畫長度 ÷ 播放速度。\n" +
+                "接收開始：播到這個比例之後按的鍵才算數，只認第一個（⬜ / 🔺 / 翻滾）。\n" +
+                "取消時間點：最早能出下一招的時間；設 1 = 播完才接。\n" +
+                "停頓連打：在指定那一下 ⬜ 的取消時間點之後（到播完 + 寬限）才按 ⬜；更早按是一般連段。\n" +
+                "蓄力：🔺 按住超過門檻；更早放開出原本的強攻擊。沒放動畫的分支招不會啟用。\n" +
+                "命中區間：每一格是一下揮擊，各算一次傷害；留空 = 整招只算一下。可用下方按鈕自動抓。",
+                MessageType.Info);
+
+            EditorGUILayout.PropertyField(combo.FindPropertyRelative("enabled"), new GUIContent("使用出招表"));
+
+            for (int i = 0; i < ComboSlots.Length; i++)
+            {
+                var (field, label) = ComboSlots[i];
+                // 分組標題（一般攻擊／強攻擊／惡魔獵人分支）由 ComboMoveSet 欄位上的 [Header] 自動畫出
+                var move = combo.FindPropertyRelative(field);
+                if (move == null) continue;
+                EditorGUILayout.PropertyField(move, new GUIContent(MoveTitle(label, move)), true);
+
+                if (field == "pauseCombo")
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(combo.FindPropertyRelative("pauseAfterNormal"), new GUIContent("接在第幾下 ⬜ 之後"));
+                    EditorGUILayout.PropertyField(combo.FindPropertyRelative("pauseGraceSeconds"), new GUIContent("停頓寬限（秒）"));
+                    EditorGUI.indentLevel--;
+                }
+                else if (field == "chargeHold")
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(combo.FindPropertyRelative("chargeHoldSeconds"), new GUIContent("長按門檻（秒）"));
+                    EditorGUI.indentLevel--;
+                }
+            }
+
+            var special = combo.FindPropertyRelative("specialHitWindows");
+            if (special != null)
+            {
+                string title = special.arraySize > 0 ? $"秘劍 R1 命中區間　命中 {special.arraySize} 下" : "秘劍 R1 命中區間　整招一下";
+                EditorGUILayout.PropertyField(special, new GUIContent(title), true);
+            }
+        }
+
+        /// <summary>收合時的標題：「N1 ⬜　combo2_pencil_s1 · 0.79s · 取消 50%」，沒放動畫顯示（空）。</summary>
+        private static string MoveTitle(string label, SerializedProperty move)
+        {
+            var clip = move.FindPropertyRelative("clip").objectReferenceValue as AnimationClip;
+            if (clip == null) return $"{label}　（空）";
+            float speed = Mathf.Max(0.1f, move.FindPropertyRelative("speed").floatValue);
+            float cancel = move.FindPropertyRelative("cancelRatio").floatValue;
+            float input = move.FindPropertyRelative("inputStartRatio").floatValue;
+            var windows = move.FindPropertyRelative("hitWindows");
+            string hits = windows != null && windows.arraySize > 0 ? $"命中 {windows.arraySize} 下" : "整招一下";
+            return $"{label}　{clip.name} · {clip.length / speed:F2}s · 接收 {input * 100f:F0}% · 取消 {cancel * 100f:F0}% · {hits}";
         }
     }
 }
