@@ -6245,7 +6245,7 @@ MonoBehaviour:
   _pencilPrefab: {fileID: 919132149155446097, guid: fad7c71b40212ef42b73cf910b49c169, type: 3}
   _brushPrefab: {fileID: 919132149155446097, guid: 654dcab23f59e244dbd506f9045f807b, type: 3}
   _paintKnifePrefab: {fileID: 919132149155446097, guid: 858fceecb5b8afc4ca76c432785d26e4, type: 3}
-  _palettePrefab: {fileID: 919132149155446097, guid: b1d49cf0469296044b04e4929b9dd7f7, type: 3}
+  _palettePrefab: {fileID: 919132149155446097, guid: b3e844c66d446f440b7cf1333047377e, type: 3}
   _handAttachLeftBoneName: DEF-hand_attach.L
   _handAttachRightBoneName: DEF-hand_attach.R
   _pencilRotationOffset: {x: 0, y: 180, z: 0}
