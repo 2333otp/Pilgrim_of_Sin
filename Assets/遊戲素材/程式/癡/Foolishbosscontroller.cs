@@ -10,11 +10,14 @@ namespace PilgrimOfSin.StateMachine
     ///   善/惡區(5s) → 緩衝 → 善/惡區(5s) → 緩衝 → 打鬥窗口(10s) → 嘶吼(1s) → 地面擴散變黑(2s) → 重複
     /// 惡區每秒傷害依癡的血量分三段；安全區 1~3 個（假隨機）、位置每輪隨機、不貼邊，
     /// 並隨癡受到的傷害線性向外擴張。
+    /// 數值與素材（動畫、音效、配音、特效、攻擊判定、場地機制）全部在 FoolishBossProfile 裡設定。
     /// </summary>
-    [RequireComponent(typeof(Animator))]
     public class FoolishBossController : MonoBehaviour, IDamageable, IBossHealth
     {
         // ── References ───────────────────────────────────────────────
+        [Header("素材總表（數值、動畫、音效、配音、特效、場地機制都在這裡改）")]
+        [SerializeField] private FoolishBossProfile _profile;
+
         [Header("References")]
         [SerializeField] private Transform _player;
 
@@ -24,60 +27,26 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>善區物件池（數量決定一輪最多能出現幾個）。</summary>
         [SerializeField] private SafeZone[] _safeZones = new SafeZone[4];
 
+        /// <summary>癡模型上的 Animator（在模型子物件上，骨架在那裡）。</summary>
         public Animator Animator { get; private set; }
 
-        /// <summary>配音（選配）。沒掛 FoolishVoice 元件就是 null，呼叫端用 ?. 即可。</summary>
-        public FoolishVoice Voice { get; private set; }
+        /// <summary>素材播放器：音效、配音、特效、攻擊命中時間點。</summary>
+        public BossActionFeedback Feedback { get; private set; }
 
-        // ── Boss 基本數值 ─────────────────────────────────────────────
-        [Header("Boss Stats")]
-        [SerializeField] private string _displayName = "心魔-癡";
-        [SerializeField] private float _maxHp = 10000f;
-        [SerializeField] private float _moveSpeed = 3.5f;
-        [SerializeField] private float _idleDuration = 1f;
-
-        [Header("Attack Damage")]
-        [SerializeField] private float _attack1Damage = 800f;
-        [SerializeField] private float _attack2Damage = 1000f;
-        [SerializeField] private float _attack3Damage = 1700f;
-
-        [Header("Attack Range")]
-        [SerializeField] private float _attack1Range = 3f;
-        [SerializeField] private float _attack2Range = 6f;
-        [SerializeField] private float _attack3Range = 10f;
-
-        [Tooltip("沒有動畫事件（還沒綁 Animator Controller）時，攻擊狀態最多持續幾秒就結束，避免卡死。")]
-        [SerializeField] private float _attackFallbackDuration = 1.5f;
-
-        // ── 模型尺寸 ─────────────────────────────────────────────────
-        [Header("模型尺寸")]
-        [Tooltip("勾選：開始時自動量模型實際高度，縮放到下面的目標高度並讓腳貼地。預設不勾，維持模型原始尺寸。")]
-        [SerializeField] private bool _autoFitModel = false;
-        [Tooltip("目標身高（公尺）。規則文件：癡體型 300cm。只有勾選 Auto Fit Model 才會用到。")]
-        [SerializeField] private float _modelTargetHeight = 3f;
-        [Tooltip("勾選：開始時依模型實際大小調整碰撞膠囊（高度、半徑、中心），不改變模型本身大小。")]
-        [SerializeField] private bool _autoFitCollider = true;
-
-        // ── 場地機制數值 ──────────────────────────────────────────────
-        [Header("場地機制")]
-        [SerializeField] private FoolishArenaSettings _arena = new FoolishArenaSettings();
-
-        // ── Stagger（選配） ───────────────────────────────────────────
-        [Header("Stagger (Optional)")]
-        [SerializeField] public bool enableStagger = false;
-        [SerializeField] public float StaggerDuration = 0.5f;
+        public FoolishBossProfile Profile => _profile;
+        private FoolishArenaSettings Arena => _profile.arena;
 
         // ── 公開屬性 ─────────────────────────────────────────────────
         public float CurrentHp { get; private set; }
-        public float MaxHp => _maxHp;
+        public float MaxHp => _profile.maxHp;
         public bool IsDead => CurrentHp <= 0f;
-        public string DisplayName => _displayName;
-        public float IdleDuration => _idleDuration;
-        public float AttackFallbackDuration => _attackFallbackDuration;
-        public float Attack1Range => _attack1Range;
-        public float Attack2Range => _attack2Range;
-        public float Attack3Range => _attack3Range;
-        public float HpRatio => _maxHp > 0f ? CurrentHp / _maxHp : 0f;
+        public string DisplayName => _profile.displayName;
+        public float IdleDuration => _profile.idleDuration;
+        public float Attack1Range => _profile.attack1.attackRange;
+        public float Attack2Range => _profile.attack2.attackRange;
+        public float Attack3Range => _profile.attack3.attackRange;
+        public bool EnableStagger => _profile.enableStagger;
+        public float HpRatio => MaxHp > 0f ? CurrentHp / MaxHp : 0f;
         public FoolishBossStateType CurrentStateType => _fsm?.CurrentType ?? FoolishBossStateType.Idle;
         public float DistanceToPlayer => _player != null
                                          ? Vector3.Distance(transform.position, _player.position)
@@ -102,17 +71,15 @@ namespace PilgrimOfSin.StateMachine
         public bool EvilZoneDamaging => !IsDead && CyclePhase == FoolishCyclePhase.ZoneShow;
 
         /// <summary>目前惡區每秒傷害（依癡血量分三段）。</summary>
-        public float CurrentEvilDps => _arena.GetEvilDps(HpRatio);
+        public float CurrentEvilDps => Arena.GetEvilDps(HpRatio);
 
         /// <summary>玩家目前是否站在善區內。</summary>
         public bool PlayerInSafeZone { get; private set; }
 
-        // ── 動畫事件 ─────────────────────────────────────────────────
-        public event Action OnAttackAnimEnd;
-
         // ── 內部計時 ─────────────────────────────────────────────────
         private FoolishBossStateMachine _fsm;
         private PlayerController _playerController;
+        private float _nextHurtVoiceTime;
         private float _phaseTimer;
         private float _phaseDuration;
         private int _zoneRound;           // 目前是第幾輪善惡區（0 起算）
@@ -136,12 +103,23 @@ namespace PilgrimOfSin.StateMachine
 
         private void Awake()
         {
-            Animator = GetComponent<Animator>();
-            // 配音元件放在癡本身、子物件、或場景裡任何一個物件上都可以
-            Voice = GetComponent<FoolishVoice>();
-            if (Voice == null) Voice = GetComponentInChildren<FoolishVoice>();
-            if (Voice == null) Voice = FindFirstObjectByType<FoolishVoice>();
-            CurrentHp = _maxHp;
+            if (_profile == null)
+            {
+                Debug.LogWarning("[FoolishBoss] 沒有指定素材總表（FoolishBossProfile），先用預設值執行。", this);
+                _profile = ScriptableObject.CreateInstance<FoolishBossProfile>();
+            }
+
+            // Animator 在模型子物件上（骨架在那裡，動畫路徑才對得上）；優先找有指定 Controller 的那個
+            Animator = null;
+            foreach (var a in GetComponentsInChildren<Animator>(true))
+                if (Animator == null || (Animator.runtimeAnimatorController == null && a.runtimeAnimatorController != null))
+                    Animator = a;
+
+            Feedback = GetComponent<BossActionFeedback>();
+            if (Feedback == null) Feedback = gameObject.AddComponent<BossActionFeedback>();
+            Feedback.Initialize(Animator, _profile.AllEntries(), _profile.mixerGroup);
+
+            CurrentHp = MaxHp;
             if (_player != null) _playerController = _player.GetComponent<PlayerController>();
 
             // 癡的位置由程式直接控制（MoveTowardPlayer 改 transform），不能讓物理引擎推它：
@@ -163,7 +141,11 @@ namespace PilgrimOfSin.StateMachine
         [ContextMenu("套用模型自動縮放與碰撞調整")]
         private void FitModelToHeight()
         {
-            if (!_autoFitModel && !_autoFitCollider) return;
+            if (_profile == null) return;
+            bool autoFitModel = _profile.autoFitModel;
+            bool autoFitCollider = _profile.autoFitCollider;
+            float targetHeight = _profile.modelTargetHeight;
+            if (!autoFitModel && !autoFitCollider) return;
 
             Transform modelRoot = null;
             for (int i = 0; i < transform.childCount; i++)
@@ -176,9 +158,9 @@ namespace PilgrimOfSin.StateMachine
             if (!TryGetBounds(modelRoot, out Bounds b) || b.size.y < 0.01f) return;
 
             float originalHeight = b.size.y;
-            if (_autoFitModel)
+            if (autoFitModel)
             {
-                float factor = _modelTargetHeight / originalHeight;
+                float factor = targetHeight / originalHeight;
                 modelRoot.localScale *= factor;
 
                 // 縮放後重新量一次，讓腳底貼在癡的根物件高度
@@ -188,7 +170,7 @@ namespace PilgrimOfSin.StateMachine
             }
 
             var capsule = GetComponent<CapsuleCollider>();
-            if (_autoFitCollider && capsule != null)
+            if (autoFitCollider && capsule != null)
             {
                 // 碰撞膠囊貼合模型實際範圍：中心在模型範圍中心，高度 = 模型高度，半徑取較窄那一邊的 35%
                 Vector3 localCenter = transform.InverseTransformPoint(b.center);
@@ -199,8 +181,8 @@ namespace PilgrimOfSin.StateMachine
             }
 
             Debug.Log($"[FoolishBoss] 模型實際大小：高 {b.size.y:F3}m / 寬 {b.size.x:F3}m / 深 {b.size.z:F3}m" +
-                      (_autoFitModel ? $"（已縮放到 {_modelTargetHeight:F2}m）" : "（維持原始尺寸）") +
-                      (_autoFitCollider ? "，碰撞膠囊已貼合模型" : ""));
+                      (autoFitModel ? $"（已縮放到 {targetHeight:F2}m）" : "（維持原始尺寸）") +
+                      (autoFitCollider ? "，碰撞膠囊已貼合模型" : ""));
         }
 
         /// <summary>
@@ -246,7 +228,7 @@ namespace PilgrimOfSin.StateMachine
             }
 
             // 惡區要蓋住整個方形場地（多留 0.5m 避免邊緣露出）
-            if (_evilZone != null) _evilZone.Initialize(_arena.arenaCenter, _arena.arenaHalfSize + 0.5f);
+            if (_evilZone != null) _evilZone.Initialize(Arena.arenaCenter, Arena.arenaHalfSize + 0.5f);
 
             // 開場先進一段緩衝（_zoneRound = -1），讓玩家在第一輪善惡區出現前就看到善區預告
             HideAllSafeZones();
@@ -320,7 +302,7 @@ namespace PilgrimOfSin.StateMachine
                     EnterBuffer();
                     break;
                 case FoolishCyclePhase.Buffer:
-                    if (_zoneRound + 1 < _arena.zoneRounds)
+                    if (_zoneRound + 1 < Arena.zoneRounds)
                     {
                         _zoneRound++;
                         EnterZoneShow();
@@ -349,44 +331,47 @@ namespace PilgrimOfSin.StateMachine
 
         private void EnterZoneShow()
         {
-            SetPhase(FoolishCyclePhase.ZoneShow, _arena.zoneShowDuration);
+            SetPhase(FoolishCyclePhase.ZoneShow, Arena.zoneShowDuration);
             if (_evilZone != null) _evilZone.Show(1f);
             ActivatePlannedZones(); // 預告的那批善區現在正式生效
         }
 
         private void EnterBuffer()
         {
-            SetPhase(FoolishCyclePhase.Buffer, _arena.bufferDuration);
+            SetPhase(FoolishCyclePhase.Buffer, Arena.bufferDuration);
             HideAllSafeZones();
             if (_evilZone != null) _evilZone.Hide();
 
             // 緩衝之後還有下一輪善惡區：現在就預告它的位置；之後是打鬥窗口就不預告
-            if (_zoneRound + 1 < _arena.zoneRounds) PlanNextRound();
+            if (_zoneRound + 1 < Arena.zoneRounds) PlanNextRound();
         }
 
         private void EnterBattle()
         {
-            SetPhase(FoolishCyclePhase.Battle, _arena.battleDuration);
+            SetPhase(FoolishCyclePhase.Battle, Arena.battleDuration);
             HideAllSafeZones();
             if (_evilZone != null) _evilZone.Hide();
         }
 
         private void EnterRoar()
         {
-            SetPhase(FoolishCyclePhase.Roar, _arena.roarDuration);
+            SetPhase(FoolishCyclePhase.Roar, Arena.roarDuration);
             HideAllSafeZones();
             if (_evilZone != null) _evilZone.Hide();
 
             // 下一個大循環第一輪善區的預告：嘶吼和擴散期間都看得到
             PlanNextRound();
 
-            Voice?.Play(FoolishVoiceId.Roar);
-            if (Animator != null && Animator.runtimeAnimatorController != null) Animator.SetTrigger("Roar");
+            // 先讓 AI 回到待機（停掉進行中的攻擊/移動），再播嘶吼；
+            // 不然攻擊結束時會觸發 Idle，把播到一半的嘶吼動畫切掉。
+            if (CurrentStateType != FoolishBossStateType.Idle) _fsm.Force(FoolishBossStateType.Idle);
+            PlayAnimTrigger("Roar");
+            Feedback.Play(_profile.roar, _profile.roar.GetDuration(Arena.roarDuration));
         }
 
         private void EnterSpread()
         {
-            SetPhase(FoolishCyclePhase.Spread, _arena.spreadDuration);
+            SetPhase(FoolishCyclePhase.Spread, Arena.spreadDuration);
             if (_evilZone != null) _evilZone.Show(0f);
         }
 
@@ -480,8 +465,8 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>安全區半徑 = 基本半徑 + 額外半徑 × 癡已損失血量比例（線性向外擴張）。</summary>
         private float GetSafeZoneRadius(SafeZone zone)
         {
-            float baseRadius = _arena.safeZoneBaseRadius > 0f ? _arena.safeZoneBaseRadius : zone.GetSceneRadius();
-            return baseRadius + _arena.safeZoneExtraRadiusAtZeroHp * (1f - HpRatio);
+            float baseRadius = Arena.safeZoneBaseRadius > 0f ? Arena.safeZoneBaseRadius : zone.GetSceneRadius();
+            return baseRadius + Arena.safeZoneExtraRadiusAtZeroHp * (1f - HpRatio);
         }
 
         /// <summary>
@@ -490,14 +475,14 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         private int RollSafeZoneCount()
         {
-            int min = Mathf.Max(1, _arena.safeZoneMin);
-            int max = Mathf.Max(min, _arena.safeZoneMax);
+            int min = Mathf.Max(1, Arena.safeZoneMin);
+            int max = Mathf.Max(min, Arena.safeZoneMax);
 
             var candidates = new List<int>();
             for (int n = min; n <= max; n++)
             {
                 bool isExtreme = n == min || n == max;
-                bool blocked = isExtreme && n == _lastSafeCount && _sameCountStreak >= _arena.maxSameCountStreak;
+                bool blocked = isExtreme && n == _lastSafeCount && _sameCountStreak >= Arena.maxSameCountStreak;
                 if (!blocked) candidates.Add(n);
             }
             if (candidates.Count == 0) candidates.Add(min);
@@ -514,19 +499,19 @@ namespace PilgrimOfSin.StateMachine
         /// </summary>
         private Vector2 PickSafeZonePosition(float radius, List<Vector2> centers, List<float> radii)
         {
-            float range = Mathf.Max(0f, _arena.arenaHalfSize - _arena.edgeMargin - radius);
-            Vector2 candidate = _arena.arenaCenter;
+            float range = Mathf.Max(0f, Arena.arenaHalfSize - Arena.edgeMargin - radius);
+            Vector2 candidate = Arena.arenaCenter;
 
             for (int attempt = 0; attempt < 30; attempt++)
             {
-                candidate = _arena.arenaCenter + new Vector2(
+                candidate = Arena.arenaCenter + new Vector2(
                     UnityEngine.Random.Range(-range, range),
                     UnityEngine.Random.Range(-range, range));
 
                 bool ok = true;
                 for (int i = 0; i < centers.Count; i++)
                 {
-                    if (Vector2.Distance(candidate, centers[i]) < radius + radii[i] + _arena.safeZoneGap)
+                    if (Vector2.Distance(candidate, centers[i]) < radius + radii[i] + Arena.safeZoneGap)
                     {
                         ok = false;
                         break;
@@ -546,7 +531,7 @@ namespace PilgrimOfSin.StateMachine
             if (IsDead) return;
 
             // 只有打鬥窗口能造成傷害（可在 Inspector 勾選 vulnerableOutsideBattle 改成隨時可打）
-            if (CyclePhase != FoolishCyclePhase.Battle && !_arena.vulnerableOutsideBattle)
+            if (CyclePhase != FoolishCyclePhase.Battle && !Arena.vulnerableOutsideBattle)
                 return;
 
             float ratioBefore = HpRatio;
@@ -558,17 +543,21 @@ namespace PilgrimOfSin.StateMachine
                 return;
             }
 
-            Voice?.Play(FoolishVoiceId.Hurt);
+            // 受擊回饋疊加在目前動作上（不中斷攻擊的命中判定）；配音有最小間隔，避免連續被打時一直喊
+            bool playVoice = Time.time >= _nextHurtVoiceTime;
+            if (playVoice) _nextHurtVoiceTime = Time.time + _profile.hurtVoiceMinInterval;
+            Feedback.Play(_profile.hurt, _profile.hurt.GetDuration(_profile.staggerDuration), interrupt: false, playVoice: playVoice);
 
             // 打鬥窗口中血量降到門檻以下 → 窗口提前結束（每場戰鬥只觸發一次）
             if (CyclePhase == FoolishCyclePhase.Battle && !_earlyEndUsed
-                && ratioBefore > _arena.battleEarlyEndHpRatio && HpRatio <= _arena.battleEarlyEndHpRatio)
+                && ratioBefore > Arena.battleEarlyEndHpRatio && HpRatio <= Arena.battleEarlyEndHpRatio)
             {
                 _earlyEndUsed = true;
                 EnterRoar();
+                return; // 已經開始嘶吼，不要再被硬直打斷
             }
 
-            if (enableStagger)
+            if (EnableStagger)
                 _fsm.Request(FoolishBossStateType.Stagger);
         }
 
@@ -577,21 +566,87 @@ namespace PilgrimOfSin.StateMachine
             if (_player == null) return;
             Vector3 dir = (_player.position - transform.position).normalized;
             dir.y = 0f;
-            transform.position += dir * _moveSpeed * dt;
+            transform.position += dir * _profile.moveSpeed * dt;
             if (dir != Vector3.zero)
                 transform.rotation = Quaternion.Slerp(transform.rotation,
                                                        Quaternion.LookRotation(dir), 10f * dt);
         }
 
-        public float GetAttackDamage(FoolishBossStateType type)
+        /// <summary>直接轉向主角（攻擊開始時用，讓招式朝主角出手）。</summary>
+        public void FacePlayer()
         {
-            return type switch
-            {
-                FoolishBossStateType.Attack1 => _attack1Damage,
-                FoolishBossStateType.Attack2 => _attack2Damage,
-                _ => _attack3Damage,
-            };
+            if (_player == null) return;
+            Vector3 dir = _player.position - transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.0001f) transform.rotation = Quaternion.LookRotation(dir);
         }
+
+        public float GetAttackDamage(FoolishBossStateType type) => _profile.GetAttack(type).damage;
+
+        /// <summary>
+        /// 攻擊命中判定（在素材總表設定的命中時間點呼叫一次）：
+        /// 主角在命中距離內、且在 Boss 正前方的扇形角度內就扣血。翻滾無敵由 PlayerController.TakeDamage 自己擋。
+        /// </summary>
+        public void PerformAttackHit(FoolishBossStateType type)
+        {
+            if (IsDead || BossResultPortal.IsPlayerDefeated || _player == null || _playerController == null) return;
+            if (CurrentStateType != type) return; // 已經離開這招（被打斷、死亡）就不判定
+
+            var attack = _profile.GetAttack(type);
+            Vector3 toPlayer = _player.position - transform.position;
+            toPlayer.y = 0f;
+            float dist = toPlayer.magnitude;
+            float angle = toPlayer.sqrMagnitude > 0.0001f ? Vector3.Angle(transform.forward, toPlayer) : 0f;
+            bool hit = dist <= attack.hitRadius && (attack.hitAngle >= 360f || angle <= attack.hitAngle * 0.5f);
+
+            if (_profile.showHitArea)
+            {
+                ShowHitArea(attack, hit);
+                Debug.Log($"[癡] {type} 命中判定（時間點 {attack.hitNormalizedTime:P0}）：{(hit ? "打到" : "沒打到")}" +
+                          $"　主角距離 {dist:F1}m / 判定距離 {attack.hitRadius:F1}m　偏離正前方 {angle:F0}° / 判定角度 ±{attack.hitAngle * 0.5f:F0}°", this);
+            }
+
+            if (hit) _playerController.TakeDamage(attack.damage);
+        }
+
+        /// <summary>測試用：在地上畫出這次的判定範圍（扇形外框），0.4 秒後消失。紅 = 打到、黃 = 沒打到。</summary>
+        private void ShowHitArea(BossActionEntry attack, bool hit)
+        {
+            var go = new GameObject("癡_命中判定範圍(測試)");
+            var lr = go.AddComponent<LineRenderer>();
+            lr.useWorldSpace = true;
+            lr.loop = attack.hitAngle < 360f;
+            lr.widthMultiplier = 0.12f;
+            lr.material = new Material(Shader.Find("Sprites/Default"));
+            lr.startColor = lr.endColor = hit ? new Color(1f, 0.15f, 0.15f) : new Color(1f, 0.85f, 0.1f);
+            lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+            const int segments = 32;
+            float half = Mathf.Min(attack.hitAngle, 360f) * 0.5f;
+            Vector3 origin = transform.position + Vector3.up * 0.05f;
+            var points = new List<Vector3>();
+            if (attack.hitAngle < 360f) points.Add(origin);
+            for (int i = 0; i <= segments; i++)
+            {
+                float a = -half + half * 2f * i / segments;
+                points.Add(origin + Quaternion.Euler(0f, a, 0f) * transform.forward * attack.hitRadius);
+            }
+            lr.positionCount = points.Count;
+            lr.SetPositions(points.ToArray());
+
+            Destroy(lr.material, 0.4f);
+            Destroy(go, 0.4f);
+        }
+
+        /// <summary>觸發 Animator 動作（先清掉其他還沒被消耗的 Trigger，避免殘留的 Trigger 讓動畫亂跳）。</summary>
+        public void PlayAnimTrigger(string trigger)
+        {
+            if (Animator == null || Animator.runtimeAnimatorController == null) return;
+            foreach (var p in AnimTriggers) Animator.ResetTrigger(p);
+            Animator.SetTrigger(trigger);
+        }
+
+        private static readonly string[] AnimTriggers = { "Idle", "Move", "Attack1", "Attack2", "Attack3", "Roar", "Stagger", "Dead" };
 
         public void OnDeath()
         {
@@ -600,10 +655,30 @@ namespace PilgrimOfSin.StateMachine
             BossResultPortal.Instance?.OnBossDefeated();
         }
 
-        // ════════════════════════════════════════════════════════════
-        //  Animation Events
-        // ════════════════════════════════════════════════════════════
-
-        public void AnimEvent_AttackEnd() => OnAttackAnimEnd?.Invoke();
+        private void OnDrawGizmosSelected()
+        {
+            if (_profile == null) return;
+            // 三招的命中範圍：紅=攻擊1、橘=攻擊2、黃=攻擊3
+            var colors = new[] { new Color(1f, 0.2f, 0.2f), new Color(1f, 0.6f, 0.1f), new Color(1f, 0.9f, 0.2f) };
+            var attacks = new[] { _profile.attack1, _profile.attack2, _profile.attack3 };
+            for (int i = 0; i < 3; i++)
+            {
+                Gizmos.color = colors[i];
+                float r = attacks[i].hitRadius;
+                float half = Mathf.Min(attacks[i].hitAngle, 360f) * 0.5f;
+                Vector3 prev = transform.position + Quaternion.Euler(0f, -half, 0f) * transform.forward * r;
+                for (int s = 1; s <= 24; s++)
+                {
+                    Vector3 next = transform.position + Quaternion.Euler(0f, -half + half * 2f * s / 24f, 0f) * transform.forward * r;
+                    Gizmos.DrawLine(prev, next);
+                    prev = next;
+                }
+                if (half < 180f)
+                {
+                    Gizmos.DrawLine(transform.position, transform.position + Quaternion.Euler(0f, -half, 0f) * transform.forward * r);
+                    Gizmos.DrawLine(transform.position, transform.position + Quaternion.Euler(0f, half, 0f) * transform.forward * r);
+                }
+            }
+        }
     }
 }
