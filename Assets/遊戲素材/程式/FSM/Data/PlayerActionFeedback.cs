@@ -122,6 +122,29 @@ namespace PilgrimOfSin.StateMachine
             if (entry != null) Fire(entry);
         }
 
+        /// <summary>目前武器的出招表（沒有總表或沒勾選時回傳 null／不可用）。</summary>
+        public ComboMoveSet GetComboSet(int weaponIndex)
+            => _profile != null ? _profile.GetSet(weaponIndex)?.combo : null;
+
+        /// <summary>出招表的一招開始時呼叫：取消上一招還沒播的音效/特效，排程這一招的。時間點以這一招的實際長度換算。</summary>
+        public void FireMove(ComboMoveEntry move)
+        {
+            CancelPending();
+            if (move == null) return;
+            float length = move.Duration;
+
+            Schedule(move.sfxNormalizedTime * length, () => PlayRandom(move.sfx, move.sfxVolume));
+            Schedule(move.voiceNormalizedTime * length, () => PlayRandom(move.GetVoice(GameLanguage.Current), move.voiceVolume));
+
+            if (move.vfx == null) return;
+            foreach (var v in move.vfx)
+            {
+                if (v == null || v.prefab == null) continue;
+                var vfx = v;
+                Schedule(vfx.normalizedTime * length, () => SpawnVfx(vfx));
+            }
+        }
+
         private void Fire(PlayerActionEntry entry)
         {
             float length = entry.HasClipDuration ? entry.ClipDuration : 0f;

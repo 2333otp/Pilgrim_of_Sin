@@ -68,7 +68,12 @@ namespace PilgrimOfSin.StateMachine
             }
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
+            _comboPanel = gameObject.AddComponent<ComboDevPanel>();   // 手把圖 + 連段進度圖，跟這個面板一起用 F1 開關
+            _hitboxVisualizer = gameObject.AddComponent<AttackHitboxVisualizer>();   // 攻擊判定範圍
         }
+
+        private ComboDevPanel _comboPanel;
+        private AttackHitboxVisualizer _hitboxVisualizer;
 
         private void OnDestroy()
         {
@@ -97,6 +102,17 @@ namespace PilgrimOfSin.StateMachine
             }
 
             UpdateBossTimers();
+
+            if (_comboPanel != null)
+            {
+                _comboPanel.Visible = _visible;
+                _comboPanel.Player = _player;
+            }
+            if (_hitboxVisualizer != null)
+            {
+                _hitboxVisualizer.Visible = _visible;
+                _hitboxVisualizer.Player = _player;
+            }
         }
 
         private void RefreshRefs()
@@ -181,6 +197,20 @@ namespace PilgrimOfSin.StateMachine
                     $"State  : {_player.CurrentStateType}",
                     $"HP     : {hp:F0} / {maxHp:F0}  ({hp / maxHp:P0})",
                 };
+            }
+
+            // 出招表：目前這一招與播放時間
+            var mas = _player.MoveAttackDebug;
+            if (_player.CurrentStateType == PlayerStateType.MoveAttack && mas != null && mas.CurrentMove != null && mas.CurrentMove.IsValid)
+            {
+                var m = mas.CurrentMove;
+                string slot = mas.SlotName;
+                var list = new System.Collections.Generic.List<string>(rows)
+                {
+                    $"Move   : {slot} {m.clip.name}",
+                    $"Time   : {mas.Progress * m.Duration:F2} / {m.Duration:F2} s",
+                };
+                rows = list.ToArray();
             }
 
             return DrawRows(x, y, rows);

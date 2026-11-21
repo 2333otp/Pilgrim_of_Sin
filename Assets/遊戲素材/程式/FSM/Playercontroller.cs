@@ -80,6 +80,30 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _groundCheckDistance = 0.6f; // 依角色高度調整
         [SerializeField] private LayerMask _groundLayer = ~0;       // 預設偵測所有層
 
+        // ── 攻擊取消時間點（連段研究：ResearchWeaponCombo） ─────────────
+        // 數值是「動畫長度的比例」。攻擊播到這個比例之後：
+        //   · 已經按下的下一個攻擊立刻接上（不必等整段動畫播完）
+        //   · 可用翻滾取消收招
+        // 播到「移動取消」比例之後，推搖桿就直接離開攻擊開始移動。
+        // 之後改成每一招各自的連段表設定，這裡是所有招式共用的初版數值。
+        [Header("Attack Cancel（攻擊取消時間點，比例 0~1）")]
+        [Tooltip("關閉 = 回到舊行為：每一招都要播完整段動畫才能接下一招。")]
+        [SerializeField] private bool _enableAttackCancel = true;
+        [Tooltip("輕攻擊播到這個比例後可接下一招／翻滾取消。")]
+        [SerializeField, Range(0f, 1f)] private float _lightCancelRatio = 0.45f;
+        [Tooltip("重攻擊播到這個比例後可接下一招／翻滾取消。")]
+        [SerializeField, Range(0f, 1f)] private float _heavyCancelRatio = 0.5f;
+        [Tooltip("連段播到這個比例後可接下一招／翻滾取消。")]
+        [SerializeField, Range(0f, 1f)] private float _comboCancelRatio = 0.7f;
+        [Tooltip("任何攻擊播到這個比例後，推搖桿就直接離開攻擊開始移動（收招尾段）。")]
+        [SerializeField, Range(0f, 1f)] private float _moveCancelRatio = 0.85f;
+
+        public bool EnableAttackCancel => _enableAttackCancel;
+        public float LightCancelRatio => _lightCancelRatio;
+        public float HeavyCancelRatio => _heavyCancelRatio;
+        public float ComboCancelRatio => _comboCancelRatio;
+        public float MoveCancelRatio => _moveCancelRatio;
+
         // 同上：有放該武器的 Damaged 動畫就跟 Clip 長度走
         public float StunDuration
             => Feedback != null && Feedback.TryGetCurrentWeaponDuration("Damaged", out float d) ? d : _stunDuration;
@@ -164,6 +188,33 @@ namespace PilgrimOfSin.StateMachine
             Animator.applyRootMotion = true;
         }
 
+        // ── 出招表（無雙式連段研究） ─────────────────────────────────
+        private AttackClipPlayer _clipPlayer;
+
+        /// <summary>出招表動畫播放器（Domain Reload 後自動重建）。</summary>
+        public AttackClipPlayer ClipPlayer => _clipPlayer ??= new AttackClipPlayer(Animator);
+
+        /// <summary>從 Idle/Walk/Sprint 進入 MoveAttack 時，第一招是強攻擊（🔺）還是一般攻擊（⬜）。</summary>
+        public bool PendingAttackHeavy { get; set; }
+
+        /// <summary>目前武器的出招表；沒勾選或沒放 N1 動畫時回傳 null（改走舊連段）。</summary>
+        public ComboMoveSet CurrentComboSet
+        {
+            get
+            {
+                var set = Feedback?.GetComboSet(Combat != null ? Combat.CurrentWeaponIndex : 1);
+                return set != null && set.IsUsable ? set : null;
+            }
+        }
+
+        /// <summary>出招表狀態（唯讀，給 F1 開發者面板顯示連段進度）。</summary>
+        public MoveAttackState MoveAttackDebug { get; private set; }
+
+        /// <summary>秘劍狀態（唯讀，給 F1 開發者面板顯示命中第幾下）。</summary>
+        public SpecialSkillState SpecialSkillDebug { get; private set; }
+
+        private void OnDestroy() => _clipPlayer?.Dispose();
+
         public void ForceExitPause()
         {
             Time.timeScale = 1f;
@@ -176,6 +227,7 @@ namespace PilgrimOfSin.StateMachine
 
             // timeScale = 0 時只跑狀態機（讓 PausedState 可以偵測輸入恢復）
             _stateMachine.Update(Time.unscaledDeltaTime);
+            _clipPlayer?.Tick(Time.deltaTime);   // 出招表動畫的淡入淡出（暫停時 deltaTime = 0，跟著停）
 
             if (Time.timeScale == 0f) return;
 
@@ -219,7 +271,8 @@ namespace PilgrimOfSin.StateMachine
             if (_stateMachine == null) return; // 見 EnsureStateMachine() 註解：Domain Reload 後這裡可能還沒被 Update() 救回來
             var state = _stateMachine.CurrentStateType;
             if (state == PlayerStateType.LightAttack || state == PlayerStateType.HeavyAttack
-                || state == PlayerStateType.ComboAttack || state == PlayerStateType.SpecialSkill)
+                || state == PlayerStateType.ComboAttack || state == PlayerStateType.SpecialSkill
+                || state == PlayerStateType.MoveAttack)
                 _pendingRootMotion += Animator.deltaPosition;
         }
 
@@ -283,12 +336,13 @@ namespace PilgrimOfSin.StateMachine
                 { PlayerStateType.LightAttack,          new LightAttackState(this, _stateMachine)          },
                 { PlayerStateType.HeavyAttack,          new HeavyAttackState(this, _stateMachine)          },
                 { PlayerStateType.ComboAttack,          new ComboAttackState(this, _stateMachine)          },
-                { PlayerStateType.SpecialSkill,         new SpecialSkillState(this, _stateMachine)         },
+                { PlayerStateType.SpecialSkill,         SpecialSkillDebug = new SpecialSkillState(this, _stateMachine) },
                 { PlayerStateType.SpecialSkillCooldown, new SpecialSkillCooldownState(this, _stateMachine) },
                 { PlayerStateType.WeaponSwitch,         new WeaponSwitchState(this, _stateMachine)         },
                 { PlayerStateType.Damaged,              new DamagedState(this, _stateMachine)               },
                 { PlayerStateType.Dead,                 new DeadState(this, _stateMachine)                  },
                 { PlayerStateType.Paused,               new PausedState(this, _stateMachine)                },
+                { PlayerStateType.MoveAttack,           MoveAttackDebug = new MoveAttackState(this, _stateMachine) },
             };
 
             _stateMachine.Init(states, PlayerStateType.Idle);

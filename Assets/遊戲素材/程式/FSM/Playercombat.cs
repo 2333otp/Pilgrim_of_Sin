@@ -76,6 +76,40 @@ namespace PilgrimOfSin.StateMachine
         public void EndAttack()
             => _hitbox?.Deactivate();
 
+        /// <summary>出招表的一招：用指定傷害開啟攻擊判定（每一招重新計一次命中）。</summary>
+        public void StartMoveAttack(float damage)
+            => _hitbox?.Activate(damage);
+
+        /// <summary>出招表的一下：指定判定形狀（null = 舊的球）與這一下的秒數（往前飛的判定用）。</summary>
+        public void StartMoveAttack(float damage, HitboxShape shape, float duration)
+            => _hitbox?.Activate(damage, shape, duration);
+
+        /// <summary>攻擊判定元件（F1 顯示判定形狀用）。</summary>
+        public PlayerAttackHitbox Hitbox => _hitbox;
+
+        /// <summary>
+        /// 出招表沒填傷害（0）時的預設值，沿用上面的舊數值：
+        /// 一般攻擊 = 輕攻擊；C1 = 重攻擊；C2 / C3 / C4 = 連段 1 / 2 / 4（C4 當最後的大招）。
+        /// </summary>
+        public float GetDefaultMoveDamage(bool isCharge, int index)
+        {
+            if (!isCharge) return GetDamage(AttackType.Light);
+            return index switch
+            {
+                0 => GetDamage(AttackType.Heavy),
+                1 => GetDamage(AttackType.Combo, 1),
+                2 => GetDamage(AttackType.Combo, 2),
+                _ => GetDamage(AttackType.Combo, 4),
+            };
+        }
+
+        /// <summary>目前武器的特殊技（秘劍）整招傷害。</summary>
+        public float SpecialDamage => GetDamage(AttackType.Special);
+
+        /// <summary>惡魔獵人分支沒填傷害時的預設值：停頓連打 = 連段 3；蓄力 = 連段 4。</summary>
+        public float GetDefaultBranchMoveDamage(bool isHold)
+            => GetDamage(AttackType.Combo, isHold ? 4 : 3);
+
         // ────────────────────────────────────────────────────────────
         //  傷害查詢
         // ────────────────────────────────────────────────────────────

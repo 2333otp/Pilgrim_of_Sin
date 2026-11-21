@@ -25,6 +25,7 @@ namespace PilgrimOfSin.StateMachine
             { PlayerStateType.LightAttack,  2 },
             { PlayerStateType.HeavyAttack,  2 },
             { PlayerStateType.ComboAttack,  2 },
+            { PlayerStateType.MoveAttack,   2 },
             { PlayerStateType.Jump,         3 },
             { PlayerStateType.Roll,         3 }, // Roll 只有 SpecialSkill（1）可打斷
         };
@@ -43,6 +44,7 @@ namespace PilgrimOfSin.StateMachine
             PlayerStateType.LightAttack,
             PlayerStateType.HeavyAttack,
             PlayerStateType.ComboAttack,
+            PlayerStateType.MoveAttack,
             PlayerStateType.Damaged,       // 連續受傷可重入
         };
 

@@ -226,3 +226,579 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
+  combo:
+    enabled: 1
+    n1:
+      clip: {fileID: 7400000, guid: 57b745bf2e56fbe4abac308a8433669f, type: 2}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.8
+      damage: 0
+      hitWindows:
+      - start: 0
+        end: 0.821
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    n2:
+      clip: {fileID: 7400000, guid: 307c01e31dd54474897d4ae6f278b4e5, type: 2}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.87
+      damage: 0
+      hitWindows:
+      - start: 0.323
+        end: 0.516
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.677
+        end: 0.806
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.871
+        end: 1
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    n3:
+      clip: {fileID: 7400000, guid: f7851b2bc13c4364f8625fe87cd5eae6, type: 2}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.8
+      damage: 0
+      hitWindows:
+      - start: 0.125
+        end: 0.292
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.583
+        end: 0.729
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    n4:
+      clip: {fileID: -7241783472766842207, guid: 13649ce082ad8fc4eb631660615becd7, type: 3}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.9
+      damage: 0
+      hitWindows:
+      - start: 0.595
+        end: 1
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    c1:
+      clip: {fileID: 4720275915632916084, guid: 4d60a31b0512a6c4c88c6187eda2515d, type: 3}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.8
+      damage: 0
+      hitWindows:
+      - start: 0
+        end: 0.133
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.2
+        end: 0.433
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.6
+        end: 0.733
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.9
+        end: 1
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    c2:
+      clip: {fileID: 7400000, guid: ef0dbab8d1307bb40bb1957ab1bda551, type: 2}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.8
+      damage: 0
+      hitWindows:
+      - start: 0.045
+        end: 0.227
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.273
+        end: 0.545
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.818
+        end: 1
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    c3:
+      clip: {fileID: 7400000, guid: 7e5b32fd3209f00499d7e340b5da30fe, type: 2}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.85
+      damage: 0
+      hitWindows:
+      - start: 0.103
+        end: 0.221
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.235
+        end: 0.324
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.691
+        end: 0.765
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    c4:
+      clip: {fileID: 7400000, guid: 3e102c9905ab4fe4a9e5283878b1e8f0, type: 2}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.89
+      damage: 0
+      hitWindows:
+      - start: 0
+        end: 0.159
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.386
+        end: 0.591
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      - start: 0.636
+        end: 0.864
+        damage: 0
+        weight: 1
+        customHitbox: 0
+        hitbox:
+          shape: 0
+          anchor: 0
+          offset: {x: 0, y: 0.83, z: 0.7}
+          rotation: {x: 0, y: 0, z: 0}
+          size: {x: 1.8, y: 1.8, z: 1.8}
+          motion: 0
+          projectileDistance: 6
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    pauseCombo:
+      clip: {fileID: 0}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.5
+      damage: 0
+      hitWindows: []
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    pauseAfterNormal: 2
+    pauseGraceSeconds: 0.3
+    chargeHold:
+      clip: {fileID: 0}
+      speed: 1
+      inputStartRatio: 0.4
+      cancelRatio: 0.6
+      damage: 0
+      hitWindows: []
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+      sfx: []
+      sfxVolume: 1
+      sfxNormalizedTime: 0
+      voiceEnglish: []
+      voiceTaiwanese: []
+      voiceVolume: 1
+      voiceNormalizedTime: 0
+      vfx: []
+    chargeHoldSeconds: 0.25
+    specialHitWindows:
+    - start: 0
+      end: 0.038
+      damage: 0
+      weight: 1
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+    - start: 0.488
+      end: 0.55
+      damage: 0
+      weight: 1
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+    - start: 0.725
+      end: 0.812
+      damage: 0
+      weight: 1
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+    - start: 0.825
+      end: 0.888
+      damage: 0
+      weight: 1
+      customHitbox: 0
+      hitbox:
+        shape: 0
+        anchor: 0
+        offset: {x: 0, y: 0.83, z: 0.7}
+        rotation: {x: 0, y: 0, z: 0}
+        size: {x: 1.8, y: 1.8, z: 1.8}
+        motion: 0
+        projectileDistance: 6
+    specialCustomHitbox: 0
+    specialHitbox:
+      shape: 0
+      anchor: 0
+      offset: {x: 0, y: 0.83, z: 0.7}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 1.8, y: 1.8, z: 1.8}
+      motion: 0
+      projectileDistance: 6
+    useWeaponHitbox: 1
+    weaponHitbox:
+      shape: 2
+      anchor: 3
+      offset: {x: 0, y: 0.18, z: 0}
+      rotation: {x: 270, y: 0, z: 0}
+      size: {x: 0.5, y: 0.5, z: 0.6}
+      motion: 0
+      projectileDistance: 6

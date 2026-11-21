@@ -100,6 +100,27 @@ namespace PilgrimOfSin.StateMachine
         // ── 攻擊（每幀只有按下那幀為 true） ──────────────────────────
         public bool LightAttackPressed { get; private set; }
         public bool HeavyAttackPressed { get; private set; }
+
+        // 🔺 目前是否按著（蓄力判斷用）。Send Messages 模式下按鈕放開不會送回呼，
+        // 所以直接讀 Action 的即時狀態；跟 HeavyAttack 用同一組綁定，改鍵一樣會套用。
+        // 注意：PlayerInput 執行時會把 actions 換成複製出來的實例（第一次讀到的可能是舊的那份），
+        // 所以 actions 換了就重新找，不然會一直讀到沒在運作的舊 Action、永遠是「沒按」。
+        private InputAction _heavyAction;
+        private InputActionAsset _heavyActionAsset;
+        public bool HeavyAttackHeld
+        {
+            get
+            {
+                var asset = _playerInput != null ? _playerInput.actions : null;
+                if (asset == null) return false;
+                if (_heavyAction == null || _heavyActionAsset != asset)
+                {
+                    _heavyAction = asset.FindAction("HeavyAttack");
+                    _heavyActionAsset = asset;
+                }
+                return _heavyAction != null && _heavyAction.IsPressed();
+            }
+        }
         // 特殊技能有 5 秒 CD 且只有特定狀態才吃得到輸入，按早了/按在不能用的那一幀就整個被吃掉，
         // 表現就是「按好幾下才有反應」。這裡把按下的輸入保留一小段時間，等狀態機真的能施放
         // （SpecialSkillState.Enter 會呼叫 ConsumeSpecial()）才清掉。
