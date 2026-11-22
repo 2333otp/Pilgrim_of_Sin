@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PilgrimOfSin.StateMachine
@@ -35,20 +36,13 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _balanceMax = 40f; // 平衡上限（視窗寬15，較易達成）
         [SerializeField] private float _maxWeight = 50f; // 右側最大重量上限（Clamp 用）
 
-        // ── 音效（把音檔拖進這兩個 SO 資產即可，不用改程式）─────────────
-        [Header("Sound Effects")]
-        [Tooltip("攻擊天秤時（一次揮擊打到天秤只播一次）")]
-        [SerializeField] private SoundEffectData _hitSfx;
-        [Tooltip("天秤翻倒時（Boss 踢翻天秤、播 Break 動畫的瞬間；撞擊聲要對齊動畫可在 SO 設「延遲」）")]
-        [SerializeField] private SoundEffectData _breakSfx;
+        // 動畫、音效、特效都在 GreedScaleConfig（_config）裡設定。
+        // 下面兩個時長只在 SO 找不到對應 state 時當備用；有 SO 時一律用動畫實際長度。
+        [Header("備用時長（SO 沒設定時才用）")]
+        [SerializeField] private float _breakDuration = 2.4f;    // Break 播完視為「踢翻完成」
+        [SerializeField] private float _hitResetDuration = 1.3f; // Attacked + MoneyBagUpdate 播完視為「重製完成」
 
-        // ── Break 動畫 ────────────────────────────────────────────────
-        [Header("Break Animation")]
-        [SerializeField] private float _breakDuration = 2.4f; // Break clip 長度，播完視為「踢翻完成」
-
-        // ── 受擊 + 重製動畫（超重時攻擊天秤觸發）────────────────────────
-        [Header("Hit + Reset Animation")]
-        [SerializeField] private float _hitResetDuration = 1.3f; // Attacked(0.25s) + MoneyBagUpdate(1.04s) 播完視為「重製完成」
+        private const string StateBreak = "Break", StateAttacked = "Attacked", StateMoneyBagUpdate = "MoneyBagUpdate";
 
         // ── Animator 參數 ────────────────────────────────────────────
         private static readonly int TiltHash       = Animator.StringToHash("Tilt");
@@ -64,6 +58,11 @@ namespace PilgrimOfSin.StateMachine
         private int _currentTilt = -1;
         private int _lastHitSfxSwingId = -1;
         private int _hitCount; // 累積攻擊次數，達到 _config.HitsRequiredToTrigger 才觸發受擊+重製
+
+        private GreedFxPlayer _fx;
+        private GreedFxPlayer Fx => _fx ??= new GreedFxPlayer(transform, () => _config != null ? _config.mixerGroup : null);
+        private Dictionary<int, ScaleAnimEntry> _entryByHash;
+        private int _fxStateHash;   // 目前正在播特效的 state（換 state 時重新開始）
 
         // ── 事件 ──────────────────────────────────────────────────────
         /// <summary>右側重量變化時觸發，傳出當前右側總重。</summary>
@@ -101,10 +100,73 @@ namespace PilgrimOfSin.StateMachine
         //  Unity 生命週期
         // ════════════════════════════════════════════════════════════
 
+        private void Awake()
+        {
+            ApplyAnimationOverrides();
+        }
+
         private void Start()
         {
             // 初始 0 重量 → 雕像重 → 進場停在對應側（跟 Animator Entry 的 ToRight 一致）
             ApplyTiltFromWeight();
+        }
+
+        private void Update()
+        {
+            UpdateStateFx();
+        }
+
+        /// <summary>
+        /// SO 裡有換動畫的 state，用 AnimatorOverrideController 把原本的 Clip 換掉。
+        /// 全部維持原樣就完全不碰 Animator。必須在設定 Animator 參數之前做（換 Controller 會重置參數）。
+        /// </summary>
+        private void ApplyAnimationOverrides()
+        {
+            if (_config == null || _libraAnimator == null || _libraAnimator.runtimeAnimatorController == null) return;
+
+            var swaps = new Dictionary<AnimationClip, AnimationClip>();
+            foreach (var s in _config.states)
+                if (s != null && s.clip != null && s.baseClip != null && s.clip != s.baseClip)
+                    swaps[s.baseClip] = s.clip;
+            if (swaps.Count == 0) return;
+
+            var oc = new AnimatorOverrideController(_libraAnimator.runtimeAnimatorController);
+            var pairs = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+            oc.GetOverrides(pairs);
+            for (int i = 0; i < pairs.Count; i++)
+                if (swaps.TryGetValue(pairs[i].Key, out var rep))
+                    pairs[i] = new KeyValuePair<AnimationClip, AnimationClip>(pairs[i].Key, rep);
+            oc.ApplyOverrides(pairs);
+            _libraAnimator.runtimeAnimatorController = oc;
+        }
+
+        /// <summary>
+        /// 每幀看 Animator 正在播哪個 state（轉換中以「要轉過去的」為準），
+        /// 換 state 時開始播那個 state 的音效 / 特效，並依播放進度觸發各時間點。
+        /// </summary>
+        private void UpdateStateFx()
+        {
+            if (_config == null || _libraAnimator == null || !_libraAnimator.isActiveAndEnabled) return;
+
+            if (_entryByHash == null)
+            {
+                _entryByHash = new Dictionary<int, ScaleAnimEntry>();
+                foreach (var s in _config.states)
+                    if (s != null && !string.IsNullOrEmpty(s.stateName))
+                        _entryByHash[Animator.StringToHash(s.stateName)] = s;
+            }
+
+            var info = _libraAnimator.IsInTransition(0)
+                ? _libraAnimator.GetNextAnimatorStateInfo(0)
+                : _libraAnimator.GetCurrentAnimatorStateInfo(0);
+
+            if (info.shortNameHash != _fxStateHash)
+            {
+                _fxStateHash = info.shortNameHash;
+                if (_entryByHash.TryGetValue(_fxStateHash, out var entry)) Fx.Begin(entry.fx);
+                else Fx.Stop();
+            }
+            Fx.Tick(Mathf.Min(1f, info.normalizedTime));
         }
 
         // ════════════════════════════════════════════════════════════
@@ -141,7 +203,7 @@ namespace PilgrimOfSin.StateMachine
             if (hitbox.SwingId != _lastHitSfxSwingId)
             {
                 _lastHitSfxSwingId = hitbox.SwingId;
-                _hitSfx?.Play();
+                if (_config != null) Fx.FireAll(_config.hitFx);
             }
 
             _hitCount++;
@@ -187,7 +249,7 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>由 GreedBossController.PlayScaleBreak 呼叫：播 Break 動畫。</summary>
         public void PlayBreak()
         {
-            _breakSfx?.Play();
+            // 翻倒音效 / 特效改由 SO 的 Break state 播（Animator 進入 Break 時自動觸發）
             OnBreakStarted?.Invoke();
             if (_libraAnimator != null) _libraAnimator.SetTrigger(DoBreakHash);
             StopAllCoroutines();
@@ -196,7 +258,8 @@ namespace PilgrimOfSin.StateMachine
 
         private IEnumerator BreakRoutine()
         {
-            yield return new WaitForSeconds(_breakDuration);
+            float d = _config != null ? _config.GetLength(StateBreak, _breakDuration) : _breakDuration;
+            yield return new WaitForSeconds(d);
             OnBreakComplete?.Invoke();
         }
 
@@ -215,7 +278,10 @@ namespace PilgrimOfSin.StateMachine
 
         private IEnumerator HitResetRoutine()
         {
-            yield return new WaitForSeconds(_hitResetDuration);
+            float d = _hitResetDuration;
+            if (_config != null && _config.Find(StateAttacked) != null && _config.Find(StateMoneyBagUpdate) != null)
+                d = _config.GetLength(StateAttacked, 0f) + _config.GetLength(StateMoneyBagUpdate, 0f);
+            yield return new WaitForSeconds(d);
             OnHitResetComplete?.Invoke();
         }
 

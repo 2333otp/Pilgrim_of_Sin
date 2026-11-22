@@ -8,10 +8,8 @@
     {
         Idle,       // 短暫待機，決策下一個行動
         Move,       // 移動接近玩家
-        Attack1,    // 傷害 900（Inspector 可調）
-        Attack2,    // 傷害 1200（Inspector 可調）
-        Attack3,    // 傷害 2300（Inspector 可調）
-        KickScale,  // 踢翻天秤，天秤碰撞體傷害 700（Inspector 可調）
+        Action,     // 出招（招式內容與派生見 GreedBossProfile SO）
+        KickScale,  // 平衡結束空襲：起飛 → 定位天秤一側 → 踢翻 → 鎖定主角墜落（見 GreedBossProfile.aerialKick）
         Stagger,    // 受擊硬直（需開啟 GreedBossController.enableStagger）
         Dead,       // HP=0，觸發通關
     }

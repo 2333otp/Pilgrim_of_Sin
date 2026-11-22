@@ -228,7 +228,7 @@ namespace PilgrimOfSin.StateMachine
 
             DrawRows(x, y, new[]
             {
-                $"State  : {_greed.CurrentStateType}",
+                $"State  : {_greed.CurrentStateType}  {_greed.DebugDetail}",
                 $"HP     : {hp:F0} / {maxHp:F0}  ({hp / maxHp:P0})",
                 $"Phase  : {_greed.CurrentPhase}",
                 $"Timer  : {_greedTimer:F1} s",
