@@ -6,17 +6,22 @@ using UnityEngine.Audio;
 namespace PilgrimOfSin.StateMachine
 {
     /// <summary>
-    /// 貪 Boss 的招式表與平衡結束空襲流程設定。企劃直接在 Assets/遊戲素材/SO 底下調整，不用開場景。
+    /// 貪的素材總表：共通欄位（基本資料、基本動作、受擊…）見 BossProfileBase，格式和癡相同；
+    /// 這裡另外放貪的招式清單（含派生）與平衡結束空襲流程。企劃直接在 Assets/遊戲素材/SO/Boss 底下調整，不用開場景。
     /// 新增招式：在招式清單加一筆、放動畫 → 按 Inspector 最下面的「同步到 Animator」建立對應的 Animator state。
     /// </summary>
-    [CreateAssetMenu(fileName = "GreedBossProfile", menuName = "PilgrimOfSin/貪/Boss 招式表 (Greed Boss Profile)")]
-    public class GreedBossProfile : ScriptableObject
+    [CreateAssetMenu(fileName = "GreedBossProfile", menuName = "PilgrimOfSin/Boss/貪素材總表 (Greed Boss Profile)")]
+    public class GreedBossProfile : BossProfileBase
     {
-        [Tooltip("這個 Profile 綁定的 Animator Controller（「同步到 Animator」會把招式動畫寫進這裡）。")]
-        public RuntimeAnimatorController animatorController;
+        [Header("受擊（貪）")]
+        [Min(0f)]
+        [Tooltip("兩次受擊硬直的最短間隔（秒）。避免連段把 Boss 鎖死在受擊動作；攻擊 / 空襲中不會被打斷（霸體）。")]
+        public float staggerCooldown = 4f;
 
-        [Header("招式清單")]
-        [Tooltip("Boss 會用的所有招式。勾「可當起手招」的才會在待機時被挑選；其他招只能被派生接出來。")]
+        [Header("招式（貪）")]
+        [Tooltip("Boss 會用的所有招式。勾「可當起手招」的才會在待機時被挑選；其他招只能被派生接出來。\n" +
+                 "名稱 = Animator state 名稱，也是派生指定要接哪一招用的名字。")]
+        [BossEntryHide("attackRange")]
         public List<GreedMoveEntry> moves = new List<GreedMoveEntry>();
 
         [Min(0f)]
@@ -26,24 +31,34 @@ namespace PilgrimOfSin.StateMachine
         [Header("平衡結束：起飛 → 定位天秤一側 → 踢翻 → 鎖定主角墜落")]
         public GreedAerialKickConfig aerialKick = new GreedAerialKickConfig();
 
-        [Header("音訊輸出")]
-        [Tooltip("Boss 的音效 / 配音輸出到哪個 Mixer 群組（建議和主角相同，會跟著遊戲設定裡的音量走）。")]
-        public AudioMixerGroup mixerGroup;
-
-        [Header("受擊 / 死亡（時間點欄位在這裡不使用，一律立刻觸發）")]
-        public GreedFx hurtFx = new GreedFx();
-
-        [Min(0f)]
-        [Tooltip("受擊音效 / 配音 / 特效的最短間隔（秒），避免連段時每一下都喊。")]
-        public float hurtMinInterval = 1.5f;
-
-        public GreedFx deathFx = new GreedFx();
-
-        public GreedMoveEntry FindMove(string id)
+        private void Reset()
         {
-            if (string.IsNullOrEmpty(id)) return null;
+            displayName = "心魔-貪";
+            maxHp = 5000f;
+            moveSpeed = 4f;
+            // 貪的 Animator 裡基本動作的 state 名稱
+            idle.stateName = "Idle";
+            move.stateName = "Run";
+            hurt.stateName = "Damage";
+            dead.stateName = "Death";
+            staggerDuration = 0f;
+        }
+
+        public override IEnumerable<BossActionEntry> AllEntries()
+        {
+            foreach (var e in base.AllEntries()) yield return e;
+            foreach (var m in moves) if (m != null) yield return m;
+            yield return aerialKick.fly;
+            yield return aerialKick.kick;
+            yield return aerialKick.dive;
+            yield return aerialKick.fall;
+        }
+
+        public GreedMoveEntry FindMove(string stateName)
+        {
+            if (string.IsNullOrEmpty(stateName)) return null;
             foreach (var m in moves)
-                if (m != null && m.id == id) return m;
+                if (m != null && m.stateName == stateName) return m;
             return null;
         }
     }
@@ -107,18 +122,22 @@ namespace PilgrimOfSin.StateMachine
     //  一招
     // ════════════════════════════════════════════════════════════════
 
+    /// <summary>
+    /// 貪的一招 = 共通動作格式（BossActionEntry：名稱、動畫、音效、配音、特效、傷害、單次扇形判定）
+    /// + 貪專用的起手條件、瞄準突進、多段命中區間、派生。
+    /// </summary>
     [Serializable]
-    public class GreedMoveEntry
+    public class GreedMoveEntry : BossActionEntry
     {
-        [Tooltip("招式名稱（派生用這個名字指定要接哪一招，也是 Animator state 名稱）。不要重複。")]
-        public string id = "Attack1";
-
-        [Tooltip("這一招播的動畫。動作長度 = 動畫長度 ÷ 播放速度。改了動畫記得按「同步到 Animator」。")]
-        public AnimationClip clip;
-
+        [Header("播放")]
         [Min(0.1f)]
-        [Tooltip("播放速度。1 = 原速。")]
+        [Tooltip("播放速度。1 = 原速。動作長度 = 動畫長度 ÷ 播放速度 + 結尾餘裕。")]
         public float speed = 1f;
+
+        [Header("多段命中區間（貪）")]
+        [Tooltip("多段攻擊：每一格 = 一下攻擊，動畫播到 開始~結束（比例）之間有球形判定，每一下最多打中主角一次。\n" +
+                 "有填任何一格時，上面的單次扇形判定（命中時間點 / 距離 / 角度）就不使用。")]
+        public List<GreedHitWindow> hitWindows = new List<GreedHitWindow>();
 
         [Header("起手（待機時挑選）")]
         [Tooltip("勾選 = 待機時可以直接出這招。不勾 = 只能被其他招派生出來。")]
@@ -149,36 +168,37 @@ namespace PilgrimOfSin.StateMachine
         [Range(0f, 1f)] public float lungeStart = 0.3f;
         [Range(0f, 1f)] public float lungeEnd = 0.6f;
 
-        [Header("攻擊判定")]
-        [Min(0f)]
-        [Tooltip("整招傷害（錢袋重時會再乘 Boss 攻擊倍率）。命中區間沒填傷害時平分。")]
-        public float damage = 900f;
-
-        [Tooltip("每一格 = 一下攻擊，動畫播到 開始~結束（比例）之間有判定，每一下最多打中主角一次。")]
-        public List<GreedHitWindow> hitWindows = new List<GreedHitWindow>();
-
         [Header("收招")]
         [Min(0f)]
         [Tooltip("這招播完（沒有派生）後回待機，待機多久再選下一招。")]
         public float recoveryIdle = 1f;
 
-        [Header("音效 / 配音 / 特效")]
-        public GreedFx fx = new GreedFx();
-
         [Header("派生（由上往下檢查，第一個成立的就接）")]
         public List<GreedMoveBranch> branches = new List<GreedMoveBranch>();
 
-        public bool IsValid => clip != null && !string.IsNullOrEmpty(id);
-        public float Duration => clip != null ? clip.length / Mathf.Max(0.1f, speed) : 0f;
+        public GreedMoveEntry() { stateName = "Attack1"; damage = 900f; }
+
+        public bool IsValid => EffectiveClip != null && !string.IsNullOrEmpty(stateName);
+        /// <summary>沒有命中區間、但有填單次判定距離時，用和癡相同的扇形判定。</summary>
+        public bool UsesFanHit => (hitWindows == null || hitWindows.Count == 0) && hitRadius > 0f;
+        public float Duration => EffectiveClip != null ? EffectiveClip.length / Mathf.Max(0.1f, speed) + endPadding : fallbackDuration;
     }
 
     /// <summary>
-    /// 一個動作的音效 / 配音 / 特效（格式同主角的動作清單）。全部留空 = 什麼都不播，不會報錯。
+    /// 只有音效 / 配音 / 特效、沒有動畫的一組設定（目前給天秤 GreedScaleConfig 用；Boss 的動作一律用 BossActionEntry）。
+    /// 欄位和 BossActionEntry 的音效 / 配音 / 特效段相同。全部留空 = 什麼都不播，不會報錯。
     /// 時間點是「這段動畫的比例」，依動畫實際播放進度觸發（停格時也會正確等待）。
     /// </summary>
     [Serializable]
-    public class GreedFx
+    public class GreedFx : IBossFx
     {
+        AudioClip[] IBossFx.Sfx => sfx;
+        float IBossFx.SfxVolume => sfxVolume;
+        float IBossFx.SfxNormalizedTime => sfxNormalizedTime;
+        float IBossFx.VoiceVolume => voiceVolume;
+        float IBossFx.VoiceNormalizedTime => voiceNormalizedTime;
+        PlayerVfxEntry[] IBossFx.Vfx => vfx;
+
         [Tooltip("音效音檔，可放多個，每次隨機播一個。留空 = 不播。")]
         public AudioClip[] sfx = new AudioClip[0];
         [Range(0f, 1f)] public float sfxVolume = 1f;
@@ -276,7 +296,8 @@ namespace PilgrimOfSin.StateMachine
     public class GreedAerialKickConfig
     {
         [Header("起飛 (Fly)")]
-        public AnimationClip flyClip;
+        [Tooltip("起飛：動畫 + 音效 / 配音 / 特效（時間點 = 這段動畫的比例，停格時會等待）。例如振翅聲、起飛嘶吼。")]
+        [BossEntryHide] public BossActionEntry fly = new BossActionEntry(GreedBossController.AnimStateFly);
         [Min(0.1f)] public float flySpeedMultiplier = 1f;
 
         [Range(0f, 1f)]
@@ -328,7 +349,8 @@ namespace PilgrimOfSin.StateMachine
         public GreedKickSide kickSide = GreedKickSide.離Boss近的那側;
 
         [Header("踢翻 (Kick)")]
-        public AnimationClip kickClip;
+        [Tooltip("踢翻：例如踢擊聲、喊聲（時間點可對到下面的踢中幀）。")]
+        [BossEntryHide] public BossActionEntry kick = new BossActionEntry(GreedBossController.AnimStateKick);
         [Min(0.1f)] public float kickSpeedMultiplier = 1f;
 
         [Range(0f, 1f)]
@@ -336,7 +358,8 @@ namespace PilgrimOfSin.StateMachine
         public float kickImpactRatio = 0.55f;
 
         [Header("墜落：俯衝 (Dive) → 落地 (Fall)")]
-        public AnimationClip diveClip;
+        [Tooltip("俯衝：例如破風聲、俯衝嘶吼。")]
+        [BossEntryHide] public BossActionEntry dive = new BossActionEntry(GreedBossController.AnimStateDive);
         [Min(0.1f)] public float diveSpeedMultiplier = 1f;
 
         [Range(0f, 1f)]
@@ -358,31 +381,31 @@ namespace PilgrimOfSin.StateMachine
         [Tooltip("落點最多離主角腳下多遠會被預判修正。0 = 直接砸在鎖定時的座標。")]
         public float maxLeadDistance;
 
-        public AnimationClip fallClip;
+        [Tooltip("落地 + 趴地爬起：時間點 0 = 撞地那一刻，適合放撞擊聲、煙塵 / 震波特效。")]
+        [BossEntryHide] public BossActionEntry fall = new BossActionEntry(GreedBossController.AnimStateFall);
         [Min(0.1f)] public float fallSpeedMultiplier = 1f;
 
         [Header("落地衝擊")]
         [Min(0f)] public float impactDamage = 1500f;
         [Min(0f)] public float impactRadius = 3f;
 
-        [Header("音效 / 配音 / 特效（時間點 = 該段動畫的比例）")]
-        [Tooltip("起飛（Fly）：例如振翅聲、起飛嘶吼。")]
-        public GreedFx flyFx = new GreedFx();
-        [Tooltip("踢翻（Kick）：例如踢擊聲、喊聲（時間點可對到 kickImpactRatio）。")]
-        public GreedFx kickFx = new GreedFx();
-        [Tooltip("俯衝（Dive）：例如破風聲、俯衝嘶吼。")]
-        public GreedFx diveFx = new GreedFx();
-        [Tooltip("落地 + 趴地爬起（Fall）：時間點 0 = 撞地那一刻，適合放撞擊聲、煙塵 / 震波特效。")]
-        public GreedFx fallFx = new GreedFx();
-
         [Header("保險")]
         [Min(1f)]
         [Tooltip("任何一段飛行超過這麼多秒還沒到定位就強制瞬移到位（避免卡死）。")]
         public float maxTravelSeconds = 15f;
 
-        public float FlyDuration => flyClip ? flyClip.length / flySpeedMultiplier : 0f;
-        public float KickDuration => kickClip ? kickClip.length / kickSpeedMultiplier : 0f;
-        public float DiveDuration => diveClip ? diveClip.length / diveSpeedMultiplier : 0f;
-        public float FallDuration => fallClip ? fallClip.length / fallSpeedMultiplier : 0f;
+        /// <summary>四段動畫都有放才走空襲流程；缺任何一段就退回舊流程。</summary>
+        public bool IsComplete => fly.EffectiveClip && kick.EffectiveClip && dive.EffectiveClip && fall.EffectiveClip;
+
+        public float FlyDuration => Len(fly, flySpeedMultiplier);
+        public float KickDuration => Len(kick, kickSpeedMultiplier);
+        public float DiveDuration => Len(dive, diveSpeedMultiplier);
+        public float FallDuration => Len(fall, fallSpeedMultiplier);
+
+        private static float Len(BossActionEntry e, float speed)
+        {
+            var c = e?.EffectiveClip;
+            return c ? c.length / Mathf.Max(0.1f, speed) + e.endPadding : 0f;
+        }
     }
 }

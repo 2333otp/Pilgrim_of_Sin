@@ -10,18 +10,25 @@ namespace PilgrimOfSin.StateMachine
         public override GreedBossStateType StateType => GreedBossStateType.Idle;
 
         private float _timer;
+        private float _elapsed;
 
         public GreedIdleState(GreedBossController b, GreedBossStateMachine m) : base(b, m) { }
 
         public override void Enter()
         {
             _timer = Boss.ConsumeNextIdleDuration();
+            _elapsed = 0f;
             PlayAnim();
+            Boss.Feedback.Begin(Boss.Profile.idle);
         }
+
+        public override void Exit() => Boss.Feedback.Stop();
 
         public override void Update(float dt)
         {
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
+            _elapsed += dt;
+            Boss.Feedback.Tick(_elapsed / Mathf.Max(0.01f, Boss.Profile.idle.GetDuration(1f)));
             if (Boss.IsInBalanceWindow) return;
 
             Boss.FacePlayer(dt);   // 待機時持續面向玩家，出招時才不會對著空氣揮
@@ -49,16 +56,24 @@ namespace PilgrimOfSin.StateMachine
     {
         public override GreedBossStateType StateType => GreedBossStateType.Move;
 
+        private float _elapsed;
+
         public GreedMoveState(GreedBossController b, GreedBossStateMachine m) : base(b, m) { }
 
         public override void Enter()
         {
+            _elapsed = 0f;
             PlayAnim();
+            Boss.Feedback.Begin(Boss.Profile.move);
         }
+
+        public override void Exit() => Boss.Feedback.Stop();
 
         public override void FixedUpdate(float dt)
         {
             if (Boss.IsDead) { ForceGo(GreedBossStateType.Dead); return; }
+            _elapsed += dt;
+            Boss.Feedback.Tick(_elapsed / Mathf.Max(0.01f, Boss.Profile.move.GetDuration(1f)));
             if (Boss.IsInBalanceWindow) { Go(GreedBossStateType.Idle); return; }
 
             Boss.MoveTowardPlayer(dt);
@@ -82,7 +97,9 @@ namespace PilgrimOfSin.StateMachine
         private float _time;
         private float _duration;
         private bool[] _windowDone;
+        private bool[] _windowHit;
         private bool[] _branchChecked;
+        private bool _fanDone;
 
         public GreedMoveEntry CurrentMove => _move;
         public float Progress => _duration > 0f ? Mathf.Clamp01(_time / _duration) : 1f;
@@ -104,10 +121,12 @@ namespace PilgrimOfSin.StateMachine
 
             _duration = _move.Duration;
             _windowDone = new bool[_move.hitWindows.Count];
+            _windowHit = new bool[_move.hitWindows.Count];
             _branchChecked = new bool[_move.branches.Count];
+            _fanDone = false;
             Boss.MarkMoveUsed(_move);
-            Boss.PlayAnimState(_move.id, _move.speed);
-            Boss.Feedback.Begin(_move.fx);
+            Boss.PlayAnimState(_move.stateName, _move.speed);
+            Boss.Feedback.Begin(_move);
         }
 
         public override void Update(float dt)
@@ -137,9 +156,18 @@ namespace PilgrimOfSin.StateMachine
                 var w = _move.hitWindows[i];
                 if (p < w.start || prev >= w.end) continue;
                 float dmg = GreedHitWindow.DamageAt(_move.hitWindows, i, _move.damage);
-                if (Boss.TryHitPlayerSphere(Boss.LocalToWorldHitCenter(w.forward, w.height), w.radius, dmg))
-                    _windowDone[i] = true;
+                Vector3 center = Boss.LocalToWorldHitCenter(w.forward, w.height);
+                if (Boss.TryHitPlayerSphere(center, w.radius, dmg))
+                    _windowDone[i] = _windowHit[i] = true;
                 if (p >= w.end) _windowDone[i] = true;
+                if (_windowDone[i]) Boss.ReportHitSphere(center, w.radius, _windowHit[i], $"{_move.stateName} 第 {i + 1} 下");
+            }
+
+            // 沒有命中區間：和癡一樣，在命中時間點做一次扇形判定
+            if (!_fanDone && _move.UsesFanHit && p >= _move.hitNormalizedTime)
+            {
+                _fanDone = true;
+                Boss.TryHitPlayerFan(_move.hitRadius, _move.hitAngle, _move.damage, _move.stateName);
             }
 
             // 派生：由上往下，播到 atRatio 時檢查一次；第一個成立的就接
@@ -155,7 +183,7 @@ namespace PilgrimOfSin.StateMachine
                 var next = Boss.Profile != null ? Boss.Profile.FindMove(br.toMove) : null;
                 if (next == null || !next.IsValid)
                 {
-                    Debug.LogWarning($"[GreedAction] {_move.id} 的派生目標「{br.toMove}」不存在或沒放動畫。");
+                    Debug.LogWarning($"[GreedAction] {_move.stateName} 的派生目標「{br.toMove}」不存在或沒放動畫。");
                     continue;
                 }
                 Boss.PendingMove = next;
@@ -221,7 +249,7 @@ namespace PilgrimOfSin.StateMachine
         public override void Enter()
         {
             var c = Cfg;
-            if (c == null || c.flyClip == null || c.kickClip == null || c.diveClip == null || c.fallClip == null)
+            if (c == null || !c.IsComplete)
             {
                 // 沒設定空襲：沿用舊流程（Boss 站著，天秤自己翻倒）
                 _phase = Phase.Legacy;
@@ -260,30 +288,34 @@ namespace PilgrimOfSin.StateMachine
             {
                 case Phase.TakeOff:
                     _animDuration = c.FlyDuration;
-                    Boss.PlayAnimState(GreedBossController.AnimStateFly, c.flySpeedMultiplier);
                     _travelling = false; _arrived = false;
                     break;
                 case Phase.Kick:
                     _animDuration = c.KickDuration;
-                    Boss.PlayAnimState(GreedBossController.AnimStateKick, c.kickSpeedMultiplier);
                     break;
                 case Phase.Dive:
                     _animDuration = c.DiveDuration;
-                    Boss.PlayAnimState(GreedBossController.AnimStateDive, c.diveSpeedMultiplier);
                     _travelling = false; _arrived = false;
                     break;
                 case Phase.Fall:
                     _animDuration = c.FallDuration;
-                    Boss.PlayAnimState(GreedBossController.AnimStateFall, c.fallSpeedMultiplier);
                     break;
             }
-            Boss.Feedback.Begin(p switch
+            var entry = CurrentEntry();
+            Boss.PlayAnimState(entry.stateName, CurrentSpeedMultiplier());
+            Boss.Feedback.Begin(entry);
+        }
+
+        private BossActionEntry CurrentEntry()
+        {
+            var c = Cfg;
+            return _phase switch
             {
-                Phase.TakeOff => c.flyFx,
-                Phase.Kick => c.kickFx,
-                Phase.Dive => c.diveFx,
-                _ => c.fallFx,
-            });
+                Phase.TakeOff => c.fly,
+                Phase.Kick => c.kick,
+                Phase.Dive => c.dive,
+                _ => c.fall,
+            };
         }
 
         private float Progress => _animDuration > 0f ? Mathf.Clamp01(_animTime / _animDuration) : 1f;
@@ -314,13 +346,7 @@ namespace PilgrimOfSin.StateMachine
             _animTime += dt;
         }
 
-        private string CurrentStateName() => _phase switch
-        {
-            Phase.TakeOff => GreedBossController.AnimStateFly,
-            Phase.Kick => GreedBossController.AnimStateKick,
-            Phase.Dive => GreedBossController.AnimStateDive,
-            _ => GreedBossController.AnimStateFall,
-        };
+        private string CurrentStateName() => CurrentEntry().stateName;
 
         private float CurrentSpeedMultiplier()
         {
@@ -553,7 +579,7 @@ namespace PilgrimOfSin.StateMachine
 
     // ════════════════════════════════════════════════════════════════
     //  StaggerState
-    //  選配：需開啟 GreedBossController.enableStagger
+    //  選配：需在素材總表勾「受擊硬直」
     // ════════════════════════════════════════════════════════════════
     public class GreedStaggerState : GreedBossState
     {
@@ -588,6 +614,8 @@ namespace PilgrimOfSin.StateMachine
     {
         public override GreedBossStateType StateType => GreedBossStateType.Dead;
 
+        private float _elapsed;
+
         public GreedDeadState(GreedBossController b, GreedBossStateMachine m) : base(b, m) { }
 
         public override void Enter()
@@ -595,6 +623,14 @@ namespace PilgrimOfSin.StateMachine
             Boss.EndAirborne();
             PlayAnim();
             Boss.OnDeath();
+            _elapsed = 0f;
+            Boss.Feedback.Begin(Boss.Profile.dead);   // 死亡的音效 / 配音 / 特效（時間點 = 死亡動畫比例）
+        }
+
+        public override void Update(float dt)
+        {
+            _elapsed += dt;
+            Boss.Feedback.Tick(_elapsed / Mathf.Max(0.01f, Boss.Profile.dead.GetDuration(2f)));
         }
     }
 }

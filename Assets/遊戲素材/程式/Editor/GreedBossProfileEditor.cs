@@ -8,72 +8,74 @@ using UnityEngine;
 namespace PilgrimOfSin.StateMachine.EditorTools
 {
     /// <summary>
-    /// GreedBossProfile 的 Inspector：檢查設定錯誤 + 「同步到 Animator」按鈕。
-    /// 同步 = 每個招式 / 空襲動畫在 Animator 裡建立（或更新）同名 state，程式用 CrossFade 直接播。
+    /// GreedBossProfile 的 Inspector：版面同所有 Boss（BossProfileEditor），另外加上招式檢查 + 「同步到 Animator」按鈕。
+    /// 同步 = 每個招式 / 空襲動畫在 Animator 裡建立（或更新）同名 state，再把原始 Clip 讀回總表。
     /// </summary>
     [CustomEditor(typeof(GreedBossProfile))]
-    public class GreedBossProfileEditor : Editor
+    public class GreedBossProfileEditor : BossProfileEditor
     {
-        // Animator 裡由 int State 參數驅動的基本 state，招式不可用這些名字（否則會蓋掉它們的動畫）
-        private static readonly HashSet<string> Reserved = new HashSet<string> { "Idle", "Run", "Damage", "Death" };
-
-        public override void OnInspectorGUI()
+        protected override void DrawTools(BossProfileBase baseProfile)
         {
-            DrawDefaultInspector();
-
-            var p = (GreedBossProfile)target;
-            EditorGUILayout.Space(10);
+            var p = (GreedBossProfile)baseProfile;
             foreach (var msg in Validate(p))
                 EditorGUILayout.HelpBox(msg, MessageType.Warning);
 
             EditorGUILayout.Space(4);
             using (new EditorGUI.DisabledScope(p.animatorController == null))
             {
-                if (GUILayout.Button("同步到 Animator（建立 / 更新招式與空襲的動畫 state）", GUILayout.Height(30)))
+                if (GUILayout.Button("同步到 Animator（建立 / 更新招式與空襲的動畫 state，並讀取所有動作的原始動畫）", GUILayout.Height(30)))
                     SyncToAnimator(p);
             }
             if (p.animatorController == null)
-                EditorGUILayout.HelpBox("請先在最上面指定 Animator Controller（GreedBoss.controller）。", MessageType.Info);
+                EditorGUILayout.HelpBox("請先在「動畫」指定 Animator Controller（GreedBoss.controller）。", MessageType.Info);
         }
+
+        /// <summary>基本動作（待機 / 移動 / 受擊 / 死亡）用的 state，招式不能取這些名字（否則會蓋掉它們的動畫）。</summary>
+        private static HashSet<string> Reserved(GreedBossProfile p)
+            => new HashSet<string>(new[] { p.idle, p.move, p.hurt, p.dead }.Where(e => e != null).Select(e => e.stateName));
+
+        private static IEnumerable<BossActionEntry> Aerial(GreedBossProfile p)
+            => new[] { p.aerialKick.fly, p.aerialKick.kick, p.aerialKick.dive, p.aerialKick.fall };
 
         public static List<string> Validate(GreedBossProfile p)
         {
             var list = new List<string>();
+            var reserved = Reserved(p);
+            var aerialNames = new HashSet<string>(Aerial(p).Select(e => e.stateName));
             var ids = new HashSet<string>();
             foreach (var m in p.moves)
             {
                 if (m == null) continue;
-                if (string.IsNullOrEmpty(m.id)) { list.Add("有招式沒有填名稱（id）。"); continue; }
-                if (!ids.Add(m.id)) list.Add($"招式名稱重複：{m.id}");
-                if (Reserved.Contains(m.id) || IsAerialName(m.id)) list.Add($"招式名稱「{m.id}」是保留名稱，請換一個。");
-                if (m.clip == null) list.Add($"{m.id}：沒有放動畫，這招不會出。");
+                if (string.IsNullOrEmpty(m.stateName)) { list.Add("有招式沒有填名稱。"); continue; }
+                if (!ids.Add(m.stateName)) list.Add($"招式名稱重複：{m.stateName}");
+                if (reserved.Contains(m.stateName) || aerialNames.Contains(m.stateName)) list.Add($"招式名稱「{m.stateName}」和基本動作 / 空襲的 state 重名，請換一個。");
+                if (m.EffectiveClip == null) list.Add($"{m.stateName}：沒有放動畫，這招不會出。");
                 foreach (var w in m.hitWindows)
-                    if (w.end <= w.start) list.Add($"{m.id}：有命中區間的結束 ≤ 開始。");
-                if (m.lungeDistance > 0f && m.lungeEnd <= m.lungeStart) list.Add($"{m.id}：突進的結束 ≤ 開始，不會移動。");
+                    if (w.end <= w.start) list.Add($"{m.stateName}：有命中區間的結束 ≤ 開始。");
+                if (m.hitWindows.Count == 0 && m.hitRadius <= 0f) list.Add($"{m.stateName}：沒有命中區間、判定距離也是 0，這招打不到人。");
+                if (m.lungeDistance > 0f && m.lungeEnd <= m.lungeStart) list.Add($"{m.stateName}：突進的結束 ≤ 開始，不會移動。");
             }
             foreach (var m in p.moves)
             {
                 if (m == null) continue;
                 foreach (var b in m.branches)
                 {
-                    if (string.IsNullOrEmpty(b.toMove)) list.Add($"{m.id}：有派生沒填要接哪一招。");
-                    else if (!ids.Contains(b.toMove)) list.Add($"{m.id}：派生目標「{b.toMove}」不在招式清單裡。");
+                    if (string.IsNullOrEmpty(b.toMove)) list.Add($"{m.stateName}：有派生沒填要接哪一招。");
+                    else if (!ids.Contains(b.toMove)) list.Add($"{m.stateName}：派生目標「{b.toMove}」不在招式清單裡。");
                 }
             }
             if (!p.moves.Any(m => m != null && m.IsValid && m.canOpen))
                 list.Add("沒有任何「可當起手招」的招式，Boss 只會追著主角跑。");
 
             var a = p.aerialKick;
-            if (a.flyClip == null || a.kickClip == null || a.diveClip == null || a.fallClip == null)
+            if (!a.IsComplete)
                 list.Add("空襲的 Fly / Kick / Dive / Fall 動畫沒放齊：平衡結束時會退回舊流程（Boss 站著、天秤自己翻倒）。");
             if (a.liftOffRatio > a.flyHoldRatio) list.Add("空襲：離地比例 > 起飛停格幀，會在停格幀就離地。");
             if (a.diveLaunchRatio > a.diveHoldRatio) list.Add("空襲：俯衝出發比例 > 俯衝停格幀，會在停格幀就出發。");
+
+            list.AddRange(ValidateStates(p).Where(s => !s.Contains("還沒有原始 Clip")));   // 同步按鈕會自動補原始 Clip
             return list;
         }
-
-        private static bool IsAerialName(string s)
-            => s == GreedBossController.AnimStateFly || s == GreedBossController.AnimStateKick
-            || s == GreedBossController.AnimStateDive || s == GreedBossController.AnimStateFall;
 
         public static void SyncToAnimator(GreedBossProfile p)
         {
@@ -83,14 +85,12 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             var sm = ac.layers[0].stateMachine;
             Undo.RecordObject(sm, "Sync Greed Boss Animator");
 
+            var reserved = Reserved(p);
             var wanted = new List<(string name, AnimationClip clip)>();
             foreach (var m in p.moves)
-                if (m != null && m.IsValid && !Reserved.Contains(m.id) && !IsAerialName(m.id)) wanted.Add((m.id, m.clip));
-            var a = p.aerialKick;
-            if (a.flyClip) wanted.Add((GreedBossController.AnimStateFly, a.flyClip));
-            if (a.kickClip) wanted.Add((GreedBossController.AnimStateKick, a.kickClip));
-            if (a.diveClip) wanted.Add((GreedBossController.AnimStateDive, a.diveClip));
-            if (a.fallClip) wanted.Add((GreedBossController.AnimStateFall, a.fallClip));
+                if (m != null && m.IsValid && !reserved.Contains(m.stateName)) wanted.Add((m.stateName, m.EffectiveClip));
+            foreach (var e in Aerial(p))
+                if (e != null && e.EffectiveClip != null && !string.IsNullOrEmpty(e.stateName)) wanted.Add((e.stateName, e.EffectiveClip));
 
             int created = 0, updated = 0, col = 0;
             foreach (var (name, clip) in wanted)
@@ -111,17 +111,20 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             EditorUtility.SetDirty(ac);
             AssetDatabase.SaveAssets();
             Debug.Log($"[GreedBossProfile] 同步完成：新增 {created} 個 state、更新 {updated} 個動畫。");
+
+            // 招式 / 空襲的 Animator state 現在綁的就是總表裡的動畫 → 原始 Clip = 它；基本動作則從 Animator 讀
+            SyncBaseClips(p);
         }
 
         // ════════════════════════════════════════════════════════════
         //  建立預設資產
         // ════════════════════════════════════════════════════════════
 
-        private const string AssetPath = "Assets/遊戲素材/SO/GreedBossProfile.asset";
+        private const string AssetPath = "Assets/遊戲素材/SO/Boss/GreedBossProfile.asset";
         private const string AnimFolder = "Assets/遊戲素材/敵人/貪/Animation";
         private const string ControllerPath = "Assets/遊戲素材/敵人/貪/GreedBoss.controller";
 
-        [MenuItem("PilgrimOfSin/貪/建立預設 Boss 招式表")]
+        [MenuItem("PilgrimOfSin/貪/建立預設 Boss 素材總表")]
         public static void CreateDefault()
         {
             if (AssetDatabase.LoadAssetAtPath<GreedBossProfile>(AssetPath) != null)
@@ -132,13 +135,20 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             }
 
             var p = CreateInstance<GreedBossProfile>();
+            p.displayName = "心魔-貪";
+            p.maxHp = 5000f;
+            p.moveSpeed = 4f;
+            p.idle.stateName = "Idle";
+            p.move.stateName = "Run";
+            p.hurt.stateName = "Damage";
+            p.dead.stateName = "Death";
+            p.staggerDuration = 0f;
             p.animatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ControllerPath);
 
-            // 數值沿用改版前場景上的設定（Attack1 範圍 3m / 傷害 900 / 判定球 1.3, 1.0, r1.5）；
             // 命中區間依動畫裡翅膀揮最快的時間點抓的，可再微調。
             var a1 = new GreedMoveEntry
             {
-                id = "Attack1", clip = Clip("Attack1"), canOpen = true, openerWeight = 2f,
+                stateName = "Attack1", clip = Clip("Attack1"), canOpen = true, openerWeight = 2f,
                 openerCondition = new GreedMoveCondition { maxDistance = 3f },
                 trackUntilRatio = 0.5f, damage = 900f, recoveryIdle = 1f,
                 hitWindows = { new GreedHitWindow { start = 0.70f, end = 0.82f, forward = 1.3f, height = 1f, radius = 1.5f } },
@@ -151,7 +161,7 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             };
             var a2 = new GreedMoveEntry
             {
-                id = "Attack2", clip = Clip("Attack2"), canOpen = true, openerWeight = 1f, cooldown = 3f,
+                stateName = "Attack2", clip = Clip("Attack2"), canOpen = true, openerWeight = 1f, cooldown = 3f,
                 openerCondition = new GreedMoveCondition { minDistance = 3f, maxDistance = 6f },
                 trackUntilRatio = 0.15f, lungeDistance = 2.5f, lungeStart = 0.08f, lungeEnd = 0.2f,
                 damage = 1200f, recoveryIdle = 1.2f,
@@ -169,7 +179,7 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             };
             var a3 = new GreedMoveEntry
             {
-                id = "Attack3", clip = Clip("Attack3"), canOpen = true, openerWeight = 1f, cooldown = 4f,
+                stateName = "Attack3", clip = Clip("Attack3"), canOpen = true, openerWeight = 1f, cooldown = 4f,
                 openerCondition = new GreedMoveCondition { maxDistance = 3f },
                 trackUntilRatio = 0.6f, damage = 2300f, recoveryIdle = 1.5f,
                 hitWindows =
@@ -181,10 +191,10 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             };
             p.moves.Add(a1); p.moves.Add(a2); p.moves.Add(a3);
 
-            p.aerialKick.flyClip = Clip("Fly");
-            p.aerialKick.kickClip = Clip("Kick");
-            p.aerialKick.diveClip = Clip("Dive");
-            p.aerialKick.fallClip = Clip("Fall");
+            p.aerialKick.fly.clip = Clip("Fly");
+            p.aerialKick.kick.clip = Clip("Kick");
+            p.aerialKick.dive.clip = Clip("Dive");
+            p.aerialKick.fall.clip = Clip("Fall");
 
             AssetDatabase.CreateAsset(p, AssetPath);
             AssetDatabase.SaveAssets();

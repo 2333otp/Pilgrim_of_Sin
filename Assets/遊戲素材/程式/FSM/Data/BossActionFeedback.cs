@@ -28,7 +28,7 @@ namespace PilgrimOfSin.StateMachine
         }
 
         /// <summary>只有真的有 Clip 被換掉時才建立 OverrideController；全部維持原樣就完全不碰 Animator。</summary>
-        private static void ApplyAnimationOverrides(Animator animator, IEnumerable<BossActionEntry> entries)
+        public static void ApplyAnimationOverrides(Animator animator, IEnumerable<BossActionEntry> entries)
         {
             if (animator == null || animator.runtimeAnimatorController == null || entries == null) return;
 

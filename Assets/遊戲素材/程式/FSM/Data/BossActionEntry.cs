@@ -1,17 +1,44 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PilgrimOfSin.StateMachine
 {
+    /// <summary>一組音效 / 配音 / 特效（BossActionEntry 與天秤的 GreedFx 共用，給 GreedFxPlayer 播放）。</summary>
+    public interface IBossFx
+    {
+        AudioClip[] Sfx { get; }
+        float SfxVolume { get; }
+        float SfxNormalizedTime { get; }
+        AudioClip[] GetVoice(VoiceLanguage language);
+        float VoiceVolume { get; }
+        float VoiceNormalizedTime { get; }
+        PlayerVfxEntry[] Vfx { get; }
+    }
+
+    /// <summary>
+    /// 在 Inspector 隱藏 BossActionEntry 裡用不到的欄位（例如待機動作不需要攻擊判定）。
+    /// 也可以掛在 List 上，對每一筆生效。
+    /// </summary>
+    public class BossEntryHideAttribute : PropertyAttribute
+    {
+        public static readonly string[] HitFields = { "damage", "attackRange", "hitNormalizedTime", "hitRadius", "hitAngle" };
+
+        public readonly string[] Fields;
+        /// <param name="fields">要隱藏的欄位名稱；不填 = 隱藏整段攻擊判定。</param>
+        public BossEntryHideAttribute(params string[] fields) { Fields = fields != null && fields.Length > 0 ? fields : HitFields; }
+    }
+
     /// <summary>
     /// Boss 一個動作的全部素材：動畫、音效、配音、特效，攻擊動作另外有命中判定設定。
     /// 格式跟主角的 PlayerActionEntry 一致（特效直接沿用 PlayerVfxEntry），三隻 Boss 共用。
     /// 對應 Boss Animator Controller 裡一個 state（state 名稱 = stateName）。
     /// </summary>
     [Serializable]
-    public class BossActionEntry
+    public class BossActionEntry : IBossFx
     {
         [Tooltip("Animator Controller 裡的 state 名稱，程式用它對應這筆資料。一般不要改。")]
+        [FormerlySerializedAs("id")]
         public string stateName;
 
         [Header("動畫")]
@@ -81,6 +108,13 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>依語言取得配音清單（只取該語言的，不會跨語言替補）。</summary>
         public AudioClip[] GetVoice(VoiceLanguage language)
             => language == VoiceLanguage.English ? voiceEnglish : voiceTaiwanese;
+
+        AudioClip[] IBossFx.Sfx => sfx;
+        float IBossFx.SfxVolume => sfxVolume;
+        float IBossFx.SfxNormalizedTime => sfxNormalizedTime;
+        float IBossFx.VoiceVolume => voiceVolume;
+        float IBossFx.VoiceNormalizedTime => voiceNormalizedTime;
+        PlayerVfxEntry[] IBossFx.Vfx => vfx;
 
         /// <summary>這筆動作實際要播的 Clip（有換就用換的，沒換就用 Animator 原本的）。</summary>
         public AnimationClip EffectiveClip => clip != null ? clip : baseClip;

@@ -1648,15 +1648,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 977e94f362519cf4ba2a297337d46bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.GreedBossController
+  _profile: {fileID: 11400000, guid: 78022f372e6a43642b8ea2ee2f31fc87, type: 2}
   _player: {fileID: 1422496066}
-  _displayName: "\u5FC3\u9B54-\u8CAA"
   _scale: {fileID: 41600402}
   _scaleHitbox: {fileID: 1434837447}
   _spawner: {fileID: 942762640}
-  _maxHp: 5000
-  _moveSpeed: 4
-  _idleDuration: 1
-  _profile: {fileID: 11400000, guid: 78022f372e6a43642b8ea2ee2f31fc87, type: 2}
   _balanceWindowDuration: 12
   _playerDamageBoostMultiplier: 3
   _bossAttackBoostMultiplier: 1.5
@@ -1668,9 +1664,6 @@ MonoBehaviour:
   _introDuration: 0.9
   _runAnimReferenceSpeed: 4.5
   _hpGateCount: 0
-  enableStagger: 1
-  StaggerDuration: 0.63
-  StaggerCooldown: 4
 --- !u!54 &942762638
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2043,15 +2036,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 977e94f362519cf4ba2a297337d46bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.GreedBossController
+  _profile: {fileID: 11400000, guid: 78022f372e6a43642b8ea2ee2f31fc87, type: 2}
   _player: {fileID: 1422496066}
-  _displayName: "\u5FC3\u9B54-\u8CAA"
   _scale: {fileID: 41600402}
   _scaleHitbox: {fileID: 1434837447}
   _spawner: {fileID: 0}
-  _maxHp: 5000
-  _moveSpeed: 4
-  _idleDuration: 1
-  _profile: {fileID: 11400000, guid: 78022f372e6a43642b8ea2ee2f31fc87, type: 2}
   _balanceWindowDuration: 12
   _playerDamageBoostMultiplier: 3
   _bossAttackBoostMultiplier: 1.5
@@ -2063,9 +2052,6 @@ MonoBehaviour:
   _introDuration: 0.9
   _runAnimReferenceSpeed: 4.5
   _hpGateCount: 0
-  enableStagger: 0
-  StaggerDuration: 0.5
-  StaggerCooldown: 4
 --- !u!54 &1046915400
 Rigidbody:
   m_ObjectHideFlags: 0

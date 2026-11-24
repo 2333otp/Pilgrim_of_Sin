@@ -10,7 +10,7 @@
         Move,       // 移動接近玩家
         Action,     // 出招（招式內容與派生見 GreedBossProfile SO）
         KickScale,  // 平衡結束空襲：起飛 → 定位天秤一側 → 踢翻 → 鎖定主角墜落（見 GreedBossProfile.aerialKick）
-        Stagger,    // 受擊硬直（需開啟 GreedBossController.enableStagger）
+        Stagger,    // 受擊硬直（需在素材總表勾「受擊硬直」）
         Dead,       // HP=0，觸發通關
     }
 

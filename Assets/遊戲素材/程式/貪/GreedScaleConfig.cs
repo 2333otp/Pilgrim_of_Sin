@@ -6,7 +6,7 @@ using UnityEngine.Audio;
 namespace PilgrimOfSin.StateMachine
 {
     /// <summary>
-    /// 天秤（Libra）設定，企劃可直接在 Assets/遊戲素材/SO 底下調整，不用開場景。
+    /// 天秤（Libra）設定，企劃可直接在 Assets/遊戲素材/SO/Boss 底下調整，不用開場景。
     /// 包含：受擊觸發門檻、每個動畫 state 的動畫 / 音效 / 配音 / 特效、被攻擊時的音效 / 特效。
     /// </summary>
     [CreateAssetMenu(fileName = "GreedScaleConfig", menuName = "PilgrimOfSin/Greed Scale Config")]

@@ -16,6 +16,7 @@ MonoBehaviour:
   maxHp: 10000
   moveSpeed: 3.5
   idleDuration: 1
+  animatorController: {fileID: 9100000, guid: c8b233916c6b520488a76b6835d7a641, type: 2}
   idle:
     stateName: Idle
     clip: {fileID: -2313192979344413084, guid: 9298e78fe0b159e4ca6c15ebcff7924a, type: 3}
@@ -54,6 +55,49 @@ MonoBehaviour:
     hitNormalizedTime: 0.5
     hitRadius: 0
     hitAngle: 120
+  hurt:
+    stateName: Stagger
+    clip: {fileID: 226898705699175079, guid: be7e99ca88c3abe4d95d5fd6c86d2053, type: 3}
+    baseClip: {fileID: 226898705699175079, guid: be7e99ca88c3abe4d95d5fd6c86d2053, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx: []
+    damage: 0
+    attackRange: 0
+    hitNormalizedTime: 0.5
+    hitRadius: 0
+    hitAngle: 120
+  dead:
+    stateName: Dead
+    clip: {fileID: 4171429708540782693, guid: 283834997a8db564990a607b71352380, type: 3}
+    baseClip: {fileID: 4171429708540782693, guid: 283834997a8db564990a607b71352380, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx: []
+    damage: 0
+    attackRange: 0
+    hitNormalizedTime: 0.5
+    hitRadius: 0
+    hitAngle: 120
+  hurtVoiceMinInterval: 1.5
+  enableStagger: 0
+  staggerDuration: 0.5
+  showHitArea: 1
+  mixerGroup: {fileID: 4853816048678867972, guid: 3bc653d8ce919474a911bcf516d5d417, type: 2}
   attack1:
     stateName: Attack1
     clip: {fileID: -5205688785684812755, guid: ab4e260d86baae941b99cfd76268dbf1, type: 3}
@@ -130,47 +174,6 @@ MonoBehaviour:
     hitNormalizedTime: 0.5
     hitRadius: 0
     hitAngle: 120
-  hurt:
-    stateName: Stagger
-    clip: {fileID: 226898705699175079, guid: be7e99ca88c3abe4d95d5fd6c86d2053, type: 3}
-    baseClip: {fileID: 226898705699175079, guid: be7e99ca88c3abe4d95d5fd6c86d2053, type: 3}
-    endPadding: 0
-    fallbackDuration: 0
-    sfx: []
-    sfxVolume: 1
-    sfxNormalizedTime: 0
-    voiceEnglish: []
-    voiceTaiwanese: []
-    voiceVolume: 1
-    voiceNormalizedTime: 0
-    vfx: []
-    damage: 0
-    attackRange: 0
-    hitNormalizedTime: 0.5
-    hitRadius: 0
-    hitAngle: 120
-  dead:
-    stateName: Dead
-    clip: {fileID: 4171429708540782693, guid: 283834997a8db564990a607b71352380, type: 3}
-    baseClip: {fileID: 4171429708540782693, guid: 283834997a8db564990a607b71352380, type: 3}
-    endPadding: 0
-    fallbackDuration: 0
-    sfx: []
-    sfxVolume: 1
-    sfxNormalizedTime: 0
-    voiceEnglish: []
-    voiceTaiwanese: []
-    voiceVolume: 1
-    voiceNormalizedTime: 0
-    vfx: []
-    damage: 0
-    attackRange: 0
-    hitNormalizedTime: 0.5
-    hitRadius: 0
-    hitAngle: 120
-  hurtVoiceMinInterval: 1.5
-  enableStagger: 0
-  staggerDuration: 0.5
   attackFallbackDuration: 1.5
   autoFitModel: 0
   modelTargetHeight: 3
@@ -198,5 +201,3 @@ MonoBehaviour:
     arenaCenter: {x: 0, y: 0}
     arenaHalfSize: 35
     edgeMargin: 5
-  showHitArea: 1
-  mixerGroup: {fileID: 4853816048678867972, guid: 3bc653d8ce919474a911bcf516d5d417, type: 2}

@@ -5,7 +5,7 @@ using UnityEngine.Audio;
 namespace PilgrimOfSin.StateMachine
 {
     /// <summary>
-    /// 播放 GreedFx（音效 / 配音 / 特效），貪 Boss 與天秤共用。
+    /// 播放一組音效 / 配音 / 特效（IBossFx：Boss 的 BossActionEntry、天秤的 GreedFx），貪 Boss 與天秤共用。
     /// 不用計時器排程，而是由呼叫端每幀回報「這段動畫播到哪」（Tick），進度跨過設定的時間點才觸發：
     /// 這樣停格時會正確等待，切到下一段動作時也自然不會再觸發上一段的。
     /// </summary>
@@ -16,7 +16,7 @@ namespace PilgrimOfSin.StateMachine
         private readonly Dictionary<string, Transform> _boneCache = new Dictionary<string, Transform>();
         private readonly Dictionary<AudioClip[], AudioClip> _lastPick = new Dictionary<AudioClip[], AudioClip>();
 
-        private GreedFx _current;
+        private IBossFx _current;
         private bool _sfxDone, _voiceDone;
         private bool[] _vfxDone = new bool[0];
 
@@ -29,11 +29,11 @@ namespace PilgrimOfSin.StateMachine
         }
 
         /// <summary>開始一段新動作（取代上一段，上一段還沒觸發的不再觸發）。進度 0 的項目立刻觸發。</summary>
-        public void Begin(GreedFx fx)
+        public void Begin(IBossFx fx)
         {
             _current = fx;
             _sfxDone = _voiceDone = false;
-            int n = fx?.vfx?.Length ?? 0;
+            int n = fx?.Vfx?.Length ?? 0;
             if (_vfxDone.Length != n) _vfxDone = new bool[n];
             else System.Array.Clear(_vfxDone, 0, n);
             Tick(0f);
@@ -45,21 +45,21 @@ namespace PilgrimOfSin.StateMachine
             var fx = _current;
             if (fx == null) return;
 
-            if (!_sfxDone && progress >= fx.sfxNormalizedTime)
+            if (!_sfxDone && progress >= fx.SfxNormalizedTime)
             {
                 _sfxDone = true;
-                PlayRandom(fx.sfx, fx.sfxVolume);
+                PlayRandom(fx.Sfx, fx.SfxVolume);
             }
-            if (!_voiceDone && progress >= fx.voiceNormalizedTime)
+            if (!_voiceDone && progress >= fx.VoiceNormalizedTime)
             {
                 _voiceDone = true;
-                PlayRandom(fx.GetVoice(GameLanguage.Current), fx.voiceVolume);
+                PlayRandom(fx.GetVoice(GameLanguage.Current), fx.VoiceVolume);
             }
-            if (fx.vfx == null) return;
-            for (int i = 0; i < fx.vfx.Length && i < _vfxDone.Length; i++)
+            var vfxList = fx.Vfx; if (vfxList == null) return;
+            for (int i = 0; i < vfxList.Length && i < _vfxDone.Length; i++)
             {
                 if (_vfxDone[i]) continue;
-                var v = fx.vfx[i];
+                var v = vfxList[i];
                 if (v == null || v.prefab == null) { _vfxDone[i] = true; continue; }
                 if (progress < v.normalizedTime) continue;
                 _vfxDone[i] = true;
@@ -71,13 +71,13 @@ namespace PilgrimOfSin.StateMachine
         public void Stop() => _current = null;
 
         /// <summary>一次觸發整組（不看時間點）。不影響目前動作的排程。</summary>
-        public void FireAll(GreedFx fx)
+        public void FireAll(IBossFx fx, bool playVoice = true)
         {
             if (fx == null) return;
-            PlayRandom(fx.sfx, fx.sfxVolume);
-            PlayRandom(fx.GetVoice(GameLanguage.Current), fx.voiceVolume);
-            if (fx.vfx == null) return;
-            foreach (var v in fx.vfx)
+            PlayRandom(fx.Sfx, fx.SfxVolume);
+            if (playVoice) PlayRandom(fx.GetVoice(GameLanguage.Current), fx.VoiceVolume);
+            var vfxList = fx.Vfx; if (vfxList == null) return;
+            foreach (var v in vfxList)
                 if (v != null && v.prefab != null) SpawnVfx(v);
         }
 
