@@ -158,8 +158,6 @@ MonoBehaviour:
   _balanceMin: 25
   _balanceMax: 40
   _maxWeight: 50
-  _hitSfx: {fileID: 11400000, guid: e5d46e3c8c2b03845af2390050348959, type: 2}
-  _breakSfx: {fileID: 11400000, guid: 0198f5220fb8565438472e078d940a00, type: 2}
   _breakDuration: 2.4
   _hitResetDuration: 1.3
 --- !u!4 &41600403
@@ -1650,20 +1648,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 977e94f362519cf4ba2a297337d46bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.GreedBossController
+  _profile: {fileID: 11400000, guid: 78022f372e6a43642b8ea2ee2f31fc87, type: 2}
   _player: {fileID: 1422496066}
-  _displayName: "\u5FC3\u9B54-\u8CAA"
   _scale: {fileID: 41600402}
   _scaleHitbox: {fileID: 1434837447}
   _spawner: {fileID: 942762640}
-  _maxHp: 5000
-  _moveSpeed: 4
-  _idleDuration: 1
-  _attack1Range: 3
-  _attack2Range: 6
-  _attack3Range: 150
-  _attack1Damage: 900
-  _attack2Damage: 1200
-  _attack3Damage: 2300
   _balanceWindowDuration: 12
   _playerDamageBoostMultiplier: 3
   _bossAttackBoostMultiplier: 1.5
@@ -1674,15 +1663,7 @@ MonoBehaviour:
   _scaleKickHitboxDuration: 0.7
   _introDuration: 0.9
   _runAnimReferenceSpeed: 4.5
-  _useAttack2And3: 0
-  _attackHitForward: 1.3
-  _attackHitHeight: 1
-  _attackHitRadius: 1.5
-  _attackTrackDuration: 0.7
   _hpGateCount: 0
-  enableStagger: 1
-  StaggerDuration: 0.63
-  StaggerCooldown: 4
 --- !u!54 &942762638
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2055,20 +2036,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 977e94f362519cf4ba2a297337d46bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.GreedBossController
+  _profile: {fileID: 11400000, guid: 78022f372e6a43642b8ea2ee2f31fc87, type: 2}
   _player: {fileID: 1422496066}
-  _displayName: "\u5FC3\u9B54-\u8CAA"
   _scale: {fileID: 41600402}
   _scaleHitbox: {fileID: 1434837447}
   _spawner: {fileID: 0}
-  _maxHp: 5000
-  _moveSpeed: 4
-  _idleDuration: 1
-  _attack1Range: 3
-  _attack2Range: 6
-  _attack3Range: 10
-  _attack1Damage: 900
-  _attack2Damage: 1200
-  _attack3Damage: 2300
   _balanceWindowDuration: 12
   _playerDamageBoostMultiplier: 3
   _bossAttackBoostMultiplier: 1.5
@@ -2079,15 +2051,7 @@ MonoBehaviour:
   _scaleKickHitboxDuration: 0.7
   _introDuration: 0.9
   _runAnimReferenceSpeed: 4.5
-  _useAttack2And3: 0
-  _attackHitForward: 1.3
-  _attackHitHeight: 1
-  _attackHitRadius: 1.5
-  _attackTrackDuration: 0.7
   _hpGateCount: 0
-  enableStagger: 0
-  StaggerDuration: 0.5
-  StaggerCooldown: 4
 --- !u!54 &1046915400
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4935,123 +4899,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04edd965990ef884db5c5417958ff154, type: 3}
---- !u!1001 &7702831657320558636
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1082626909654696325, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_MaxParticleSize
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2684842268289324570, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_Name
-      value: PtcSystem_Ripple
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.61
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3049726604790768518, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: looping
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: lengthInSec
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: startDelay.scalar
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 35
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: InitialModule.startLifetime.scalar
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: InitialModule.startLifetime.minScalar
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: InitialModule.startLifetime.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].inSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].inSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].outSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].outSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].tangentMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685064238629988477, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].tangentMode
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a71edc909833afd44b01e7e75a37d00c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -5081,4 +4928,3 @@ SceneRoots:
   - {fileID: 2106297746}
   - {fileID: 746149755}
   - {fileID: 1742285223}
-  - {fileID: 7702831657320558636}

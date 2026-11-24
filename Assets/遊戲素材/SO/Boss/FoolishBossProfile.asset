@@ -16,6 +16,7 @@ MonoBehaviour:
   maxHp: 10000
   moveSpeed: 3.5
   idleDuration: 1
+  animatorController: {fileID: 9100000, guid: c8b233916c6b520488a76b6835d7a641, type: 2}
   idle:
     stateName: Idle
     clip: {fileID: -2313192979344413084, guid: 9298e78fe0b159e4ca6c15ebcff7924a, type: 3}
@@ -30,8 +31,6 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -51,92 +50,6 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
-    damage: 0
-    attackRange: 0
-    hitNormalizedTime: 0.5
-    hitRadius: 0
-    hitAngle: 120
-  attack1:
-    stateName: Attack1
-    clip: {fileID: -5205688785684812755, guid: ab4e260d86baae941b99cfd76268dbf1, type: 3}
-    baseClip: {fileID: -5205688785684812755, guid: ab4e260d86baae941b99cfd76268dbf1, type: 3}
-    endPadding: 0
-    fallbackDuration: 0
-    sfx: []
-    sfxVolume: 1
-    sfxNormalizedTime: 0
-    voiceEnglish: []
-    voiceTaiwanese: []
-    voiceVolume: 1
-    voiceNormalizedTime: 0
-    vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
-    damage: 800
-    attackRange: 3
-    hitNormalizedTime: 0.5
-    hitRadius: 3.5
-    hitAngle: 120
-  attack2:
-    stateName: Attack2
-    clip: {fileID: 796085260154743200, guid: c1b84c5b77a99fd49aae1b1c1f3eda02, type: 3}
-    baseClip: {fileID: 796085260154743200, guid: c1b84c5b77a99fd49aae1b1c1f3eda02, type: 3}
-    endPadding: 0
-    fallbackDuration: 0
-    sfx: []
-    sfxVolume: 1
-    sfxNormalizedTime: 0
-    voiceEnglish: []
-    voiceTaiwanese: []
-    voiceVolume: 1
-    voiceNormalizedTime: 0
-    vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
-    damage: 1000
-    attackRange: 6
-    hitNormalizedTime: 0.5
-    hitRadius: 6.5
-    hitAngle: 120
-  attack3:
-    stateName: Attack3
-    clip: {fileID: -167656657657268247, guid: ca4fb72de1e8ca04fb8195b779d680ed, type: 3}
-    baseClip: {fileID: -167656657657268247, guid: ca4fb72de1e8ca04fb8195b779d680ed, type: 3}
-    endPadding: 0
-    fallbackDuration: 0
-    sfx: []
-    sfxVolume: 1
-    sfxNormalizedTime: 0
-    voiceEnglish: []
-    voiceTaiwanese: []
-    voiceVolume: 1
-    voiceNormalizedTime: 0
-    vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
-    damage: 1700
-    attackRange: 10
-    hitNormalizedTime: 0.5
-    hitRadius: 10.5
-    hitAngle: 120
-  roar:
-    stateName: Roar
-    clip: {fileID: 9046301113024794651, guid: 70237d66f4f7da44ca27c82627b14e7a, type: 3}
-    baseClip: {fileID: 9046301113024794651, guid: 70237d66f4f7da44ca27c82627b14e7a, type: 3}
-    endPadding: 0
-    fallbackDuration: 0
-    sfx: []
-    sfxVolume: 1
-    sfxNormalizedTime: 0
-    voiceEnglish: []
-    voiceTaiwanese: []
-    voiceVolume: 1
-    voiceNormalizedTime: 0
-    vfx: []
-    cameraShake: 4
-    cameraShakeNormalizedTime: 0.15
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -156,8 +69,6 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -177,8 +88,6 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    cameraShake: 0
-    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -187,6 +96,84 @@ MonoBehaviour:
   hurtVoiceMinInterval: 1.5
   enableStagger: 0
   staggerDuration: 0.5
+  showHitArea: 1
+  mixerGroup: {fileID: 4853816048678867972, guid: 3bc653d8ce919474a911bcf516d5d417, type: 2}
+  attack1:
+    stateName: Attack1
+    clip: {fileID: -5205688785684812755, guid: ab4e260d86baae941b99cfd76268dbf1, type: 3}
+    baseClip: {fileID: -5205688785684812755, guid: ab4e260d86baae941b99cfd76268dbf1, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx: []
+    damage: 800
+    attackRange: 3
+    hitNormalizedTime: 0.5
+    hitRadius: 3.5
+    hitAngle: 120
+  attack2:
+    stateName: Attack2
+    clip: {fileID: 796085260154743200, guid: c1b84c5b77a99fd49aae1b1c1f3eda02, type: 3}
+    baseClip: {fileID: 796085260154743200, guid: c1b84c5b77a99fd49aae1b1c1f3eda02, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx: []
+    damage: 1000
+    attackRange: 6
+    hitNormalizedTime: 0.5
+    hitRadius: 6.5
+    hitAngle: 120
+  attack3:
+    stateName: Attack3
+    clip: {fileID: -167656657657268247, guid: ca4fb72de1e8ca04fb8195b779d680ed, type: 3}
+    baseClip: {fileID: -167656657657268247, guid: ca4fb72de1e8ca04fb8195b779d680ed, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx: []
+    damage: 1700
+    attackRange: 10
+    hitNormalizedTime: 0.5
+    hitRadius: 10.5
+    hitAngle: 120
+  roar:
+    stateName: Roar
+    clip: {fileID: 9046301113024794651, guid: 70237d66f4f7da44ca27c82627b14e7a, type: 3}
+    baseClip: {fileID: 9046301113024794651, guid: 70237d66f4f7da44ca27c82627b14e7a, type: 3}
+    endPadding: 0
+    fallbackDuration: 0
+    sfx: []
+    sfxVolume: 1
+    sfxNormalizedTime: 0
+    voiceEnglish: []
+    voiceTaiwanese: []
+    voiceVolume: 1
+    voiceNormalizedTime: 0
+    vfx: []
+    damage: 0
+    attackRange: 0
+    hitNormalizedTime: 0.5
+    hitRadius: 0
+    hitAngle: 120
   attackFallbackDuration: 1.5
   autoFitModel: 0
   modelTargetHeight: 3
@@ -214,5 +201,3 @@ MonoBehaviour:
     arenaCenter: {x: 0, y: 0}
     arenaHalfSize: 35
     edgeMargin: 5
-  showHitArea: 1
-  mixerGroup: {fileID: 4853816048678867972, guid: 3bc653d8ce919474a911bcf516d5d417, type: 2}

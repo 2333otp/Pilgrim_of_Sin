@@ -17,31 +17,18 @@ namespace PilgrimOfSin.StateMachine
     public class GreedBossController : MonoBehaviour, IDamageable, IBossHealth
     {
         // ── References ───────────────────────────────────────────────
+        [Header("素材總表（數值、動畫、音效、配音、特效、招式、派生、空襲都在這裡改）")]
+        [Tooltip("Assets/遊戲素材/SO/Boss/GreedBossProfile。格式和癡的 FoolishBossProfile 相同（共通部分見 BossProfileBase）。")]
+        [SerializeField] private GreedBossProfile _profile;
+
         [Header("References")]
         [SerializeField] private Transform _player;
-        [SerializeField] private string _displayName = "心魔-貪";   // 血條旁名字（IBossHealth）
         [SerializeField] private ScaleObject _scale;         // 天秤場景物件
         [SerializeField] private Collider _scaleHitbox;   // 天秤踢翻碰撞體
         [SerializeField] private MoneybagSpawner _spawner;       // 錢袋生成器
 
         /// <summary>骨架模型（子物件 Model）上的 Animator，不在本物件上，所以用 GetComponentInChildren 取得。</summary>
         public Animator Animator { get; private set; }
-
-        // ── Boss 基本數值 ─────────────────────────────────────────────
-        [Header("Boss Stats")]
-        [SerializeField] private float _maxHp = 12000f;
-        [SerializeField] private float _moveSpeed = 4f;
-        [SerializeField] private float _idleDuration = 1f;
-
-        [Header("Attack Range")]
-        [SerializeField] private float _attack1Range = 3f;
-        [SerializeField] private float _attack2Range = 6f;
-        [SerializeField] private float _attack3Range = 10f;
-
-        [Header("Attack Damage")]
-        [SerializeField] private float _attack1Damage = 900f;
-        [SerializeField] private float _attack2Damage = 1200f;
-        [SerializeField] private float _attack3Damage = 2300f;
 
         // ── 天秤機制數值 ──────────────────────────────────────────────
         [Header("Scale Mechanic")]
@@ -57,21 +44,8 @@ namespace PilgrimOfSin.StateMachine
 
         // ── 動畫 ──────────────────────────────────────────────────────
         [Header("Animation")]
-        [Tooltip("Run 動畫本身對應的移動速度（m/s，由腳掌著地速度量測）。Run 播放速度 = _moveSpeed / 此值，避免滑步。")]
+        [Tooltip("Run 動畫本身對應的移動速度（m/s，由腳掌著地速度量測）。Run 播放速度 = 素材總表的移動速度 / 此值，避免滑步。")]
         [SerializeField] private float _runAnimReferenceSpeed = 4.5f;
-        [Tooltip("Attack2/Attack3 的動畫還沒做。關閉時 Boss 一律追擊到 Attack1 範圍再出 Attack1；做好動畫後再打開。")]
-        [SerializeField] private bool _useAttack2And3 = false;
-
-        // ── 攻擊判定（Attack1 動畫事件 AnimEvent_AttackHit 觸發） ─────
-        [Header("Attack Hit")]
-        [Tooltip("判定球中心：Boss 前方距離（m）")]
-        [SerializeField] private float _attackHitForward = 1.3f;
-        [Tooltip("判定球中心：離地高度（m）")]
-        [SerializeField] private float _attackHitHeight = 1.0f;
-        [Tooltip("判定球半徑（m）")]
-        [SerializeField] private float _attackHitRadius = 1.5f;
-        [Tooltip("攻擊開始後多少秒內 Boss 持續轉向玩家（之後砸下去的方向就鎖定了）")]
-        [SerializeField] private float _attackTrackDuration = 0.7f;
 
         // ── 血量閘門 ──────────────────────────────────────────────────
         [Header("HP Gate (非平衡期間的血量鎖)")]
@@ -80,27 +54,45 @@ namespace PilgrimOfSin.StateMachine
                  "例：4 段 = 底線在 75% / 50% / 25% / 1 點血，需要撐過數次平衡窗口才能擊殺。")]
         [SerializeField, Min(0)] private int _hpGateCount = 0;
 
-        // ── Stagger（選配） ───────────────────────────────────────────
-        [Header("Stagger (Optional)")]
-        [SerializeField] public bool enableStagger = false;
-        [SerializeField] public float StaggerDuration = 0.63f;   // = Damage 動畫長度
-        [Tooltip("兩次受擊硬直的最短間隔（秒）。避免連段把 Boss 鎖死在受擊動作；攻擊/踢天秤中不會被打斷（霸體）。")]
-        [SerializeField] public float StaggerCooldown = 4f;
-
         // ── 公開屬性 ──────────────────────────────────────────────────
         public float CurrentHp { get; private set; }
-        public float MaxHp => _maxHp;
+        public float MaxHp => _profile.maxHp;
         public bool IsDead => CurrentHp <= 0f;
-        public string DisplayName => _displayName;   // IBossHealth
-        public float IdleDuration => _idleDuration;
-        public float Attack1Range => _attack1Range;
-        public float Attack2Range => _attack2Range;
-        public float Attack3Range => _attack3Range;
-        public bool UseAttack2And3 => _useAttack2And3;
-        public float AttackTrackDuration => _attackTrackDuration;
-        public float DistanceToPlayer => _player != null
-            ? Vector3.Distance(transform.position, _player.position)
-            : float.MaxValue;
+        public string DisplayName => _profile.displayName;   // IBossHealth
+        public float IdleDuration => _profile.idleDuration;
+        public float StaggerDuration => _profile.StaggerTime;
+        public GreedBossProfile Profile => _profile;
+        /// <summary>和主角的水平距離（Boss 飛在空中時也不受高度影響）。</summary>
+        public float DistanceToPlayer
+        {
+            get
+            {
+                if (_player == null) return float.MaxValue;
+                Vector3 d = _player.position - transform.position; d.y = 0f;
+                return d.magnitude;
+            }
+        }
+        public float HpRatio => MaxHp > 0f ? CurrentHp / MaxHp : 0f;
+        public float GroundY => _groundY;
+
+        private GreedFxPlayer _feedback;
+        private float _nextHurtVoiceTime;
+        /// <summary>音效 / 配音 / 特效播放（素材總表裡每個動作的音效 / 配音 / 特效，依動畫進度觸發）。</summary>
+        public GreedFxPlayer Feedback => _feedback ??= new GreedFxPlayer(transform, () => _profile != null ? _profile.mixerGroup : null);   // 延遲建立：Domain Reload 後也會自動重建
+
+        /// <summary>下一次進入 Action 狀態要播的招式（Idle 選招或派生時設定）。</summary>
+        public GreedMoveEntry PendingMove { get; set; }
+
+        /// <summary>除錯面板顯示用：目前招式 / 空襲階段。</summary>
+        public string DebugDetail
+        {
+            get
+            {
+                if (_fsm?.Current is GreedActionState a && a.CurrentMove != null) return $"[{a.CurrentMove.stateName} {a.Progress:P0}]";
+                if (_fsm?.Current is GreedKickScaleState k) return $"[{k.PhaseName}]";
+                return "";
+            }
+        }
 
         // ── 天秤相位 ──────────────────────────────────────────────────
         public ScalePhase CurrentPhase { get; private set; } = ScalePhase.StatueHeavy;
@@ -108,7 +100,6 @@ namespace PilgrimOfSin.StateMachine
         public GreedBossStateType CurrentStateType => _fsm?.CurrentType ?? GreedBossStateType.Idle;
 
         // ── 動畫事件 ──────────────────────────────────────────────────
-        public event Action OnAttackAnimEnd;
         public event Action OnKickScaleAnimEnd;
 
         // ── 內部 ──────────────────────────────────────────────────────
@@ -125,11 +116,21 @@ namespace PilgrimOfSin.StateMachine
         private Vector3 _slideDir;       // 被擋住時選定的繞行方向（只要還走得通就一直沿用，避免左右抖動）
         private const float BlockedAnimDelay = 0.25f;
 
-        // Animator 參數（int）。所有狀態都由這一個參數驅動，不用 Trigger：
+        private float _groundY;                  // 地面高度（Awake 時 Boss 站的高度），空襲落地用
+        private bool _airborne;
+        private float _nextIdleDuration = -1f;   // < 0 = 用素材總表的待機時間
+        private readonly Dictionary<GreedMoveEntry, float> _moveReadyTime = new Dictionary<GreedMoveEntry, float>();
+        private readonly List<GreedMoveEntry> _openerCandidates = new List<GreedMoveEntry>();
+
+        // Animator 參數（int）。Idle/Run/Damage/Death 由這一個參數驅動，不用 Trigger：
         // Trigger 在沒有可消耗的轉換時會殘留，之後在錯誤時機觸發，造成動畫打架。
+        // 招式與空襲動畫改用 CrossFade 直接播 state（名稱 = 招式 id / Fly / Kick / Dive / Fall），
+        // 播放期間把 State 設成 AnimAction（沒有任何 Any State 轉換對應它），避免被 Any State 搶走。
         private static readonly int StateHash = Animator.StringToHash("State");
         private static readonly int MoveSpeedHash = Animator.StringToHash("MoveSpeed");
-        private const int AnimIdle = 0, AnimMove = 1, AnimAttack1 = 2, AnimStagger = 3, AnimDead = 4;
+        private const int AnimIdle = 0, AnimMove = 1, AnimStagger = 3, AnimDead = 4, AnimAction = 99;
+
+        public const string AnimStateFly = "Fly", AnimStateKick = "Kick", AnimStateDive = "Dive", AnimStateFall = "Fall";
 
         // ════════════════════════════════════════════════════════════
         //  Unity 生命週期
@@ -137,6 +138,12 @@ namespace PilgrimOfSin.StateMachine
 
         private void Awake()
         {
+            if (_profile == null)
+            {
+                Debug.LogError("[Greed] ❌ 沒有指定素材總表（GreedBossProfile），先用預設值執行（沒有招式可出）。", this);
+                _profile = ScriptableObject.CreateInstance<GreedBossProfile>();
+            }
+
             Animator = GetComponentInChildren<Animator>(true);
             if (Animator == null)
                 Debug.LogError("[Greed] ❌ 找不到 Animator！骨架模型（子物件 Model）必須帶 Animator。");
@@ -145,10 +152,13 @@ namespace PilgrimOfSin.StateMachine
                 // 位移完全由 MoveTowardPlayer() 控制，動畫不可帶動 Boss 本體，否則兩邊會打架。
                 Animator.applyRootMotion = false;
                 Animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; // 離開畫面也要跑，否則 AnimEvent 不會觸發、攻擊流程卡住
-                Animator.SetFloat(MoveSpeedHash, _runAnimReferenceSpeed > 0f ? _moveSpeed / _runAnimReferenceSpeed : 1f);
+                Animator.SetFloat(MoveSpeedHash, _runAnimReferenceSpeed > 0f ? _profile.moveSpeed / _runAnimReferenceSpeed : 1f);
+                // 素材總表裡換掉的動畫（Clip ≠ 原始 Clip）在這裡套進 Animator，和癡共用同一套
+                BossActionFeedback.ApplyAnimationOverrides(Animator, _profile.AllEntries());
             }
             _capsule = GetComponent<CapsuleCollider>();
-            CurrentHp = _maxHp;
+            _groundY = transform.position.y;
+            CurrentHp = MaxHp;
             if (_scaleHitbox) _scaleHitbox.enabled = false;
             BuildFSM();
         }
@@ -217,6 +227,8 @@ namespace PilgrimOfSin.StateMachine
 
             StopAllCoroutines();                       // 結束進行中的天秤踢擊碰撞體脈衝
             if (_scaleHitbox) _scaleHitbox.enabled = false;
+            Feedback.Stop();
+            EndAirborne();                             // 空襲途中玩家死了：不要懸在空中
             SetAnimState(GreedBossStateType.Idle);
         }
 
@@ -255,9 +267,7 @@ namespace PilgrimOfSin.StateMachine
             {
                 { GreedBossStateType.Idle,      new GreedIdleState(this, _fsm)                               },
                 { GreedBossStateType.Move,      new GreedMoveState(this, _fsm)                               },
-                { GreedBossStateType.Attack1,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack1) },
-                { GreedBossStateType.Attack2,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack2) },
-                { GreedBossStateType.Attack3,   new GreedAttackState(this, _fsm, GreedBossStateType.Attack3) },
+                { GreedBossStateType.Action,    new GreedActionState(this, _fsm)                             },
                 { GreedBossStateType.KickScale, new GreedKickScaleState(this, _fsm)                         },
                 { GreedBossStateType.Stagger,   new GreedStaggerState(this, _fsm)                           },
                 { GreedBossStateType.Dead,      new GreedDeadState(this, _fsm)                              },
@@ -402,9 +412,17 @@ namespace PilgrimOfSin.StateMachine
                 return;
             }
 
+            // 受擊音效 / 特效每一下都播；配音有最小間隔，避免連段時每一下都喊（規則同癡）
+            if (actualDamage > 0f)
+            {
+                bool playVoice = Time.time >= _nextHurtVoiceTime;
+                if (playVoice) _nextHurtVoiceTime = Time.time + _profile.hurtVoiceMinInterval;
+                Feedback.FireAll(_profile.hurt, playVoice);
+            }
+
             // 只在待機/移動時硬直，攻擊與踢天秤中是霸體；加冷卻避免連段把 Boss 鎖死。
-            if (enableStagger
-                && Time.time - _lastStaggerTime >= StaggerCooldown
+            if (_profile.enableStagger
+                && Time.time - _lastStaggerTime >= _profile.staggerCooldown
                 && (CurrentStateType == GreedBossStateType.Idle || CurrentStateType == GreedBossStateType.Move))
             {
                 _lastStaggerTime = Time.time;
@@ -421,7 +439,7 @@ namespace PilgrimOfSin.StateMachine
         {
             if (_hpGateCount <= 0) return 0f;
 
-            float segment = _maxHp / _hpGateCount;
+            float segment = MaxHp / _hpGateCount;
             float floor = 1f;
             for (int k = 1; k < _hpGateCount; k++)
             {
@@ -431,16 +449,286 @@ namespace PilgrimOfSin.StateMachine
             return Mathf.Min(floor, hp);
         }
 
-        public float GetAttackDamage(GreedBossStateType attackType)
+        /// <summary>Boss 造成的傷害（錢袋重時乘攻擊倍率）。</summary>
+        public float ScaleOutgoingDamage(float baseDmg)
         {
-            float baseDmg = attackType switch
-            {
-                GreedBossStateType.Attack1 => _attack1Damage,
-                GreedBossStateType.Attack2 => _attack2Damage,
-                _ => _attack3Damage,
-            };
             float mult = CurrentPhase == ScalePhase.MoneyBagHeavy ? _bossAttackBoostMultiplier : 1f;
             return baseDmg * mult;
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  招式選擇（GreedBossProfile）
+        // ════════════════════════════════════════════════════════════
+
+        public bool EvaluateCondition(GreedMoveCondition c)
+            => c == null || c.Evaluate(DistanceToPlayer, CurrentPhase, HpRatio);
+
+        private bool IsOpenerReady(GreedMoveEntry m)
+            => m != null && m.IsValid && m.canOpen && m.openerWeight > 0f
+               && (!_moveReadyTime.TryGetValue(m, out float t) || Time.time >= t)
+               && EvaluateCondition(m.openerCondition);
+
+        /// <summary>從起手招裡挑一招（條件成立 + 不在冷卻，照權重隨機）。沒有可出的回傳 null。</summary>
+        public GreedMoveEntry PickOpener()
+        {
+            if (_profile == null) return null;
+            _openerCandidates.Clear();
+            float total = 0f;
+            foreach (var m in _profile.moves)
+                if (IsOpenerReady(m)) { _openerCandidates.Add(m); total += m.openerWeight; }
+            if (_openerCandidates.Count == 0) return null;
+
+            float r = UnityEngine.Random.value * total;
+            foreach (var m in _openerCandidates)
+            {
+                r -= m.openerWeight;
+                if (r <= 0f) return m;
+            }
+            return _openerCandidates[_openerCandidates.Count - 1];
+        }
+
+        /// <summary>目前距離下有沒有任何起手招的「距離條件」成立（不看冷卻 / 相位）：決定要不要繼續追擊。</summary>
+        public bool AnyOpenerInRange()
+        {
+            if (_profile == null) return true;   // 沒有招式表：不追，原地待機
+            float d = DistanceToPlayer;
+            foreach (var m in _profile.moves)
+            {
+                if (m == null || !m.IsValid || !m.canOpen) continue;
+                var c = m.openerCondition;
+                if (d >= c.minDistance && (c.maxDistance <= 0f || d <= c.maxDistance)) return true;
+            }
+            return false;
+        }
+
+        public void MarkMoveUsed(GreedMoveEntry m)
+        {
+            if (m != null) _moveReadyTime[m] = Time.time + m.Duration + m.cooldown;
+        }
+
+        public void SetNextIdleDuration(float seconds) => _nextIdleDuration = seconds;
+
+        public float ConsumeNextIdleDuration()
+        {
+            float d = _nextIdleDuration >= 0f ? _nextIdleDuration : IdleDuration;
+            _nextIdleDuration = -1f;
+            return d;
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  攻擊判定 / 突進
+        // ════════════════════════════════════════════════════════════
+
+        public Vector3 LocalToWorldHitCenter(float forward, float height)
+            => transform.position + transform.forward * forward + Vector3.up * height;
+
+        /// <summary>球形判定，打中主角就扣血並回傳 true（玩家翻滾無敵幀由 PlayerController.TakeDamage 自己擋）。</summary>
+        public bool TryHitPlayerSphere(Vector3 center, float radius, float baseDamage)
+        {
+            if (IsDead || BossResultPortal.IsPlayerDefeated) return false;
+            foreach (var col in Physics.OverlapSphere(center, radius, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (!col.CompareTag("Player")) continue;
+                var player = col.GetComponentInParent<PlayerController>();
+                if (player == null) continue;
+                player.TakeDamage(ScaleOutgoingDamage(baseDamage));
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 扇形判定（和癡相同）：主角在 radius 內、且在正前方 angle 度的扇形內就扣血。
+        /// 招式沒填命中區間時用這個（素材總表的命中時間點 / 距離 / 角度）。
+        /// </summary>
+        public bool TryHitPlayerFan(float radius, float angle, float baseDamage, string label)
+        {
+            if (IsDead || BossResultPortal.IsPlayerDefeated || _player == null) return false;
+            Vector3 toPlayer = _player.position - transform.position; toPlayer.y = 0f;
+            float dist = toPlayer.magnitude;
+            float off = toPlayer.sqrMagnitude > 0.0001f ? Vector3.Angle(transform.forward, toPlayer) : 0f;
+            bool hit = dist <= radius && (angle >= 360f || off <= angle * 0.5f);
+
+            if (_profile.showHitArea)
+            {
+                ShowHitFan(radius, angle, hit);
+                Debug.Log($"[貪] {label} 扇形判定：{(hit ? "打到" : "沒打到")}　主角距離 {dist:F1}m / 判定距離 {radius:F1}m　偏離正前方 {off:F0}° / 判定角度 ±{angle * 0.5f:F0}°", this);
+            }
+
+            if (hit)
+            {
+                var player = _player.GetComponentInParent<PlayerController>();
+                if (player != null) player.TakeDamage(ScaleOutgoingDamage(baseDamage));
+            }
+            return hit;
+        }
+
+        // ── 測試：顯示判定範圍（素材總表勾「顯示判定範圍」時） ──────────
+
+        /// <summary>命中區間結束（或打到）時呼叫：畫出判定球，0.4 秒後消失。紅 = 打到、黃 = 沒打到。</summary>
+        public void ReportHitSphere(Vector3 center, float radius, bool hit, string label)
+        {
+            if (!_profile.showHitArea) return;
+            var pts = new List<Vector3>();
+            const int seg = 32;
+            // 三個互相垂直的圓，看得出是一顆球
+            for (int i = 0; i <= seg; i++) { float a = i * Mathf.PI * 2f / seg; pts.Add(center + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * radius); }
+            for (int i = 0; i <= seg; i++) { float a = i * Mathf.PI * 2f / seg; pts.Add(center + new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0f) * radius); }
+            for (int i = 0; i <= seg; i++) { float a = i * Mathf.PI * 2f / seg; pts.Add(center + new Vector3(0f, Mathf.Sin(a), Mathf.Cos(a)) * radius); }
+            SpawnDebugLine("貪_命中判定範圍(測試)", pts, false, hit);
+            Debug.Log($"[貪] {label} 球形判定：{(hit ? "打到" : "沒打到")}　半徑 {radius:F1}m", this);
+        }
+
+        private void ShowHitFan(float radius, float angle, bool hit)
+        {
+            const int seg = 32;
+            float half = Mathf.Min(angle, 360f) * 0.5f;
+            Vector3 origin = transform.position + Vector3.up * 0.05f;
+            var pts = new List<Vector3>();
+            if (angle < 360f) pts.Add(origin);
+            for (int i = 0; i <= seg; i++)
+                pts.Add(origin + Quaternion.Euler(0f, -half + half * 2f * i / seg, 0f) * transform.forward * radius);
+            SpawnDebugLine("貪_命中判定範圍(測試)", pts, angle < 360f, hit);
+        }
+
+        private static void SpawnDebugLine(string name, List<Vector3> pts, bool loop, bool hit)
+        {
+            var go = new GameObject(name);
+            var lr = go.AddComponent<LineRenderer>();
+            lr.useWorldSpace = true;
+            lr.loop = loop;
+            lr.widthMultiplier = 0.08f;
+            lr.material = new Material(Shader.Find("Sprites/Default"));
+            lr.startColor = lr.endColor = hit ? new Color(1f, 0.15f, 0.15f) : new Color(1f, 0.85f, 0.1f);
+            lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            lr.positionCount = pts.Count;
+            lr.SetPositions(pts.ToArray());
+            Destroy(lr.material, 0.4f);
+            Destroy(go, 0.4f);
+        }
+
+        /// <summary>招式突進：往面向方向移動，會被障礙物與主角擋住。</summary>
+        public void LungeStep(float distance)
+        {
+            if (distance <= 0f) return;
+            Vector3 dir = transform.forward; dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return;
+            dir.Normalize();
+            float step = ClampStepToAvoidObstacles(dir, distance, out _);
+            step = ClampStepToAvoidPlayer(step);
+            transform.position += dir * step;
+            DepenetrateFromObstacles();
+        }
+
+        // ════════════════════════════════════════════════════════════
+        //  空襲（GreedKickScaleState 用）
+        // ════════════════════════════════════════════════════════════
+
+        public void BeginAirborne() => _airborne = true;
+
+        /// <summary>空中移動：不做障礙物檢查（會飛越天秤），落地時再推出重疊。</summary>
+        public void SetAirPosition(Vector3 pos) => transform.position = pos;
+
+        /// <summary>空中姿態（含轉彎傾斜）。落地時 Land() 會把傾斜歸零。</summary>
+        public void SetAirRotation(Quaternion rot) => transform.rotation = rot;
+
+        /// <summary>盤旋中心（天秤位置；沒設定天秤時用 Boss 自己）。</summary>
+        public Vector3 ScaleCenter => _scale != null ? _scale.transform.position : transform.position;
+
+        /// <summary>落地：貼回地面並推出重疊（例如砸在天秤旁）。</summary>
+        public void Land()
+        {
+            Vector3 p = transform.position; p.y = _groundY;
+
+            // 主角在俯衝途中跑到落點上：把 Boss 往外推，不要壓在主角身上
+            if (_player != null)
+            {
+                Vector3 away = p - _player.position; away.y = 0f;
+                if (away.magnitude < MinDistanceToPlayer)
+                {
+                    if (away.sqrMagnitude < 0.0001f) away = -transform.forward;
+                    p = new Vector3(_player.position.x, _groundY, _player.position.z) + away.normalized * MinDistanceToPlayer;
+                }
+            }
+
+            transform.position = p;
+            Vector3 fwd = transform.forward; fwd.y = 0f;   // 去掉空中的傾斜 / 俯仰，只留水平朝向
+            if (fwd.sqrMagnitude > 0.0001f) transform.rotation = Quaternion.LookRotation(fwd.normalized);
+            _airborne = false;
+            DepenetrateFromObstacles();
+        }
+
+        /// <summary>還在空中就落地（被強制中斷時呼叫，重複呼叫無害）。</summary>
+        public void EndAirborne()
+        {
+            if (Animator != null) Animator.speed = 1f;
+            if (_airborne) Land();
+        }
+
+        /// <summary>天秤一側的定位點（世界座標）與面向天秤的方向。</summary>
+        public void GetKickPoint(out Vector3 point, out Vector3 faceDir)
+        {
+            var cfg = _profile.aerialKick;
+            Transform s = _scale != null ? _scale.transform : transform;
+            Vector3 local = cfg.kickPointLocal;
+            Vector3 a = KickCandidate(s, new Vector3(Mathf.Abs(local.x), 0f, local.z));
+            Vector3 b = KickCandidate(s, new Vector3(-Mathf.Abs(local.x), 0f, local.z));
+
+            Vector3 playerPos = _player != null ? _player.position : transform.position;
+            bool pickA = cfg.kickSide switch
+            {
+                GreedKickSide.離Boss近的那側 => FlatDist(a, transform.position) <= FlatDist(b, transform.position),
+                GreedKickSide.離主角遠的那側 => FlatDist(a, playerPos) >= FlatDist(b, playerPos),
+                GreedKickSide.離主角近的那側 => FlatDist(a, playerPos) <= FlatDist(b, playerPos),
+                _ => UnityEngine.Random.value < 0.5f,
+            };
+            point = pickA ? a : b;
+            point.y = _groundY + local.y;
+
+            faceDir = s.position - point; faceDir.y = 0f;
+            if (faceDir.sqrMagnitude < 0.0001f) faceDir = transform.forward;
+            faceDir.Normalize();
+        }
+
+        private static Vector3 KickCandidate(Transform scale, Vector3 localFlat)
+            => scale.position + scale.rotation * localFlat;   // 用旋轉不用 TransformPoint：天秤的縮放不影響距離
+
+        private static float FlatDist(Vector3 a, Vector3 b) { a.y = 0f; b.y = 0f; return Vector3.Distance(a, b); }
+
+        /// <summary>俯衝落點：主角腳下（地面高度），可依主角移動方向預判最多 maxLead 公尺。</summary>
+        public Vector3 GetDiveTarget(float maxLead)
+        {
+            Vector3 t = _player != null ? _player.position : transform.position;
+            if (maxLead > 0f && _player != null)
+            {
+                var rb = _player.GetComponentInParent<Rigidbody>();
+                if (rb != null)
+                {
+                    Vector3 v = rb.linearVelocity; v.y = 0f;
+                    t += Vector3.ClampMagnitude(v * 0.5f, maxLead);
+                }
+            }
+            t.y = _groundY;
+
+            // 停在主角前方（兩者碰撞體不重疊），範圍傷害照樣打得到
+            Vector3 approach = t - transform.position; approach.y = 0f;
+            if (approach.sqrMagnitude > MinDistanceToPlayer * MinDistanceToPlayer)
+                t -= approach.normalized * MinDistanceToPlayer;
+            return t;
+        }
+
+        /// <summary>落地衝擊範圍傷害。</summary>
+        public void ImpactAoE(float radius, float damage)
+        {
+            if (radius <= 0f || damage <= 0f) return;
+            TryHitPlayerSphere(transform.position + Vector3.up * 0.5f, radius, damage);
+        }
+
+        public void FaceDirection(Vector3 dir, float dt, float turnSpeed = 10f)
+        {
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir.normalized), turnSpeed * dt);
         }
 
         // Boss capsule半徑0.5 + Player box collider半寬0.5，留一點緩衝，避免兩者實體重疊。
@@ -458,9 +746,9 @@ namespace PilgrimOfSin.StateMachine
         }
 
         /// <summary>
-        /// 依 FSM 狀態切換動畫。目前沒有專屬動畫的狀態：
-        ///   Attack2/Attack3 → 暫用 Attack1 動畫（預設已關閉，見 _useAttack2And3）
-        ///   KickScale       → 維持 Idle（踢天秤動畫還沒做，天秤自己會播 Break）
+        /// 依 FSM 狀態切換 Idle / Run / Damage / Death 動畫。
+        /// 招式（Action）與空襲（KickScale）由狀態自己呼叫 PlayAnimState 播指定 state；
+        /// KickScale 沒設定空襲動畫時（舊流程）維持 Idle。
         /// </summary>
         public void SetAnimState(GreedBossStateType type)
         {
@@ -468,15 +756,42 @@ namespace PilgrimOfSin.StateMachine
             int value = type switch
             {
                 GreedBossStateType.Move    => AnimMove,
-                GreedBossStateType.Attack1 => AnimAttack1,
-                GreedBossStateType.Attack2 => AnimAttack1,
-                GreedBossStateType.Attack3 => AnimAttack1,
                 GreedBossStateType.Stagger => AnimStagger,
                 GreedBossStateType.Dead    => AnimDead,
                 _                          => AnimIdle,
             };
             if (type == GreedBossStateType.Move) _blockedTime = 0f;
+            Animator.speed = 1f;
             Animator.SetInteger(StateHash, value);
+        }
+
+        /// <summary>直接播 Animator 裡名為 stateName 的 state（招式 / 空襲用），從頭開始。</summary>
+        public void PlayAnimState(string stateName, float speed)
+        {
+            if (Animator == null || Animator.runtimeAnimatorController == null) return;
+            int hash = Animator.StringToHash(stateName);
+            if (!Animator.HasState(0, hash))
+            {
+                Debug.LogWarning($"[Greed] Animator 沒有 state「{stateName}」，請在 GreedBossProfile 按「同步到 Animator」。");
+                return;
+            }
+            Animator.SetInteger(StateHash, AnimAction);
+            Animator.speed = speed;
+            float fade = _profile != null ? _profile.crossFade : 0.1f;
+            Animator.CrossFadeInFixedTime(hash, fade, 0, 0f);
+        }
+
+        /// <summary>把正在播的 state 直接拉到指定的動畫比例（停格中的循環區段用，需搭配 Animator.speed = 0）。</summary>
+        public void ScrubAnimState(string stateName, float normalizedTime)
+        {
+            if (Animator == null || Animator.runtimeAnimatorController == null) return;
+            Animator.Play(Animator.StringToHash(stateName), 0, normalizedTime);
+        }
+
+        /// <summary>停格（0）或恢復播放速度。</summary>
+        public void SetAnimSpeed(float speed)
+        {
+            if (Animator != null) Animator.speed = speed;
         }
 
         /// <summary>追擊中實際有沒有在移動：被擋住超過門檻就改播 Idle，恢復移動再播 Run，動畫才不會和位移打架。</summary>
@@ -502,7 +817,7 @@ namespace PilgrimOfSin.StateMachine
             dir.y = 0f;
             dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector3.zero;
 
-            float step = _moveSpeed * dt;
+            float step = _profile.moveSpeed * dt;
             Vector3 moveDir = dir;
             if (dir != Vector3.zero && step > 0f)
             {
@@ -531,7 +846,7 @@ namespace PilgrimOfSin.StateMachine
                 transform.rotation = Quaternion.Slerp(transform.rotation,
                     Quaternion.LookRotation(dir), 10f * dt);
 
-            UpdateMoveAnim(step > _moveSpeed * dt * 0.1f, dt);
+            UpdateMoveAnim(step > _profile.moveSpeed * dt * 0.1f, dt);
         }
 
         /// <summary>
@@ -706,6 +1021,7 @@ namespace PilgrimOfSin.StateMachine
             StopAllCoroutines();                       // 結束進行中的天秤踢擊碰撞體脈衝
             if (_scaleHitbox) _scaleHitbox.enabled = false;
             if (_capsule) _capsule.enabled = false;    // 屍體不再擋路、不再被打
+            Feedback.Stop();
             try { _spawner?.ClearAll(); }
             catch (System.Exception e) { Debug.LogError($"[Greed] 清除錢袋失敗，仍繼續通關流程：{e}"); }
             if (BossResultPortal.Instance == null)
@@ -717,32 +1033,19 @@ namespace PilgrimOfSin.StateMachine
         //  Animation Events
         // ════════════════════════════════════════════════════════════
 
-        public void AnimEvent_AttackEnd() => OnAttackAnimEnd?.Invoke();
         public void AnimEvent_KickScaleEnd() => OnKickScaleAnimEnd?.Invoke();
 
-        /// <summary>
-        /// Attack1 砸下去的那一幀（由 Model 上的 GreedBossAnimationEvents 轉發）。
-        /// 在 Boss 前方做球形判定，命中玩家就扣血（玩家翻滾無敵幀由 PlayerController.TakeDamage 自己擋）。
-        /// 若事件到達時 Boss 已離開攻擊狀態或已死亡就忽略，避免遲到的事件誤傷。
-        /// </summary>
+        // 舊的 Attack1 動畫事件。命中與結束時間已改由 GreedBossProfile 的命中區間 / 動畫長度決定，
+        // 這兩個留著只是讓動畫裡既有的事件有接收者（不然 Unity 會報錯）。
+        // 傷害判定不在這裡做（交給命中區間）；只保留打擊感：砸下去那一幀觸發環境晃動
+        // （只晃鏡頭、不震手把，離越遠越小）。遲到的事件（已離開出招／已死亡）忽略。
         public void AnimEvent_AttackHit()
         {
             if (IsDead || BossResultPortal.IsPlayerDefeated) return;
-            var type = CurrentStateType;
-            if (type != GreedBossStateType.Attack1 && type != GreedBossStateType.Attack2 && type != GreedBossStateType.Attack3)
-                return;
-
-            Vector3 center = transform.position + transform.forward * _attackHitForward + Vector3.up * _attackHitHeight;
-            HitFeedback.Environment(HitImpactLevel.Heavy, center);   // 砸地衝擊：沒打中也會震，離越遠越小
-            foreach (var col in Physics.OverlapSphere(center, _attackHitRadius, ~0, QueryTriggerInteraction.Ignore))
-            {
-                if (!col.CompareTag("Player")) continue;
-                var player = col.GetComponentInParent<PlayerController>();
-                if (player == null) continue;
-                player.TakeDamage(GetAttackDamage(type));
-                return; // 一次攻擊只打一次
-            }
+            if (CurrentStateType != GreedBossStateType.Action) return;
+            HitFeedback.Environment(HitImpactLevel.Heavy, transform.position);
         }
+        public void AnimEvent_AttackEnd() { }
 
         public void AnimEvent_EnableScaleHitbox()
         {
@@ -756,8 +1059,60 @@ namespace PilgrimOfSin.StateMachine
 
         private void OnDrawGizmosSelected()
         {
+            if (_profile == null) return;
+
+            // 招式命中球（目前 Boss 位置 / 朝向）
             Gizmos.color = new Color(1f, 0.3f, 0.2f, 0.6f);
-            Gizmos.DrawWireSphere(transform.position + transform.forward * _attackHitForward + Vector3.up * _attackHitHeight, _attackHitRadius);
+            foreach (var m in _profile.moves)
+            {
+                if (m == null) continue;
+                foreach (var w in m.hitWindows)
+                    Gizmos.DrawWireSphere(LocalToWorldHitCenter(w.forward, w.height), w.radius);
+
+                if (m.UsesFanHit)   // 單次扇形判定（和癡相同的畫法）
+                {
+                    float half = Mathf.Min(m.hitAngle, 360f) * 0.5f;
+                    Vector3 prevPt = transform.position + Quaternion.Euler(0f, -half, 0f) * transform.forward * m.hitRadius;
+                    for (int s = 1; s <= 24; s++)
+                    {
+                        Vector3 next = transform.position + Quaternion.Euler(0f, -half + half * 2f * s / 24f, 0f) * transform.forward * m.hitRadius;
+                        Gizmos.DrawLine(prevPt, next);
+                        prevPt = next;
+                    }
+                    if (half < 180f)
+                    {
+                        Gizmos.DrawLine(transform.position, transform.position + Quaternion.Euler(0f, -half, 0f) * transform.forward * m.hitRadius);
+                        Gizmos.DrawLine(transform.position, transform.position + Quaternion.Euler(0f, half, 0f) * transform.forward * m.hitRadius);
+                    }
+                }
+            }
+
+            // 空襲：天秤兩側定位點
+            if (_scale != null)
+            {
+                var cfg = _profile.aerialKick;
+                float gy = Application.isPlaying ? _groundY : transform.position.y;
+                Gizmos.color = new Color(0.2f, 0.8f, 1f, 0.8f);
+                foreach (float sx in new[] { 1f, -1f })
+                {
+                    Vector3 p = KickCandidate(_scale.transform, new Vector3(sx * Mathf.Abs(cfg.kickPointLocal.x), 0f, cfg.kickPointLocal.z));
+                    p.y = gy + cfg.kickPointLocal.y;
+                    Gizmos.DrawWireSphere(p, 0.5f);
+                    Gizmos.DrawLine(p, new Vector3(p.x, gy, p.z));
+                }
+
+                // 盤旋圈
+                Gizmos.color = new Color(1f, 0.85f, 0.2f, 0.7f);
+                Vector3 c = _scale.transform.position; c.y = gy + cfg.cruiseHeight;
+                Vector3 prev = c + new Vector3(cfg.orbitRadius, 0f, 0f);
+                for (int i = 1; i <= 64; i++)
+                {
+                    float a = i / 64f * Mathf.PI * 2f;
+                    Vector3 q = c + new Vector3(Mathf.Cos(a) * cfg.orbitRadius, 0f, Mathf.Sin(a) * cfg.orbitRadius);
+                    Gizmos.DrawLine(prev, q);
+                    prev = q;
+                }
+            }
         }
     }
 }

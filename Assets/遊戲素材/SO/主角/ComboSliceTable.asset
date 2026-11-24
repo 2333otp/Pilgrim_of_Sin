@@ -64,16 +64,14 @@ MonoBehaviour:
     enabled: 1
     bakeRootY: 0
     note: "\u63EE\u64CA\u9AD8\u5CF0 0.20 / 0.75 / 1.15 / 1.40 / 1.67 / 2.28 \u79D2\uFF1B1.00~1.53
-      \u4E4B\u9593\u662F\u9023\u7E8C\u5FEB\u6253\uFF0C\u5408\u6210\u4E00\u6BB5\u3002"
+      \u4E4B\u9593\u662F\u9023\u7E8C\u5FEB\u6253\uFF0C\u5408\u6210\u4E00\u6BB5\u3002\n2026-11-23\uFF1As2\u3001s3
+      \u5408\u6210\u4E00\u6BB5\uFF08\u7B2C 24\uFF5E70 \u683C\uFF09\uFF0C\u4F01\u5283\u8981\u6C42\u3002"
     segments:
     - name: combo4_pencil_s1
       startFrame: 0
       endFrame: 24
     - name: combo4_pencil_s2
       startFrame: 24
-      endFrame: 50
-    - name: combo4_pencil_s3
-      startFrame: 50
       endFrame: 70
   - label: "\u6C34\u5F69\u7B46 Combo1"
     weapon: Brush
