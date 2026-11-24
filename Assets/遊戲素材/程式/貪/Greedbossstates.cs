@@ -100,6 +100,7 @@ namespace PilgrimOfSin.StateMachine
         private bool[] _windowHit;
         private bool[] _branchChecked;
         private bool _fanDone;
+        private bool _shakeDone;   // 這招的鏡頭晃動（素材總表「鏡頭晃動」）觸發過了沒
 
         public GreedMoveEntry CurrentMove => _move;
         public float Progress => _duration > 0f ? Mathf.Clamp01(_time / _duration) : 1f;
@@ -124,6 +125,7 @@ namespace PilgrimOfSin.StateMachine
             _windowHit = new bool[_move.hitWindows.Count];
             _branchChecked = new bool[_move.branches.Count];
             _fanDone = false;
+            _shakeDone = false;
             Boss.MarkMoveUsed(_move);
             Boss.PlayAnimState(_move.stateName, _move.speed);
             Boss.Feedback.Begin(_move);
@@ -140,6 +142,15 @@ namespace PilgrimOfSin.StateMachine
 
             Boss.Feedback.Tick(p);
             if (p < _move.trackUntilRatio) Boss.FacePlayer(dt, _move.turnSpeed);
+
+            // 打擊感：素材總表這一招設了「鏡頭晃動」就在指定時間點震一下（砸地這類衝擊；沒打中也會晃，
+            // 只晃鏡頭、不震手把、離越遠越小）。跟音效／特效一樣看動畫進度觸發，停格時會正確等待。
+            if (!_shakeDone && p >= _move.cameraShakeNormalizedTime)
+            {
+                _shakeDone = true;
+                if (_move.cameraShake != HitImpactLevel.Auto && _move.cameraShake != HitImpactLevel.None)
+                    HitFeedback.Environment(_move.cameraShake, Boss.transform.position);
+            }
 
             // 突進：把 lungeStart~lungeEnd 區間內這一幀經過的比例換算成距離
             if (_move.lungeDistance > 0f && _move.lungeEnd > _move.lungeStart)

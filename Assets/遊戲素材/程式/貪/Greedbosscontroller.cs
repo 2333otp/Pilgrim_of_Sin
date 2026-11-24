@@ -1036,15 +1036,9 @@ namespace PilgrimOfSin.StateMachine
         public void AnimEvent_KickScaleEnd() => OnKickScaleAnimEnd?.Invoke();
 
         // 舊的 Attack1 動畫事件。命中與結束時間已改由 GreedBossProfile 的命中區間 / 動畫長度決定，
-        // 這兩個留著只是讓動畫裡既有的事件有接收者（不然 Unity 會報錯）。
-        // 傷害判定不在這裡做（交給命中區間）；只保留打擊感：砸下去那一幀觸發環境晃動
-        // （只晃鏡頭、不震手把，離越遠越小）。遲到的事件（已離開出招／已死亡）忽略。
-        public void AnimEvent_AttackHit()
-        {
-            if (IsDead || BossResultPortal.IsPlayerDefeated) return;
-            if (CurrentStateType != GreedBossStateType.Action) return;
-            HitFeedback.Environment(HitImpactLevel.Heavy, transform.position);
-        }
+        // 這兩個留著只是讓動畫裡既有的事件有接收者（不然 Unity 會報錯），不做任何事。
+        // 砸地的鏡頭晃動也改由素材總表每一招的「鏡頭晃動」欄位設定（GreedActionState 觸發）。
+        public void AnimEvent_AttackHit() { }
         public void AnimEvent_AttackEnd() { }
 
         public void AnimEvent_EnableScaleHitbox()
