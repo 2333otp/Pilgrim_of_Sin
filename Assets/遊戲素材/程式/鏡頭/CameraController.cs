@@ -181,6 +181,9 @@ namespace PilgrimOfSin.StateMachine
                 ? LockTarget.position + Vector3.up * _lockOnLookAtHeight
                 : playerMid;
             _camera.transform.LookAt(lookAtPoint);
+
+            // 打擊感晃動：只轉角度不移位置（不會晃進牆裡），疊在算好的鏡頭方向上，不影響下一幀的跟隨計算
+            _camera.transform.rotation *= HitFeedback.GetShakeRotation(IsLockedOn && LockTarget != null);
         }
 
         // 從鏡頭軌道中心往理想鏡頭位置打 SphereCast，撞到場景就把鏡頭拉到牆面前，避免穿模看到場景背面

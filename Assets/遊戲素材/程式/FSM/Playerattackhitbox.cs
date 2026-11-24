@@ -28,6 +28,9 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>每次揮擊（Activate）加 1。讓「一次揮擊碰到多個碰撞體」的對象（例如天秤）能辨認同一擊、只處理一次。</summary>
         public int SwingId { get; private set; }
 
+        /// <summary>這一下打中時的打擊感檔位（鏡頭晃動／頓幀／手把震動／閃白）。</summary>
+        public HitImpactLevel Impact { get; private set; } = HitImpactLevel.Light;
+
         /// <summary>累計打中幾次（開發者面板用來閃一下命中提示）。</summary>
         public int TotalHits { get; private set; }
 
@@ -81,8 +84,13 @@ namespace PilgrimOfSin.StateMachine
         /// duration = 這一下有幾秒（往前飛的判定在這段時間內飛完全程）。
         /// </summary>
         public void Activate(float damage, HitboxShape shape, float duration)
+            => Activate(damage, shape, duration, HitImpactLevel.Light);
+
+        /// <summary>同上，並指定打中時的打擊感檔位。</summary>
+        public void Activate(float damage, HitboxShape shape, float duration, HitImpactLevel impact)
         {
             _damage = damage;
+            Impact = impact;
             _hitTargets.Clear();
             HitBossThisSwing = false;
             SwingId++;
@@ -203,8 +211,22 @@ namespace PilgrimOfSin.StateMachine
             _hitTargets.Add(target);
             TotalHits++;
             if (target is IBossHealth) HitBossThisSwing = true;
+
+            bool wasAlive = !IsBossDead(target);
             target.TakeDamage(_damage);
+
+            // 打倒 Boss 的那一下 = 極重（含慢動作）；其他照這一下的檔位
+            var level = Impact;
+            if (wasAlive && IsBossDead(target)) level = HitImpactLevel.Extreme;
+            HitFeedback.PlayerHit(level, target as Component);
         }
+
+        private static bool IsBossDead(IDamageable target) => target switch
+        {
+            IBossHealth boss => boss.IsDead,
+            WrathBossController wrath => wrath.IsDead,   // 嗔還沒實作 IBossHealth
+            _ => false,
+        };
     }
 
     /// <summary>判定槽（子物件）的觸發事件轉給 PlayerAttackHitbox。</summary>

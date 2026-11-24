@@ -369,6 +369,7 @@ namespace PilgrimOfSin.StateMachine
             _scaleHitbox.GetComponent<ScaleHitbox>()?.SetDamage(_scaleKickDamage);
             yield return new WaitForSeconds(_scaleKickHitboxDelay);
             _scaleHitbox.enabled = true;
+            HitFeedback.Environment(HitImpactLevel.Heavy, _scaleHitbox.transform.position);   // 踢翻天秤的衝擊
             yield return new WaitForSeconds(_scaleKickHitboxDuration);
             _scaleHitbox.enabled = false;
         }
@@ -732,6 +733,7 @@ namespace PilgrimOfSin.StateMachine
                 return;
 
             Vector3 center = transform.position + transform.forward * _attackHitForward + Vector3.up * _attackHitHeight;
+            HitFeedback.Environment(HitImpactLevel.Heavy, center);   // 砸地衝擊：沒打中也會震，離越遠越小
             foreach (var col in Physics.OverlapSphere(center, _attackHitRadius, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (!col.CompareTag("Player")) continue;

@@ -41,6 +41,11 @@ namespace PilgrimOfSin.StateMachine
         public bool customHitbox;
         public HitboxShape hitbox = new HitboxShape();
 
+        [Tooltip("打中時的打擊感檔位（鏡頭晃動／頓幀／手把震動／閃白）。\n" +
+                 "自動 = N1~N3 輕、N4 中、C1~C3 中、C4 重、停頓連打 中、蓄力 重。\n" +
+                 "有多個命中區間時，自動只套在最後一下，前面幾下用「輕」。")]
+        public HitImpactLevel impact = HitImpactLevel.Auto;
+
         [Header("音效 / 配音 / 特效（用法同動作清單）")]
         [Tooltip("音效音檔，可放多個，每次隨機播一個。")]
         public AudioClip[] sfx = new AudioClip[0];
@@ -98,6 +103,20 @@ namespace PilgrimOfSin.StateMachine
         [Tooltip("勾選 = 這一下用自己的判定形狀（例如投擲那一下）；不勾 = 用這一招／武器的設定。")]
         public bool customHitbox;
         public HitboxShape hitbox = new HitboxShape();
+
+        [Tooltip("這一下的打擊感檔位。自動 = 最後一下用整招的檔位，前面幾下用「輕」。")]
+        public HitImpactLevel impact = HitImpactLevel.Auto;
+
+        /// <summary>
+        /// 第 i 下實際的打擊感檔位：這一下有指定就用；否則最後一下 = 整招檔位，前面幾下 = 輕（整招是「無」就都無）。
+        /// </summary>
+        public static HitImpactLevel ImpactAt(List<HitWindow> windows, int i, HitImpactLevel moveLevel)
+        {
+            if (windows != null && i >= 0 && i < windows.Count && windows[i].impact != HitImpactLevel.Auto)
+                return windows[i].impact;
+            if (windows == null || i >= windows.Count - 1 || moveLevel == HitImpactLevel.None) return moveLevel;
+            return HitImpactLevel.Light;
+        }
 
         /// <summary>動畫播到 progress 時落在第幾個區間（-1 = 沒有）。</summary>
         public static int IndexAt(List<HitWindow> windows, float progress)
@@ -173,6 +192,9 @@ namespace PilgrimOfSin.StateMachine
                  "留空 = 整招只算一下（舊行為：一開始就開判定，整招每個敵人只打一次）。\n" +
                  "傷害總量 = 主角 PlayerCombat 上的特殊技數值，區間沒填傷害就平分。")]
         public List<HitWindow> specialHitWindows = new List<HitWindow>();
+
+        [Tooltip("秘劍的打擊感檔位。自動 = 重（多段時最後一下重、前面幾下輕）。")]
+        public HitImpactLevel specialImpact = HitImpactLevel.Auto;
 
         [Tooltip("勾選 = 秘劍用自己的判定形狀；不勾 = 用武器預設。")]
         public bool specialCustomHitbox;

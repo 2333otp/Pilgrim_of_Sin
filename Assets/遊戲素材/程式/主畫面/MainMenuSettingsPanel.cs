@@ -26,11 +26,14 @@ namespace PilgrimOfSin
         [SerializeField] private GameObject _volumeSubPanel;
         [SerializeField] private GameObject _controlsSubPanel;
         [SerializeField] private GameObject _creditsSubPanel;
+        [Tooltip("畫面與震動（鏡頭晃動強度／手把震動）。這一頁自己處理輸入（DisplaySettingsPanel），這裡只負責開關。")]
+        [SerializeField] private GameObject _displaySubPanel;
 
         [Header("設置選單 - 入口按鈕")]
         [SerializeField] private Button _btnSettingsVolume;
         [SerializeField] private Button _btnSettingsControls;
         [SerializeField] private Button _btnSettingsCredits;
+        [SerializeField] private Button _btnSettingsDisplay;
 
         [Header("音量滑桿")]
         [SerializeField] private Slider _masterSlider;
@@ -68,6 +71,7 @@ namespace PilgrimOfSin
             _btnSettingsVolume.onClick.AddListener(() => Show(_volumeSubPanel));
             _btnSettingsControls.onClick.AddListener(() => Show(_controlsSubPanel));
             _btnSettingsCredits.onClick.AddListener(() => Show(_creditsSubPanel));
+            _btnSettingsDisplay?.onClick.AddListener(() => Show(_displaySubPanel));
 
             BindSliders();
             HideAll();
@@ -78,7 +82,7 @@ namespace PilgrimOfSin
         private void Update()
         {
             if (!_settingsSubPanel.activeSelf && !_volumeSubPanel.activeSelf &&
-                !_controlsSubPanel.activeSelf && !_creditsSubPanel.activeSelf)
+                !_controlsSubPanel.activeSelf && !_creditsSubPanel.activeSelf && !IsActive(_displaySubPanel))
                 return;
 
             if (_navCooldown > 0f) _navCooldown -= Time.unscaledDeltaTime;
@@ -94,7 +98,7 @@ namespace PilgrimOfSin
             if (!keyboardBack && !gamepadBack)
                 return;
 
-            if (_volumeSubPanel.activeSelf || _controlsSubPanel.activeSelf || _creditsSubPanel.activeSelf)
+            if (_volumeSubPanel.activeSelf || _controlsSubPanel.activeSelf || _creditsSubPanel.activeSelf || IsActive(_displaySubPanel))
             {
                 Show(_settingsSubPanel);
             }
@@ -196,6 +200,10 @@ namespace PilgrimOfSin
             Color target = highlighted ? colors.highlightedColor : colors.normalColor;
             sel.targetGraphic.color = target;
             sel.transform.localScale = highlighted ? Vector3.one * SelectedButtonScale : Vector3.one;
+
+            // 設置選項的入口按鈕是純文字（跟 ESC 選單共用 SettingsSubPanels.prefab）：選中時文字左邊顯示 ◆
+            var item = sel.GetComponent<MenuItemHighlight>();
+            if (item != null) item.SetHighlighted(highlighted);
         }
 
         // ── 音量子面板：上下切換滑桿、左右調整目前選到的那條 ────────────
@@ -270,6 +278,7 @@ namespace PilgrimOfSin
             _volumeSubPanel.SetActive(panel == _volumeSubPanel);
             _controlsSubPanel.SetActive(panel == _controlsSubPanel);
             _creditsSubPanel.SetActive(panel == _creditsSubPanel);
+            if (_displaySubPanel != null) _displaySubPanel.SetActive(panel == _displaySubPanel);
 
             // 切面板前把目前反白的按鈕/滑桿實際復原，避免視覺卡住
             SetHovered(null);
@@ -279,7 +288,7 @@ namespace PilgrimOfSin
             _lastMousePos        = null;
 
             if (panel == _settingsSubPanel)
-                _navButtons = new[] { _btnSettingsVolume, _btnSettingsControls, _btnSettingsCredits };
+                _navButtons = new[] { _btnSettingsVolume, _btnSettingsDisplay, _btnSettingsControls, _btnSettingsCredits };
 
             if (panel == _volumeSubPanel)
                 SyncSliderValues();
@@ -291,7 +300,10 @@ namespace PilgrimOfSin
             _volumeSubPanel.SetActive(false);
             _controlsSubPanel.SetActive(false);
             _creditsSubPanel.SetActive(false);
+            if (_displaySubPanel != null) _displaySubPanel.SetActive(false);
         }
+
+        private static bool IsActive(GameObject go) => go != null && go.activeSelf;
 
         // ── 音量同步（與 PauseMenuUI 相同邏輯）───────────────────────────
 

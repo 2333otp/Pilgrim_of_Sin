@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e267b443a88f6bb4891ce5feb8543971, type: 3}
+  m_Name: HitFeedbackSettings
+  m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.HitFeedbackSettings
+  light:
+    shakeAngle: 0.6
+    shakeDuration: 0.1
+    hitstop: 0.035
+    slowMotion: 0
+    rumbleLow: 0.1
+    rumbleHigh: 0.2
+    rumbleDuration: 0.06
+    flashDuration: 0.14
+    flashIntensity: 0.15
+    flashGlow: 0.25
+  medium:
+    shakeAngle: 1.2
+    shakeDuration: 0.2
+    hitstop: 0.06
+    slowMotion: 0
+    rumbleLow: 0.2
+    rumbleHigh: 0.3
+    rumbleDuration: 0.1
+    flashDuration: 0.18
+    flashIntensity: 0.22
+    flashGlow: 0.4
+  heavy:
+    shakeAngle: 2.2
+    shakeDuration: 0.35
+    hitstop: 0.1
+    slowMotion: 0
+    rumbleLow: 0.35
+    rumbleHigh: 0.45
+    rumbleDuration: 0.16
+    flashDuration: 0.24
+    flashIntensity: 0.3
+    flashGlow: 0.6
+  extreme:
+    shakeAngle: 3.2
+    shakeDuration: 0.5
+    hitstop: 0.12
+    slowMotion: 0.6
+    rumbleLow: 0.55
+    rumbleHigh: 0.6
+    rumbleDuration: 0.3
+    flashDuration: 0.32
+    flashIntensity: 0.4
+    flashGlow: 0.85
+  shakeFrequency: 22
+  lockOnShakeMultiplier: 0.5
+  hitstopTimeScale: 0.05
+  slowMotionTimeScale: 0.3
+  environmentFullRange: 6
+  environmentMaxRange: 25
+  flashTint: {r: 1, g: 0.85, b: 0.6, a: 1}
+  flashMinInterval: 0.1
