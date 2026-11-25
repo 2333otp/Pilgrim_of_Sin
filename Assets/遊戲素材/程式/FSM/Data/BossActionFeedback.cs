@@ -78,6 +78,12 @@ namespace PilgrimOfSin.StateMachine
                     Schedule(vfx.normalizedTime * duration, () => SpawnVfx(vfx));
                 }
 
+            if (entry.cameraShake != HitImpactLevel.Auto && entry.cameraShake != HitImpactLevel.None)
+            {
+                var level = entry.cameraShake;
+                Schedule(entry.cameraShakeNormalizedTime * duration, () => HitFeedback.Environment(level, transform.position));
+            }
+
             if (onHit != null) Schedule(entry.hitNormalizedTime * duration, onHit);
         }
 

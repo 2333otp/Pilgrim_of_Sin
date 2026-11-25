@@ -249,6 +249,9 @@ namespace PilgrimOfSin.StateMachine.EditorTools
                 string title = special.arraySize > 0 ? $"秘劍 R1 命中區間　命中 {special.arraySize} 下" : "秘劍 R1 命中區間　整招一下";
                 EditorGUILayout.PropertyField(special, new GUIContent(title), true);
             }
+            var specialImpact = combo.FindPropertyRelative("specialImpact");
+            if (specialImpact != null)
+                EditorGUILayout.PropertyField(specialImpact, new GUIContent("秘劍 R1 打擊感"));
         }
 
         /// <summary>收合時的標題：「N1 ⬜　combo2_pencil_s1 · 0.79s · 取消 50%」，沒放動畫顯示（空）。</summary>

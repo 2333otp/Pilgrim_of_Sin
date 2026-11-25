@@ -57,6 +57,8 @@ namespace PilgrimOfSin
         [SerializeField] private GameObject _volumeSubPanel;
         [SerializeField] private GameObject _controlsSubPanel;
         [SerializeField] private GameObject _creditsSubPanel;
+        [Tooltip("畫面與震動（鏡頭晃動強度／手把震動）。這一頁自己處理輸入（DisplaySettingsPanel），這裡只負責開關。")]
+        [SerializeField] private GameObject _displaySubPanel;
 
         // ── 音量子面板元件 ─────────────────────────────────────────────
         [Header("音量子面板")]
@@ -71,6 +73,7 @@ namespace PilgrimOfSin
         [SerializeField] private Button _btnSettingsVolume;
         [SerializeField] private Button _btnSettingsControls;
         [SerializeField] private Button _btnSettingsCredits;
+        [SerializeField] private Button _btnSettingsDisplay;
 
         // ── 玩家狀態面板 ───────────────────────────────────────────────
         [Header("玩家狀態面板")]
@@ -228,6 +231,7 @@ namespace PilgrimOfSin
                 if (_currentSubPanel == _settingsSubPanel)
                 {
                     TryClick(_btnSettingsVolume,   pos, () => OpenSubPanel(_volumeSubPanel,   _settingsSubPanel));
+                    TryClick(_btnSettingsDisplay,  pos, () => OpenSubPanel(_displaySubPanel,  _settingsSubPanel));
                     TryClick(_btnSettingsControls, pos, () => OpenSubPanel(_controlsSubPanel, _settingsSubPanel));
                     TryClick(_btnSettingsCredits,  pos, () => OpenSubPanel(_creditsSubPanel,  _settingsSubPanel));
                 }
@@ -317,6 +321,9 @@ namespace PilgrimOfSin
                 }
                 return;
             }
+
+            // ── 畫面與震動：整頁由 DisplaySettingsPanel 自己處理 ──────
+            if (_displaySubPanel != null && _currentSubPanel == _displaySubPanel) return;
 
             // ── 音量子面板：上下切換滑桿、左右調整目前選到的那條 ──────
             if (_currentSubPanel == _volumeSubPanel)
@@ -421,13 +428,15 @@ namespace PilgrimOfSin
             {
                 _navButtons = _currentStatusTab != null
                     ? new Button[0] // 分頁內容自己處理翻頁（如 MemoryPageBook 的手把 L1/R1）
-                    : new Button[] { _btnStatusWeaponInfo, _btnStatusMemories, _btnStatusCharData, _btnStatusBackpack, _btnReturnFromStatus };
+                    // 順序要跟畫面由上到下一致（返回ESC選單在最上面），方向鍵才不會亂跳。
+                    // 背包目前沒有接（null），Navigate 會自動略過；之後加回來時放到畫面對應的位置。
+                    : new Button[] { _btnReturnFromStatus, _btnStatusWeaponInfo, _btnStatusMemories, _btnStatusCharData, _btnStatusBackpack };
                 return;
             }
 
             if (_currentSubPanel != null && _currentSubPanel.activeSelf)
             {
-                if      (_currentSubPanel == _settingsSubPanel)          _navButtons = new Button[] { _btnSettingsVolume, _btnSettingsControls, _btnSettingsCredits };
+                if      (_currentSubPanel == _settingsSubPanel)          _navButtons = new Button[] { _btnSettingsVolume, _btnSettingsDisplay, _btnSettingsControls, _btnSettingsCredits };
                 else if (_currentSubPanel == _volumeSubPanel)            _navButtons = new Button[0];
                 else if (_currentSubPanel == _controlsSubPanel)          _navButtons = new Button[0];
                 else if (_currentSubPanel == _creditsSubPanel)           _navButtons = new Button[0];
@@ -453,6 +462,7 @@ namespace PilgrimOfSin
             else if (btn == _btnReturnHub)        OnReturnHubClicked();
             else if (btn == _btnMainMenu)         OnReturnMainMenuClicked();
             else if (btn == _btnSettingsVolume)   OpenSubPanel(_volumeSubPanel,   _settingsSubPanel);
+            else if (btn == _btnSettingsDisplay)  OpenSubPanel(_displaySubPanel,  _settingsSubPanel);
             else if (btn == _btnSettingsControls) OpenSubPanel(_controlsSubPanel, _settingsSubPanel);
             else if (btn == _btnSettingsCredits)  OpenSubPanel(_creditsSubPanel,  _settingsSubPanel);
             else if (btn == _btnConfirmHub)        ExecuteReturnHub();
@@ -505,6 +515,7 @@ namespace PilgrimOfSin
                 if (_currentSubPanel == _settingsSubPanel)
                 {
                     if (IsOver(_btnSettingsVolume,   pos)) return _btnSettingsVolume;
+                    if (IsOver(_btnSettingsDisplay,  pos)) return _btnSettingsDisplay;
                     if (IsOver(_btnSettingsControls, pos)) return _btnSettingsControls;
                     if (IsOver(_btnSettingsCredits,  pos)) return _btnSettingsCredits;
                     return null;
@@ -564,6 +575,10 @@ namespace PilgrimOfSin
             // 用深色反白列取代色彩變化，這裡順便同步切換。
             var choice = btn.GetComponent<ConfirmDialogChoice>();
             if (choice != null) choice.SetSelected(highlighted);
+
+            // 純文字選單項目（ESC 主選單、設置選項、玩家狀態分頁）：選中時文字左邊顯示 ◆
+            var item = btn.GetComponent<MenuItemHighlight>();
+            if (item != null) item.SetHighlighted(highlighted);
         }
 
         // ── 公開 API（由 PausedState 呼叫）────────────────────────────
@@ -747,6 +762,7 @@ namespace PilgrimOfSin
             if (_volumeSubPanel   != null) _volumeSubPanel.SetActive(false);
             if (_controlsSubPanel != null) _controlsSubPanel.SetActive(false);
             if (_creditsSubPanel  != null) _creditsSubPanel.SetActive(false);
+            if (_displaySubPanel  != null) _displaySubPanel.SetActive(false);
             _currentSubPanel  = null;
             _previousSubPanel = null;
         }

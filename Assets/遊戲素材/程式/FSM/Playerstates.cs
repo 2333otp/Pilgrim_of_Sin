@@ -850,6 +850,7 @@ namespace PilgrimOfSin.StateMachine
 
         // 命中區間：每一下各開一次攻擊判定
         private float _moveDamage;     // 整招傷害
+        private HitImpactLevel _moveImpact;   // 整招打擊感檔位
         private int _activeWindow = -1;
 
         // 🔺 長按判斷
@@ -1075,10 +1076,11 @@ namespace PilgrimOfSin.StateMachine
                     : kind == MoveKind.Pause ? Player.Combat.GetDefaultBranchMoveDamage(false)
                     : kind == MoveKind.Hold ? Player.Combat.GetDefaultBranchMoveDamage(true)
                     : Player.Combat.GetDefaultMoveDamage(kind == MoveKind.Strong, index);
+                _moveImpact = move.impact != HitImpactLevel.Auto ? move.impact : DefaultImpact(kind, index);
                 // 沒設命中區間：整招只算一下（舊行為），一出招就開判定
                 if (!move.HasHitWindows)
                 {
-                    Player.Combat.StartMoveAttack(_moveDamage, _set.ResolveHitbox(null, move.customHitbox, move.hitbox), move.Duration);
+                    Player.Combat.StartMoveAttack(_moveDamage, _set.ResolveHitbox(null, move.customHitbox, move.hitbox), move.Duration, _moveImpact);
                     _activeWindow = 0;
                 }
             }
@@ -1100,10 +1102,24 @@ namespace PilgrimOfSin.StateMachine
                 var window = _move.hitWindows[w];
                 var shape = _set.ResolveHitbox(window, _move.customHitbox, _move.hitbox);
                 float seconds = (window.end - window.start) * _move.Duration;
-                Player.Combat.StartMoveAttack(_move.GetWindowDamage(w, _moveDamage), shape, seconds);
+                Player.Combat.StartMoveAttack(_move.GetWindowDamage(w, _moveDamage), shape, seconds,
+                                              HitWindow.ImpactAt(_move.hitWindows, w, _moveImpact));
             }
             else Player.Combat.EndAttack();
         }
+
+        /// <summary>
+        /// 招式打擊感「自動」時的檔位：一般攻擊 N1~N3 輕、N4 中；強攻擊 C1~C3 中、C4 重；停頓連打 中；蓄力 重。
+        /// 原則：輕的很輕、重的很重，普攻不會每下都大震。
+        /// </summary>
+        private static HitImpactLevel DefaultImpact(MoveKind kind, int index) => kind switch
+        {
+            MoveKind.Normal => index >= 3 ? HitImpactLevel.Medium : HitImpactLevel.Light,
+            MoveKind.Strong => index >= 3 ? HitImpactLevel.Heavy : HitImpactLevel.Medium,
+            MoveKind.Pause => HitImpactLevel.Medium,
+            MoveKind.Hold => HitImpactLevel.Heavy,
+            _ => HitImpactLevel.Light,
+        };
     }
 
 
@@ -1156,12 +1172,16 @@ namespace PilgrimOfSin.StateMachine
                 // 沒設命中區間：整招一下（舊行為）；有設判定形狀就用形狀
                 var shape = _set?.ResolveHitbox(null, _set.specialCustomHitbox, _set.specialHitbox);
                 if (shape == null) Player.Combat?.StartSpecialAttack();
-                else Player.Combat?.StartMoveAttack(Player.Combat.SpecialDamage, shape, FallbackDuration);
+                else Player.Combat?.StartMoveAttack(Player.Combat.SpecialDamage, shape, FallbackDuration, SpecialImpact);
             }
             else Player.Combat?.EndAttack();
         }
 
         private ComboMoveSet _set;
+
+        /// <summary>秘劍整招的打擊感檔位：出招表有指定就用，自動 = 重。</summary>
+        private HitImpactLevel SpecialImpact =>
+            _set != null && _set.specialImpact != HitImpactLevel.Auto ? _set.specialImpact : HitImpactLevel.Heavy;
 
         public override void Update(float dt)
         {
@@ -1211,7 +1231,8 @@ namespace PilgrimOfSin.StateMachine
                 var window = _windows[w];
                 var shape = _set?.ResolveHitbox(window, _set.specialCustomHitbox, _set.specialHitbox);
                 Player.Combat.StartMoveAttack(HitWindow.DamageAt(_windows, w, Player.Combat.SpecialDamage), shape,
-                                              (window.end - window.start) * duration);
+                                              (window.end - window.start) * duration,
+                                              HitWindow.ImpactAt(_windows, w, SpecialImpact));
             }
             else Player.Combat.EndAttack();
         }

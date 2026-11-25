@@ -61,17 +61,19 @@ namespace PilgrimOfSin.StateMachine
         //  公開介面（由攻擊狀態呼叫）
         // ────────────────────────────────────────────────────────────
 
+        // 舊連段的打擊感：輕攻擊 輕、重攻擊 中、連段最後一下（4）中、其餘輕、特殊技 重
         public void StartLightAttack()
-            => _hitbox?.Activate(GetDamage(AttackType.Light));
+            => _hitbox?.Activate(GetDamage(AttackType.Light), null, 0f, HitImpactLevel.Light);
 
         public void StartHeavyAttack()
-            => _hitbox?.Activate(GetDamage(AttackType.Heavy));
+            => _hitbox?.Activate(GetDamage(AttackType.Heavy), null, 0f, HitImpactLevel.Medium);
 
         public void StartComboAttack(int comboIndex)
-            => _hitbox?.Activate(GetDamage(AttackType.Combo, comboIndex));
+            => _hitbox?.Activate(GetDamage(AttackType.Combo, comboIndex), null, 0f,
+                                 comboIndex >= 4 ? HitImpactLevel.Medium : HitImpactLevel.Light);
 
         public void StartSpecialAttack()
-            => _hitbox?.Activate(GetDamage(AttackType.Special));
+            => _hitbox?.Activate(GetDamage(AttackType.Special), null, 0f, HitImpactLevel.Heavy);
 
         public void EndAttack()
             => _hitbox?.Deactivate();
@@ -83,6 +85,10 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>出招表的一下：指定判定形狀（null = 舊的球）與這一下的秒數（往前飛的判定用）。</summary>
         public void StartMoveAttack(float damage, HitboxShape shape, float duration)
             => _hitbox?.Activate(damage, shape, duration);
+
+        /// <summary>同上，並指定打中時的打擊感檔位。</summary>
+        public void StartMoveAttack(float damage, HitboxShape shape, float duration, HitImpactLevel impact)
+            => _hitbox?.Activate(damage, shape, duration, impact);
 
         /// <summary>攻擊判定元件（F1 顯示判定形狀用）。</summary>
         public PlayerAttackHitbox Hitbox => _hitbox;

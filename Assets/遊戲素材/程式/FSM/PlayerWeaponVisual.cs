@@ -118,6 +118,12 @@ namespace PilgrimOfSin.StateMachine
                 _player.OnWeaponSwitched -= Equip;
         }
 
+        /// <summary>
+        /// 不靠 PlayerController 直接換武器（給武器介紹頁的展示用 Muir 用；遊戲中照舊走 OnWeaponSwitched）。
+        /// 1鉛筆 2畫筆 3畫刀 4調色盤。
+        /// </summary>
+        public void EquipWeapon(int weaponIndex) => Equip(weaponIndex);
+
         private void Equip(int weaponIndex)
         {
             ClearSpawned();

@@ -1036,9 +1036,11 @@ MonoBehaviour:
   _volumeSubPanel: {fileID: 1984688051}
   _controlsSubPanel: {fileID: 1984688050}
   _creditsSubPanel: {fileID: 1984688049}
+  _displaySubPanel: {fileID: 1082012357}
   _btnSettingsVolume: {fileID: 1984688048}
   _btnSettingsControls: {fileID: 1984688047}
   _btnSettingsCredits: {fileID: 1984688046}
+  _btnSettingsDisplay: {fileID: 1082012356}
   _masterSlider: {fileID: 1984688045}
   _musicSlider: {fileID: 1984688044}
   _sfxSlider: {fileID: 1984688042}
@@ -1822,6 +1824,22 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.55}
   m_EffectDistance: {x: 5, y: -5}
   m_UseGraphicAlpha: 1
+--- !u!114 &1082012356 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1126346076518423975, guid: cb728d5b1a91f5d428e73969e9be54da, type: 3}
+  m_PrefabInstance: {fileID: 1984688041}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &1082012357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5057261457075677715, guid: cb728d5b1a91f5d428e73969e9be54da, type: 3}
+  m_PrefabInstance: {fileID: 1984688041}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1088732801
 GameObject:
   m_ObjectHideFlags: 0

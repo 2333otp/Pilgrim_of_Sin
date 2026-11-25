@@ -317,6 +317,8 @@ namespace PilgrimOfSin.StateMachine
         public void AnimEvent_EnableExplosion()
         {
             if (_explosionHitbox) _explosionHitbox.enabled = true;
+            // 爆炸衝擊：沒打中也會震，離越遠越小
+            HitFeedback.Environment(HitImpactLevel.Heavy, _explosionHitbox ? _explosionHitbox.transform.position : transform.position);
         }
 
         /// <summary>爆炸動畫結束後：關閉爆炸碰撞體。</summary>

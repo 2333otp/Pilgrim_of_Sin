@@ -84,6 +84,14 @@ namespace PilgrimOfSin.StateMachine
         [Tooltip("特效清單，可多個；Prefab 留空 = 不生成。骨骼名稱請填 Boss 模型裡的骨頭名稱。")]
         public PlayerVfxEntry[] vfx = new PlayerVfxEntry[0];
 
+        [Header("鏡頭晃動（砸地、嘶吼這類衝擊；沒打中主角也會震，離越遠越小）")]
+        [Tooltip("衝擊的打擊感檔位。自動／無 = 不震。建議只給真正有衝擊的動作（砸地、嘶吼），一般揮擊不用。\n" +
+                 "只會震「一下」，不會持續晃（動暈考量）。主角被打中時另外有自己的晃動。")]
+        public HitImpactLevel cameraShake = HitImpactLevel.Auto;
+
+        [Range(0f, 1f)] [Tooltip("晃動時間點：動畫播到這個比例的那一刻震一下（例如砸到地面那一幀）。")]
+        public float cameraShakeNormalizedTime;
+
         [Header("攻擊判定（只有攻擊動作會用到，其他動作不用管）")]
         [Min(0f)] [Tooltip("命中時對主角造成的傷害。")]
         public float damage;

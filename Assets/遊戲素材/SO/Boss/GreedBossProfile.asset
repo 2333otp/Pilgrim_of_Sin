@@ -128,6 +128,8 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
+    cameraShake: 4
+    cameraShakeNormalizedTime: 0.78
     damage: 900
     attackRange: 0
     hitNormalizedTime: 0.5

@@ -452,7 +452,12 @@ namespace PilgrimOfSin.StateMachine
         public void TakeDamage(float amount)
         {
             if (IsInvincible) return;
+            bool wasAlive = CurrentHp > 0f;
             CurrentHp = Mathf.Max(0f, CurrentHp - amount * _incomingDamageMultiplier);
+
+            // 被打的回饋：一般 中、被打倒 重（環境持續傷害 TakeEnvironmentDamage 不震，避免一直晃）
+            if (wasAlive)
+                HitFeedback.PlayerHurt(CurrentHp <= 0f ? HitImpactLevel.Heavy : HitImpactLevel.Medium);
 
             if (CurrentHp <= 0f)
             {

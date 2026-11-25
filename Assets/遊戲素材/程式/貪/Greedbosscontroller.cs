@@ -374,6 +374,7 @@ namespace PilgrimOfSin.StateMachine
             _scaleHitbox.GetComponent<ScaleHitbox>()?.SetDamage(_scaleKickDamage);
             yield return new WaitForSeconds(_scaleKickHitboxDelay);
             _scaleHitbox.enabled = true;
+            HitFeedback.Environment(HitImpactLevel.Heavy, _scaleHitbox.transform.position);   // 踢翻天秤的衝擊
             yield return new WaitForSeconds(_scaleKickHitboxDuration);
             _scaleHitbox.enabled = false;
         }
@@ -1054,6 +1055,7 @@ namespace PilgrimOfSin.StateMachine
 
         // 舊的 Attack1 動畫事件。命中與結束時間已改由 GreedBossProfile 的命中區間 / 動畫長度決定，
         // 這兩個留著只是讓動畫裡既有的事件有接收者（不然 Unity 會報錯），不做任何事。
+        // 砸地的鏡頭晃動也改由素材總表每一招的「鏡頭晃動」欄位設定（GreedActionState 觸發）。
         public void AnimEvent_AttackHit() { }
         public void AnimEvent_AttackEnd() { }
 
