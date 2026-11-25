@@ -257,6 +257,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.425
         end: 0.525
         damage: 0
@@ -270,6 +271,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.55
         end: 0.7
         damage: 0
@@ -283,6 +285,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -292,6 +295,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -320,6 +324,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -329,6 +334,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -357,6 +363,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.576
         end: 0.939
         damage: 0
@@ -370,6 +377,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -379,6 +387,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -407,6 +416,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.412
         end: 0.647
         damage: 0
@@ -420,6 +430,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -429,6 +440,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -457,6 +469,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.206
         end: 0.324
         damage: 0
@@ -470,6 +483,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.382
         end: 0.588
         damage: 0
@@ -483,6 +497,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -492,6 +507,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -520,6 +536,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.447
         end: 0.579
         damage: 0
@@ -533,6 +550,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.605
         end: 0.895
         damage: 0
@@ -546,6 +564,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -555,6 +574,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -583,6 +603,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.433
         end: 0.833
         damage: 0
@@ -596,6 +617,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -605,6 +627,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -633,6 +656,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -642,6 +666,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -670,6 +695,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.27
         end: 0.514
         damage: 0
@@ -683,6 +709,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.649
         end: 0.784
         damage: 0
@@ -696,6 +723,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -705,6 +733,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -735,6 +764,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.125
         end: 0.24
         damage: 0
@@ -748,6 +778,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       - start: 0.688
         end: 0.74
         damage: 0
@@ -761,6 +792,7 @@ MonoBehaviour:
           size: {x: 1.8, y: 1.8, z: 1.8}
           motion: 0
           projectileDistance: 6
+        impact: 0
       customHitbox: 0
       hitbox:
         shape: 0
@@ -770,6 +802,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
       sfx: []
       sfxVolume: 1
       sfxNormalizedTime: 0
@@ -793,6 +826,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
     - start: 0.367
       end: 0.392
       damage: 0
@@ -806,6 +840,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
     - start: 0.558
       end: 0.592
       damage: 0
@@ -819,6 +854,7 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
     - start: 0.658
       end: 0.808
       damage: 0
@@ -832,6 +868,8 @@ MonoBehaviour:
         size: {x: 1.8, y: 1.8, z: 1.8}
         motion: 0
         projectileDistance: 6
+      impact: 0
+    specialImpact: 0
     specialCustomHitbox: 0
     specialHitbox:
       shape: 0
