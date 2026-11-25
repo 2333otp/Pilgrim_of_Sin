@@ -225,6 +225,9 @@ namespace PilgrimOfSin.StateMachine
         {
             EnsureStateMachine();
 
+            // 開場操作引導開著時整個狀態機停住：玩家在引導裡試按的鍵不會出招，Options 也不會打開 ESC 選單
+            if (PilgrimOfSin.OpeningGuidePanel.IsOpen) return;
+
             // timeScale = 0 時只跑狀態機（讓 PausedState 可以偵測輸入恢復）
             _stateMachine.Update(Time.unscaledDeltaTime);
             _clipPlayer?.Tick(Time.deltaTime);   // 出招表動畫的淡入淡出（暫停時 deltaTime = 0，跟著停）

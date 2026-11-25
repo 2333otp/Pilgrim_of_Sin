@@ -154,6 +154,7 @@ namespace PilgrimOfSin.StateMachine
         private void OnGUI()
         {
             if (!_visible) return;
+            if (PilgrimOfSin.OpeningGuidePanel.IsOpen) return; // 開場引導開著時不蓋在上面
 
             _scale = Mathf.Clamp(Screen.height / 450f, 1f, 4f);
             EnsureStyles();

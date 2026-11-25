@@ -234,14 +234,7 @@ namespace PilgrimOfSin.EditorTools
             sso.FindProperty("_textureSize").vector2IntValue = new Vector2Int(1344, 1080);
             sso.ApplyModifiedPropertiesWithoutUndo();
 
-            // 出招表上方：剛剛按了什麼（像格鬥遊戲的訓練模式）
-            var histLabel = Text("InputHistoryLabel", page, "輸入", 22f, Muted, TextAlignmentOptions.MidlineLeft);
-            At(histLabel.rectTransform, 108, 146, 50, 28);
-            var hist = New("InputHistory", page);
-            At((RectTransform)hist, 146, 146, 380, 28);
-            // 說明灰色按鍵的意思（靠右對齊出招表的右緣）
-            var histNote = Text("InputHistoryNote", page, "灰色＝按太早，沒接上", 20f, Muted, TextAlignmentOptions.MidlineRight);
-            At(histNote.rectTransform, 430, 146, 230, 28);
+            // 「輸入」歷史列已移除（2026-11-25 使用者：出招表通常不會有這個）；_historyRoot 留空即不顯示
 
             trial = page.gameObject.AddComponent<MoveTrialController>();
             var tso = new SerializedObject(trial);
@@ -249,7 +242,7 @@ namespace PilgrimOfSin.EditorTools
             tso.FindProperty("_preview").objectReferenceValue = stage;
             tso.FindProperty("_gameplayController").objectReferenceValue =
                 AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/遊戲素材/角色/謬爾/Muir_Gameplay.controller");
-            tso.FindProperty("_historyRoot").objectReferenceValue = hist;
+            tso.FindProperty("_historyRoot").objectReferenceValue = null;
             tso.FindProperty("_font").objectReferenceValue = _font;
             tso.FindProperty("_square").objectReferenceValue = Glyph("右邊圖形鍵-正方形.png");
             tso.FindProperty("_triangle").objectReferenceValue = Glyph("右邊圖形鍵-三角形.png");
