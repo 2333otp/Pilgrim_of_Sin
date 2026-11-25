@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: FoolishBossProfile
   m_EditorClassIdentifier: Assembly-CSharp::PilgrimOfSin.StateMachine.FoolishBossProfile
   displayName: "\u5FC3\u9B54-\u7661"
-  maxHp: 10000
+  maxHp: 5000
   moveSpeed: 3.5
-  idleDuration: 1
+  moveAnimReferenceSpeed: 3
+  idleDuration: 1.8
   animatorController: {fileID: 9100000, guid: c8b233916c6b520488a76b6835d7a641, type: 2}
   idle:
     stateName: Idle
@@ -112,9 +113,9 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    damage: 800
+    damage: 560
     attackRange: 3
-    hitNormalizedTime: 0.5
+    hitNormalizedTime: 0.63
     hitRadius: 3.5
     hitAngle: 120
   attack2:
@@ -131,9 +132,9 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    damage: 1000
+    damage: 700
     attackRange: 6
-    hitNormalizedTime: 0.5
+    hitNormalizedTime: 0.78
     hitRadius: 6.5
     hitAngle: 120
   attack3:
@@ -150,7 +151,7 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
-    damage: 1700
+    damage: 1200
     attackRange: 10
     hitNormalizedTime: 0.5
     hitRadius: 10.5
@@ -182,16 +183,18 @@ MonoBehaviour:
     zoneShowDuration: 7
     bufferDuration: 3.5
     zoneRounds: 2
-    battleDuration: 10
+    battleDuration: 20
     roarDuration: 1
     spreadDuration: 4
     battleEarlyEndHpRatio: 0.4
+    evilZoneDamageMultiplier: 1.5
     vulnerableOutsideBattle: 0
+    evadeDamageMultiplier: 0.1
     tierHighHpRatio: 0.5
     tierMidHpRatio: 0.25
-    dpsHigh: 280
-    dpsMid: 200
-    dpsLow: 120
+    dpsHigh: 180
+    dpsMid: 100
+    dpsLow: 20
     safeZoneMin: 1
     safeZoneMax: 3
     maxSameCountStreak: 2

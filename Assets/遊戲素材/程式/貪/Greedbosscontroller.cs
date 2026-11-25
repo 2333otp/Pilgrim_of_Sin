@@ -14,7 +14,7 @@ namespace PilgrimOfSin.StateMachine
     ///   - 驅動動畫（Animator 在子物件 Model 上，以單一 int 參數 "State" 切換，見 SetAnimState）
     ///   - 持有所有 Inspector 可調數值
     /// </summary>
-    public class GreedBossController : MonoBehaviour, IDamageable, IBossHealth
+    public class GreedBossController : MonoBehaviour, IDamageable, IBossHealth, IInterruptible
     {
         // ── References ───────────────────────────────────────────────
         [Header("素材總表（數值、動畫、音效、配音、特效、招式、派生、空襲都在這裡改）")]
@@ -41,11 +41,6 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private float _scaleKickHitboxDelay = 0.35f;       // Break 動畫踢擊幀延遲
         [SerializeField] private float _scaleKickHitboxDuration = 0.7f;     // 天秤傷害碰撞體開啟時長
         [SerializeField] private float _introDuration = 0.9f;               // 進場 CtoR 動畫長度，播完才開始戰鬥
-
-        // ── 動畫 ──────────────────────────────────────────────────────
-        [Header("Animation")]
-        [Tooltip("Run 動畫本身對應的移動速度（m/s，由腳掌著地速度量測）。Run 播放速度 = 素材總表的移動速度 / 此值，避免滑步。")]
-        [SerializeField] private float _runAnimReferenceSpeed = 4.5f;
 
         // ── 血量閘門 ──────────────────────────────────────────────────
         [Header("HP Gate (非平衡期間的血量鎖)")]
@@ -152,7 +147,7 @@ namespace PilgrimOfSin.StateMachine
                 // 位移完全由 MoveTowardPlayer() 控制，動畫不可帶動 Boss 本體，否則兩邊會打架。
                 Animator.applyRootMotion = false;
                 Animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; // 離開畫面也要跑，否則 AnimEvent 不會觸發、攻擊流程卡住
-                Animator.SetFloat(MoveSpeedHash, _runAnimReferenceSpeed > 0f ? _profile.moveSpeed / _runAnimReferenceSpeed : 1f);
+                Animator.SetFloat(MoveSpeedHash, _profile.MoveAnimSpeed);   // Run 播放倍率（素材總表：移動速度 ÷ 移動動畫原速）
                 // 素材總表裡換掉的動畫（Clip ≠ 原始 Clip）在這裡套進 Animator，和癡共用同一套
                 BossActionFeedback.ApplyAnimationOverrides(Animator, _profile.AllEntries());
             }
@@ -448,6 +443,17 @@ namespace PilgrimOfSin.StateMachine
             return Mathf.Min(floor, hp);
         }
 
+        /// <summary>
+        /// 被特殊技打中：不管「受擊硬直」開關和冷卻，都中斷目前招式、短暫硬直（時間 = 素材總表的受擊硬直秒數）。
+        /// 空襲（起飛 / 踢翻 / 俯衝）中不打斷，避免卡在半空或打亂天秤循環。
+        /// </summary>
+        public void Interrupt()
+        {
+            if (IsDead || _airborne || CurrentStateType == GreedBossStateType.KickScale) return;
+            _lastStaggerTime = Time.time;
+            _fsm.Force(GreedBossStateType.Stagger);
+        }
+
         /// <summary>Boss 造成的傷害（錢袋重時乘攻擊倍率）。</summary>
         public float ScaleOutgoingDamage(float baseDmg)
         {
@@ -630,6 +636,18 @@ namespace PilgrimOfSin.StateMachine
 
         /// <summary>空中姿態（含轉彎傾斜）。落地時 Land() 會把傾斜歸零。</summary>
         public void SetAirRotation(Quaternion rot) => transform.rotation = rot;
+
+        /// <summary>
+        /// 空中位置 + 姿態，傾斜以身體中心（碰撞膠囊中心）為軸：模型原點在腳底，
+        /// 直接轉會像整隻往前倒；這裡補回位移，讓身體中心停在 pos 上方原本的位置。
+        /// </summary>
+        public void SetAirPose(Vector3 pos, Quaternion rot)
+        {
+            float h = _capsule != null ? _capsule.center.y * transform.lossyScale.y : 1f;
+            Vector3 c = Vector3.up * h;
+            transform.rotation = rot;
+            transform.position = pos + c - rot * c;   // 偏航不影響垂直向量，所以只有傾斜會產生位移
+        }
 
         /// <summary>盤旋中心（天秤位置；沒設定天秤時用 Boss 自己）。</summary>
         public Vector3 ScaleCenter => _scale != null ? _scale.transform.position : transform.position;

@@ -15,7 +15,8 @@ MonoBehaviour:
   displayName: "\u5FC3\u9B54-\u8CAA"
   maxHp: 5000
   moveSpeed: 4
-  idleDuration: 1
+  moveAnimReferenceSpeed: 4.5
+  idleDuration: 1.8
   animatorController: {fileID: 9100000, guid: 7765a589abc2fc149adc54b148b25275, type: 2}
   idle:
     stateName: Idle
@@ -154,7 +155,7 @@ MonoBehaviour:
     lungeDistance: 0
     lungeStart: 0.3
     lungeEnd: 0.6
-    recoveryIdle: 1
+    recoveryIdle: 1.8
     branches:
     - toMove: Attack3
       atRatio: 0.85
@@ -211,7 +212,7 @@ MonoBehaviour:
     lungeDistance: 2.5
     lungeStart: 0.08
     lungeEnd: 0.2
-    recoveryIdle: 1.2
+    recoveryIdle: 2.2
     branches:
     - toMove: Attack1
       atRatio: 0.9
@@ -274,7 +275,7 @@ MonoBehaviour:
     lungeDistance: 0
     lungeStart: 0.3
     lungeEnd: 0.6
-    recoveryIdle: 1.5
+    recoveryIdle: 2.7
     branches: []
   crossFade: 0.1
   aerialKick:
@@ -305,7 +306,8 @@ MonoBehaviour:
     liftOffRatio: 0.8
     flyHoldRatio: 0.9
     flyLoopEndRatio: 0
-    flySpeed: 12
+    flySpeed: 20
+    flyPitch: 35
     cruiseHeight: 11
     orbitRadius: 10
     orbitDegrees: 300

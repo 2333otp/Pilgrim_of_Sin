@@ -26,8 +26,15 @@ namespace PilgrimOfSin.StateMachine
         [Header("打鬥窗口")]
         [Tooltip("打鬥窗口期間癡血量降到這個比例以下，窗口提前結束。每場戰鬥只觸發一次（之後的窗口維持正常長度）。")]
         [Range(0f, 1f)] public float battleEarlyEndHpRatio = 0.4f;
-        [Tooltip("勾選：躲避階段癡也可以被打（預設不行，只有打鬥窗口能造成傷害）。")]
+        [Min(0f)]
+        [Tooltip("惡區出現期間（善惡區階段）打中癡的傷害倍率。1.5 = 多 50%：一邊躲惡區一邊冒險輸出的獎勵。")]
+        public float evilZoneDamageMultiplier = 1.5f;
+        [Tooltip("勾選：緩衝 / 嘶吼 / 擴散階段也吃全額傷害（不減傷）。")]
         public bool vulnerableOutsideBattle = false;
+        [Range(0f, 1f)]
+        [Tooltip("緩衝 / 嘶吼 / 擴散階段（沒有惡區、也不是打鬥窗口）打中癡的傷害倍率。0.1 = 只吃 10%；0 = 完全打不動。\n" +
+                 "這些階段最多把癡打到剩 1 滴血。勾了上面的「全額傷害」就不使用這個。")]
+        public float evadeDamageMultiplier = 0.1f;
 
         [Header("惡區傷害（每秒）：依癡的血量分三段")]
         [Tooltip("癡血量高於這個比例：使用 dpsHigh。")]

@@ -54,10 +54,11 @@ namespace PilgrimOfSin.StateMachine
         {
             if (Boss.IsDead) { ForceGo(FoolishBossStateType.Dead); return; }
 
+            // 待機計時在躲避階段也照算：不然打鬥窗口一開始還要再發呆一整個待機時間才動
+            _timer -= dt;
+
             // 躲避階段 Boss 只待機，不攻擊
             if (Boss.CurrentPhase == FoolishPhase.Evade) return;
-
-            _timer -= dt;
             if (_timer > 0f) return;
 
             float dist = Boss.DistanceToPlayer;
@@ -153,6 +154,7 @@ namespace PilgrimOfSin.StateMachine
         {
             // 硬直時間：有設定就用設定值，0 = 依受擊動畫長度
             _timer = Profile.staggerDuration > 0f ? Profile.staggerDuration : Profile.hurt.GetDuration(0.5f);
+            Boss.Feedback.CancelPending();   // 被打斷的招式還沒播的音效 / 特效 / 命中不要再觸發（受擊音效在 TakeDamage 已經立刻播了）
             Trigger("Stagger");
         }
 

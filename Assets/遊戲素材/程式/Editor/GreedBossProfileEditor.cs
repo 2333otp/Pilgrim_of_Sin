@@ -138,6 +138,7 @@ namespace PilgrimOfSin.StateMachine.EditorTools
             p.displayName = "心魔-貪";
             p.maxHp = 5000f;
             p.moveSpeed = 4f;
+            p.moveAnimReferenceSpeed = 4.5f;
             p.idle.stateName = "Idle";
             p.move.stateName = "Run";
             p.hurt.stateName = "Damage";

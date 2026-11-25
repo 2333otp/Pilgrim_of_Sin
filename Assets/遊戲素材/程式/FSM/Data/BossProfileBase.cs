@@ -18,6 +18,10 @@ namespace PilgrimOfSin.StateMachine
         [Min(1f)] public float maxHp = 10000f;
         [Min(0f)] [Tooltip("移動（追主角）速度，m/s。")]
         public float moveSpeed = 3.5f;
+        [Min(0.1f)]
+        [Tooltip("移動動畫本身對應的速度（m/s，腳不滑的速度）。移動時動畫播放速度 = 移動速度 ÷ 這個值，避免在地上滑。\n" +
+                 "例：動畫原本是慢走（約 1 m/s）、移動速度 3.5 → 動畫以 3.5 倍速播放。")]
+        public float moveAnimReferenceSpeed = 1f;
         [Min(0f)] [Tooltip("每次攻擊或移動之後待機（決策）幾秒。")]
         public float idleDuration = 1f;
 
@@ -49,6 +53,9 @@ namespace PilgrimOfSin.StateMachine
         [Header("音訊輸出")]
         [Tooltip("音效與配音要輸出到哪個 Mixer 群組（建議跟主角一樣指到 SFX，會跟著遊戲設定裡的音量走）。")]
         public AudioMixerGroup mixerGroup;
+
+        /// <summary>移動動畫的播放倍率（給 Animator 的 MoveSpeed 參數）。</summary>
+        public float MoveAnimSpeed => moveAnimReferenceSpeed > 0f ? moveSpeed / moveAnimReferenceSpeed : 1f;
 
         /// <summary>受擊硬直實際秒數（0 = 用受擊動畫長度）。</summary>
         public float StaggerTime => staggerDuration > 0f ? staggerDuration : hurt.GetDuration(0.5f);

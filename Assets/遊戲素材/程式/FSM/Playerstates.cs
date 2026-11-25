@@ -1146,6 +1146,7 @@ namespace PilgrimOfSin.StateMachine
 
             int weapon = Player.Combat != null ? Player.Combat.CurrentWeaponIndex : 1;
             _set = Player.Feedback?.GetComboSet(weapon);
+            if (Player.Combat?.Hitbox != null) Player.Combat.Hitbox.InterruptsTarget = true;   // 特殊技每一下都打斷 Boss
             var windows = _set?.specialHitWindows;
             _windows = windows != null && windows.Count > 0 ? windows : null;
             _activeWindow = -1;
@@ -1192,6 +1193,7 @@ namespace PilgrimOfSin.StateMachine
             Player.OnSpecialSkillAnimationEnd -= HandleAnimEnd;
             Anim.ResetTrigger("SpecialSkill"); // 該武器沒有對應轉場時 Trigger 會一直殘留
             Player.Combat?.EndAttack();
+            if (Player.Combat?.Hitbox != null) Player.Combat.Hitbox.InterruptsTarget = false;
             Player.StartSpecialSkillCooldown();
         }
 

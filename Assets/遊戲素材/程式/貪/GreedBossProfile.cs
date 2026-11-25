@@ -36,6 +36,7 @@ namespace PilgrimOfSin.StateMachine
             displayName = "心魔-貪";
             maxHp = 5000f;
             moveSpeed = 4f;
+            moveAnimReferenceSpeed = 4.5f;   // Run 動畫腳掌著地速度量測值
             // 貪的 Animator 裡基本動作的 state 名稱
             idle.stateName = "Idle";
             move.stateName = "Run";
@@ -314,7 +315,11 @@ namespace PilgrimOfSin.StateMachine
 
         [Min(0.1f)]
         [Tooltip("飛行速度（m/s，沿路徑）。")]
-        public float flySpeed = 12f;
+        public float flySpeed = 20f;
+
+        [Range(0f, 80f)]
+        [Tooltip("盤旋飛行時身體往前趴的角度（頭朝下、身體放平）。0 = 維持動畫原本的姿勢。\n以身體中心為軸傾斜，到定位點後會慢慢回正再踢。")]
+        public float flyPitch = 35f;
 
         [Header("盤旋（像老鷹 / 遊隼繞著天秤迴旋爬升，再滑翔切入定位點）")]
         [Tooltip("盤旋高度（離地 m）。")]

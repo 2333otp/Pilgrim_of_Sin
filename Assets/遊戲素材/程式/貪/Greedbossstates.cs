@@ -228,6 +228,7 @@ namespace PilgrimOfSin.StateMachine
         private float _pathLen, _pathDist, _travelTime;
         private bool _travelling, _arrived;
         private float _roll;              // 目前傾斜角（轉彎內傾）
+        private float _pitch;             // 目前前趴角度
         private Vector3 _lastTangent;
         private float _loopClock;          // 盤旋時循環區段的計時
 
@@ -381,6 +382,7 @@ namespace PilgrimOfSin.StateMachine
             _arrived = false;
             _lastTangent = Vector3.zero;
             _roll = 0f;
+            _pitch = 0f;
         }
 
         /// <summary>弧長 → 曲線參數 s（線性插值查表）。</summary>
@@ -465,8 +467,8 @@ namespace PilgrimOfSin.StateMachine
             };
         }
 
-        /// <summary>沿路徑等速前進，機頭朝切線、轉彎時往內側傾斜；回傳是否到達。</summary>
-        private bool StepTravel(float dt, float speed, float maxBank)
+        /// <summary>沿路徑等速前進，機頭朝切線、轉彎時往內側傾斜、身體前趴 pitch 度；回傳是否到達。</summary>
+        private bool StepTravel(float dt, float speed, float maxBank, float pitch = 0f)
         {
             if (!_travelling) return _arrived;
             _travelTime += dt;
@@ -475,7 +477,7 @@ namespace PilgrimOfSin.StateMachine
 
             float s = SAtDistance(_pathDist);
             Vector3 pos = _path(s);
-            Boss.SetAirPosition(pos);
+            Quaternion rot = Boss.transform.rotation;
 
             // 切線（往前看一小段）
             Vector3 ahead = _path(Mathf.Min(1f, s + 0.01f)) - pos;
@@ -488,11 +490,15 @@ namespace PilgrimOfSin.StateMachine
                 float turnRate = _lastTangent == Vector3.zero ? 0f : Vector3.SignedAngle(_lastTangent, tangent, Vector3.up) / dt;
                 float targetRoll = Mathf.Clamp(turnRate / 60f * maxBank, -maxBank, maxBank);
                 _roll = Mathf.Lerp(_roll, targetRoll, 1f - Mathf.Exp(-4f * dt));
+                // 前趴：離地後慢慢壓下去，最後滑翔切入定位點那一小段再慢慢抬回來（到位後要回正踢）
+                float targetPitch = s > 0.9f ? pitch * Mathf.InverseLerp(1f, 0.9f, s) : pitch;
+                _pitch = Mathf.Lerp(_pitch, targetPitch, 1f - Mathf.Exp(-4f * dt));
                 _lastTangent = tangent;
-                // 平滑轉向（剛離地時切線方向可能和原本朝向差很多，不要瞬間轉過去）
-                Quaternion target = Quaternion.LookRotation(tangent) * Quaternion.Euler(0f, 0f, -_roll);
-                Boss.SetAirRotation(Quaternion.Slerp(Boss.transform.rotation, target, 1f - Mathf.Exp(-10f * dt)));
+                // 平滑轉向（剛離地時切線方向可能和原本朝向差很多，不要瞬間轉過去）；+X 旋轉 = 頭朝下
+                Quaternion target = Quaternion.LookRotation(tangent) * Quaternion.Euler(_pitch, 0f, -_roll);
+                rot = Quaternion.Slerp(rot, target, 1f - Mathf.Exp(-10f * dt));
             }
+            Boss.SetAirPose(pos, rot);
 
             if (_pathDist >= _pathLen) { _travelling = false; _arrived = true; }
             return _arrived;
@@ -513,8 +519,9 @@ namespace PilgrimOfSin.StateMachine
                 case Phase.TakeOff:
                     if (!_travelling && !_arrived && Progress >= Mathf.Min(c.liftOffRatio, c.flyHoldRatio))
                         BeginTravel(OrbitPath(Boss.transform.position, _to, Boss.ScaleCenter, c), _to);
-                    if (_travelling) StepTravel(dt, c.flySpeed, c.bankAngle);
-                    if (_arrived) Boss.FaceDirection(_kickFace, dt, 8f);   // 到位後收起傾斜、轉向天秤
+                    if (_travelling) StepTravel(dt, c.flySpeed, c.bankAngle, c.flyPitch);
+                    if (_arrived)   // 到位後收起傾斜 / 前趴、轉向天秤（以身體中心為軸回正）
+                        Boss.SetAirPose(_to, Quaternion.Slerp(Boss.transform.rotation, Quaternion.LookRotation(_kickFace), 1f - Mathf.Exp(-8f * dt)));
                     AdvanceAnim(dt, c.flyHoldRatio, _arrived, c.flyLoopEndRatio);
                     Boss.Feedback.Tick(Progress);
                     if (Progress >= 1f) StartPhase(Phase.Kick);

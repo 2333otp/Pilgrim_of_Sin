@@ -31,6 +31,9 @@ namespace PilgrimOfSin.StateMachine
         /// <summary>累計打中幾次（開發者面板用來閃一下命中提示）。</summary>
         public int TotalHits { get; private set; }
 
+        /// <summary>true = 打中會打斷敵人（IInterruptible，短暫硬直）。特殊技期間由 SpecialSkillState 開啟。</summary>
+        public bool InterruptsTarget { get; set; }
+
         // ── 形狀模式 ───────────────────────────────────────────────────
         private const int MaxSlots = 2;
         private Collider _legacyCollider;
@@ -204,6 +207,8 @@ namespace PilgrimOfSin.StateMachine
             TotalHits++;
             if (target is IBossHealth) HitBossThisSwing = true;
             target.TakeDamage(_damage);
+            // 特殊技：每打中一下就打斷敵人（短暫硬直）
+            if (InterruptsTarget && target is IInterruptible interruptible) interruptible.Interrupt();
         }
     }
 

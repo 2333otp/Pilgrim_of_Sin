@@ -12,7 +12,7 @@ namespace PilgrimOfSin.StateMachine
     /// 並隨癡受到的傷害線性向外擴張。
     /// 數值與素材（動畫、音效、配音、特效、攻擊判定、場地機制）全部在 FoolishBossProfile 裡設定。
     /// </summary>
-    public class FoolishBossController : MonoBehaviour, IDamageable, IBossHealth
+    public class FoolishBossController : MonoBehaviour, IDamageable, IBossHealth, IInterruptible
     {
         // ── References ───────────────────────────────────────────────
         [Header("素材總表（數值、動畫、音效、配音、特效、場地機制都在這裡改）")]
@@ -118,6 +118,12 @@ namespace PilgrimOfSin.StateMachine
             Feedback = GetComponent<BossActionFeedback>();
             if (Feedback == null) Feedback = gameObject.AddComponent<BossActionFeedback>();
             Feedback.Initialize(Animator, _profile.AllEntries(), _profile.mixerGroup);
+
+            // 移動動畫播放倍率（Animator 的 Move state 速度綁 MoveSpeed 參數），腳步跟上實際移動速度，不會在地上滑
+            if (Animator != null && Animator.runtimeAnimatorController != null)
+                foreach (var p in Animator.parameters)
+                    if (p.name == "MoveSpeed" && p.type == AnimatorControllerParameterType.Float)
+                        Animator.SetFloat("MoveSpeed", _profile.MoveAnimSpeed);
 
             CurrentHp = MaxHp;
             if (_player != null) _playerController = _player.GetComponent<PlayerController>();
@@ -530,12 +536,20 @@ namespace PilgrimOfSin.StateMachine
         {
             if (IsDead) return;
 
-            // 只有打鬥窗口能造成傷害（可在 Inspector 勾選 vulnerableOutsideBattle 改成隨時可打）
-            if (CyclePhase != FoolishCyclePhase.Battle && !Arena.vulnerableOutsideBattle)
-                return;
+            // 傷害倍率依階段：
+            //   打鬥窗口 = 全額；惡區出現中（善惡區階段）= evilZoneDamageMultiplier 加成（冒險輸出的獎勵）；
+            //   緩衝 / 嘶吼 / 擴散 = evadeDamageMultiplier 減傷，而且打不死（最後一擊留給打鬥窗口或惡區階段）。
+            // 勾選 vulnerableOutsideBattle = 緩衝 / 嘶吼 / 擴散也全額。
+            if (CyclePhase == FoolishCyclePhase.ZoneShow)
+                amount *= Arena.evilZoneDamageMultiplier;
+            bool evading = CyclePhase != FoolishCyclePhase.Battle && CyclePhase != FoolishCyclePhase.ZoneShow
+                           && !Arena.vulnerableOutsideBattle;
+            if (evading)
+                amount *= Arena.evadeDamageMultiplier;
+            if (amount <= 0f) return;
 
             float ratioBefore = HpRatio;
-            CurrentHp = Mathf.Max(0f, CurrentHp - amount);
+            CurrentHp = Mathf.Max(evading ? Mathf.Min(1f, CurrentHp) : 0f, CurrentHp - amount);
 
             if (CurrentHp <= 0f)
             {
@@ -559,6 +573,16 @@ namespace PilgrimOfSin.StateMachine
 
             if (EnableStagger)
                 _fsm.Request(FoolishBossStateType.Stagger);
+        }
+
+        /// <summary>
+        /// 被特殊技打中：不管「受擊硬直」有沒有勾，都中斷目前動作、短暫硬直（時間 = 素材總表的受擊硬直秒數）。
+        /// 嘶吼中不打斷（嘶吼是惡區要回來的信號，被打斷會讓玩家看不到）。
+        /// </summary>
+        public void Interrupt()
+        {
+            if (IsDead || CyclePhase == FoolishCyclePhase.Roar) return;
+            _fsm.Force(FoolishBossStateType.Stagger);
         }
 
         public void MoveTowardPlayer(float dt)
