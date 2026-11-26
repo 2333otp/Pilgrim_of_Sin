@@ -716,7 +716,7 @@ Transform:
   m_GameObject: {fileID: 234451021}
   serializedVersion: 2
   m_LocalRotation: {x: -0.24550222, y: 0.7293573, z: -0.5489843, w: -0.32616386}
-  m_LocalPosition: {x: -15.5284, y: 13.650001, z: -13.8899555}
+  m_LocalPosition: {x: -15.03, y: 16.03, z: -13.44}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -734,9 +734,9 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 75
-  m_Range: 16
-  m_SpotAngle: 75
-  m_InnerSpotAngle: 25
+  m_Range: 16.16159
+  m_SpotAngle: 70.61573
+  m_InnerSpotAngle: 53.835598
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 0
@@ -776,7 +776,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 4000
+  m_ColorTemperature: 3450
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1332,7 +1332,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 0
-  m_Color: {r: 0.92, g: 0.92, b: 1, a: 1}
+  m_Color: {r: 0.55690837, g: 0.33008894, b: 0.6754716, a: 1}
   m_Intensity: 160
   m_Range: 35
   m_SpotAngle: 75
@@ -1811,7 +1811,7 @@ Transform:
   m_GameObject: {fileID: 560712215}
   serializedVersion: 2
   m_LocalRotation: {x: 0.24550222, y: 0.7293573, z: -0.5489843, w: 0.32616386}
-  m_LocalPosition: {x: 15.5284, y: 13.650001, z: -13.8899555}
+  m_LocalPosition: {x: 15.09, y: 15.69, z: -13.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1828,10 +1828,10 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 50
-  m_Range: 16
-  m_SpotAngle: 75
-  m_InnerSpotAngle: 25
+  m_Intensity: 35
+  m_Range: 15.426526
+  m_SpotAngle: 80.2928
+  m_InnerSpotAngle: 60.171043
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 0
@@ -1871,7 +1871,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 4000
+  m_ColorTemperature: 2500
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -2477,7 +2477,7 @@ Transform:
   m_GameObject: {fileID: 867125583}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5489843, y: -0.32616386, z: 0.24550222, w: 0.7293573}
-  m_LocalPosition: {x: -15.5284, y: 13.650001, z: 13.8899555}
+  m_LocalPosition: {x: -15.02, y: 16.03, z: 13.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2496,8 +2496,8 @@ Light:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 75
   m_Range: 16
-  m_SpotAngle: 75
-  m_InnerSpotAngle: 25
+  m_SpotAngle: 66.136314
+  m_InnerSpotAngle: 51.159805
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 0
@@ -2537,7 +2537,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 4000
+  m_ColorTemperature: 3450
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -3132,7 +3132,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -3185,7 +3185,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -10786,7 +10786,7 @@ Transform:
   m_GameObject: {fileID: 1874149373}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5489843, y: 0.32616386, z: -0.24550222, w: 0.7293573}
-  m_LocalPosition: {x: 15.5284, y: 13.650001, z: 13.8899555}
+  m_LocalPosition: {x: 15.01, y: 15.86, z: 13.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10803,10 +10803,10 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 50
-  m_Range: 16
-  m_SpotAngle: 75
-  m_InnerSpotAngle: 25
+  m_Intensity: 45
+  m_Range: 16.482943
+  m_SpotAngle: 77.11359
+  m_InnerSpotAngle: 62.205853
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 0
