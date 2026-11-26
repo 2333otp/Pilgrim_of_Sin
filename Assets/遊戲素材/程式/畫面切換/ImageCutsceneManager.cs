@@ -75,13 +75,13 @@ namespace PilgrimOfSin
             yield return new WaitForSeconds(_isFailure ? _failDisplayDuration : _displayDuration);
             yield return StartCoroutine(Fade(0f, 1f));       // 淡出（圖→黑）
 
-            // 貪嗔癡三隻 Boss 皆已擊敗 → 接結局跑馬燈名單，否則照舊回小木屋。
-            // 失敗收場一律回小木屋（已通關後回來重打又輸了，不該再看一次結局名單）。
+            // 貪嗔癡三隻 Boss 皆已擊敗 → 結尾動畫（EndingCutsceneScene，播完自動接跑馬燈名單），否則照舊回小木屋。
+            // 失敗收場一律回小木屋（已通關後回來重打又輸了，不該再看一次結局）。
             bool allDefeated = !_isFailure
                                 && GameProgressManager.Instance != null
                                 && GameProgressManager.Instance.AllBossesDefeated;
             string nextScene = allDefeated
-                ? SceneTransitionManager.CREDITS_SCENE
+                ? SceneTransitionManager.ENDING_CUTSCENE_SCENE
                 : SceneTransitionManager.HUB_SCENE;
             UnityEngine.SceneManagement.SceneManager.LoadScene(nextScene);
         }

@@ -23,10 +23,48 @@ namespace PilgrimOfSin
             Cursor.visible   = false;
 
             _fadeCanvasGroup.alpha = 1f;
-            StartCoroutine(FadeIn());
-
             _videoPlayer.loopPointReached += _ => Skip();
+            StartCoroutine(StartVideoThenFadeIn());
+        }
+
+        /// <summary>
+        /// 開頭／結尾動畫共用同一張 RenderTexture，裡面會殘留「上一次播放的最後一格」。
+        /// 如果一載入就淡入，影片第一格還沒畫出來前會先露出那張舊畫面，看起來像閃過一張圖。
+        /// 所以：先把畫布清成全黑 → 等影片準備好、第一格真的畫進畫布 → 才開始淡入。
+        /// </summary>
+        private IEnumerator StartVideoThenFadeIn()
+        {
+            ClearTargetTexture();
+
+            _videoPlayer.Prepare();
+            float waited = 0f;
+            while (!_videoPlayer.isPrepared && waited < 5f) // 保險：最多等 5 秒，避免影片壞掉時卡在黑畫面
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
             _videoPlayer.Play();
+
+            waited = 0f;
+            while (_videoPlayer.frame < 1 && waited < 2f)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!_isTransitioning)
+                yield return StartCoroutine(FadeIn());
+        }
+
+        private void ClearTargetTexture()
+        {
+            var rt = _videoPlayer.targetTexture;
+            if (rt == null) return;
+            var prev = RenderTexture.active;
+            RenderTexture.active = rt;
+            GL.Clear(true, true, Color.black);
+            RenderTexture.active = prev;
         }
 
         private void Update()
