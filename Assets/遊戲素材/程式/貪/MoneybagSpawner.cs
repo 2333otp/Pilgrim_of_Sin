@@ -16,6 +16,7 @@ namespace PilgrimOfSin.StateMachine
         // ── References ────────────────────────────────────────────────
         [Header("References")]
         [SerializeField] private GameObject _moneybagPrefab;    // 錢袋 Prefab
+        public GameObject MoneybagPrefab => _moneybagPrefab;     // 貪死亡演出（掃錢袋）借用外觀
         [SerializeField] private ScaleObject _scale;             // 天秤物件
         [SerializeField] private Transform _scaleRightSide;    // 天秤右側位置
         [SerializeField] private GameObject _interactPromptUI;  // 右下角提示 UI（場景中唯一一個）

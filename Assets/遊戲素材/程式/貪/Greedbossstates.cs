@@ -274,6 +274,7 @@ namespace PilgrimOfSin.StateMachine
             }
 
             Boss.BeginAirborne();
+            Boss.BeginKickCamera();
             Boss.GetKickPoint(out _to, out _kickFace);
             _kickFired = false;
             _targetLocked = false;
@@ -285,6 +286,7 @@ namespace PilgrimOfSin.StateMachine
             Boss.OnKickScaleAnimEnd -= HandleLegacyEnd;
             Boss.SetAnimSpeed(1f);
             Boss.Feedback.Stop();
+            Boss.EndKickCamera();  // 被強制中斷時鏡頭也要回來
             Boss.EndAirborne();   // 被強制中斷（死亡等）時也要回到地面
         }
 
@@ -549,6 +551,7 @@ namespace PilgrimOfSin.StateMachine
                     }
                     if (Progress >= 1f)
                     {
+                        Boss.EndKickCamera();   // 踢翻結束：淡回操作視角（俯衝時玩家要能看清楚閃躲）
                         if (!c.lockTargetAtLaunch) LockTarget();
                         StartPhase(Phase.Dive);
                     }
@@ -643,12 +646,21 @@ namespace PilgrimOfSin.StateMachine
             Boss.OnDeath();
             _elapsed = 0f;
             Boss.Feedback.Begin(Boss.Profile.dead);   // 死亡的音效 / 配音 / 特效（時間點 = 死亡動畫比例）
+
+            // 死亡演出：把腳前的錢袋往懷裡掃
+            var sweep = Boss.Profile.deathSweep;
+            _sweep = sweep != null && sweep.enabled
+                ? new GreedMoneySweep(Boss, sweep, Boss.Profile.dead.EffectiveClip, Boss.MoneybagPrefab)
+                : null;
         }
+
+        private GreedMoneySweep _sweep;
 
         public override void Update(float dt)
         {
             _elapsed += dt;
             Boss.Feedback.Tick(_elapsed / Mathf.Max(0.01f, Boss.Profile.dead.GetDuration(2f)));
+            _sweep?.Tick(_elapsed);
         }
     }
 }

@@ -31,6 +31,9 @@ namespace PilgrimOfSin.StateMachine
         [Header("平衡結束：起飛 → 定位天秤一側 → 踢翻 → 鎖定主角墜落")]
         public GreedAerialKickConfig aerialKick = new GreedAerialKickConfig();
 
+        [Header("死亡演出：把腳前的錢袋往懷裡掃")]
+        public GreedDeathSweepConfig deathSweep = new GreedDeathSweepConfig();
+
         private void Reset()
         {
             displayName = "心魔-貪";
@@ -353,6 +356,27 @@ namespace PilgrimOfSin.StateMachine
 
         public GreedKickSide kickSide = GreedKickSide.離Boss近的那側;
 
+        [Header("演出鏡頭（起飛 → 踢翻結束）")]
+        [Tooltip("勾選 = 起飛時切成固定位置的演出鏡頭，鏡頭跟著 Boss 轉但慢半拍（Boss 往上飛會帶到場景上方），踢翻結束後淡回操作視角。")]
+        public bool kickCamera = true;
+
+        [Min(0.01f)]
+        [Tooltip("鏡頭視線追 Boss 的平滑時間（秒）。越大越慢半拍、越看得到 Boss 飛過的上方場景。")]
+        public float kickCamLookSmooth = 0.4f;
+
+        [Tooltip("鏡頭看向 Boss 腳底往上多高（m）。")]
+        public float kickCamLookHeight = 2f;
+
+        [Min(0f)]
+        [Tooltip("沒在場景放固定鏡位（GreedBossController 的 Kick Camera Anchor）時：從起飛當下的鏡頭位置再往後拉幾公尺（撞牆會停在牆前）。")]
+        public float kickCamPullBack = 3f;
+
+        [Min(0f)] [Tooltip("切進演出鏡頭的過渡秒數。")]
+        public float kickCamBlendIn = 0.6f;
+
+        [Min(0f)] [Tooltip("踢翻結束後淡回操作視角的秒數。")]
+        public float kickCamBlendOut = 0.8f;
+
         [Header("踢翻 (Kick)")]
         [Tooltip("踢翻：例如踢擊聲、喊聲（時間點可對到下面的踢中幀）。")]
         [BossEntryHide] public BossActionEntry kick = new BossActionEntry(GreedBossController.AnimStateKick);
@@ -412,5 +436,62 @@ namespace PilgrimOfSin.StateMachine
             var c = e?.EffectiveClip;
             return c ? c.length / Mathf.Max(0.1f, speed) + e.endPadding : 0f;
         }
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    //  死亡演出：掃錢袋
+    // ════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// 死亡動畫播到「開始幀」時，在貪腳前擺幾個錢袋（純裝飾，不能撿、不算重量）；
+    /// 翼尖掃過的錢袋會被帶往懷中並縮小消失，播到「結束幀」時剩下的一起掃進來。
+    /// 幀數以死亡動畫本身的幀率計算（目前 Death 1 是 30fps）。
+    /// </summary>
+    [Serializable]
+    public class GreedDeathSweepConfig
+    {
+        [Tooltip("勾選 = 死亡時播放掃錢袋演出。")]
+        public bool enabled = true;
+
+        [Tooltip("錢袋外觀 Prefab。留空 = 用場景裡錢袋生成器（MoneybagSpawner）的錢袋。\n生成後會拿掉碰撞體和錢袋腳本，只留外觀。")]
+        public GameObject bagPrefab;
+
+        [Min(0)] [Tooltip("擺幾個錢袋。")]
+        public int count = 7;
+
+        [Min(0.05f)] [Tooltip("錢袋縮放（原本的錢袋約 0.8m 寬、1m 高）。")]
+        public float bagScale = 0.55f;
+
+        [Tooltip("錢袋保留原本的發光（Light）。多個錢袋同時發光比較吃效能。")]
+        public bool keepBagLight = false;
+
+        [Header("時間（死亡動畫的幀數）")]
+        [Min(0)] [Tooltip("這一幀錢袋冒出來。")]
+        public int startFrame = 25;
+        [Min(0)] [Tooltip("這一幀之後還沒被掃到的錢袋，全部一起掃進懷裡。")]
+        public int endFrame = 95;
+
+        [Min(0f)] [Tooltip("錢袋冒出來（由小變大）的秒數。")]
+        public float popInDuration = 0.2f;
+
+        [Header("擺放範圍（以貪為原點：前方距離 / 左右寬度，公尺）")]
+        public Vector2 forwardRange = new Vector2(0.9f, 2.0f);
+        [Min(0f)] public float halfWidth = 1.2f;
+        [Min(0f)] [Tooltip("錢袋彼此最少間隔。")]
+        public float minSpacing = 0.45f;
+
+        [Header("掃進懷裡")]
+        [Tooltip("用來掃錢袋的骨頭（翼尖）。")]
+        public string[] sweepBones = { "DEF-handLongfeather.02.L", "DEF-handLongfeather.02.R" };
+        [Min(0f)] [Tooltip("翼尖掃過時，水平距離多近的錢袋會被帶走。")]
+        public float pickupRadius = 0.7f;
+        [Min(0f)] [Tooltip("翼尖離地多高以內才算「掃過地面」。")]
+        public float pickupMaxHeight = 0.9f;
+        [Min(0.05f)] [Tooltip("錢袋從地上滑到懷裡的秒數。")]
+        public float pullDuration = 0.4f;
+        [Tooltip("懷中的位置（以貪為原點：x 右、y 上、z 前）。錢袋滑到這裡就縮小消失。")]
+        public Vector3 gatherPointLocal = new Vector3(0f, 0.7f, 0.5f);
+        [Range(0f, 1f)] [Tooltip("滑到懷裡時縮到原本的幾倍再消失。")]
+        public float gatherEndScale = 0.25f;
     }
 }

@@ -55,6 +55,86 @@ namespace PilgrimOfSin.StateMachine
         private float _standingHipsHeight;
         private float _bodyLift, _bodyLiftVelocity;
 
+        // ── 演出鏡頭（Boss 招式用：固定位置、慢半拍看向目標）─────────
+        private bool _cineActive;          // 演出中（含淡出）
+        private bool _cineHolding;         // true = 往演出鏡頭過渡；false = 淡回操作鏡頭
+        private float _cineWeight;         // 0 = 操作鏡頭，1 = 演出鏡頭
+        private float _cineBlendIn, _cineBlendOut;
+        private Transform _cineTarget;
+        private Vector3 _cinePos;
+        private Vector3 _cineLook, _cineLookVelocity;
+        private float _cineLookHeight, _cineLookSmooth;
+
+        /// <summary>演出鏡頭進行中（含淡回操作鏡頭的過程）。</summary>
+        public bool IsCinematic => _cineActive;
+
+        /// <summary>
+        /// 開始「固定位置、跟著目標轉」的演出鏡頭。
+        /// 鏡頭停在 fixedPosition（null = 目前位置往後拉 pullBack 公尺），
+        /// 看向目標的點用 SmoothDamp 追，lookSmoothTime 越大越慢半拍（目標往上飛時會帶到場景上方）。
+        /// </summary>
+        public void BeginFollowShot(Transform target, Vector3? fixedPosition, float pullBack, float lookHeight,
+                                    float lookSmoothTime, float blendIn, float blendOut)
+        {
+            if (_camera == null || target == null) return;
+            _cineTarget = target;
+            _cineLookHeight = lookHeight;
+            _cineLookSmooth = Mathf.Max(0.01f, lookSmoothTime);
+            _cineBlendIn = blendIn;
+            _cineBlendOut = blendOut;
+
+            if (fixedPosition.HasValue) _cinePos = fixedPosition.Value;
+            else
+            {
+                Vector3 camPos = _camera.transform.position;
+                Vector3 back = camPos - target.position; back.y = 0f;
+                if (back.sqrMagnitude < 0.0001f) back = -_camera.transform.forward;
+                back.y = 0f;
+                back.Normalize();
+                _cinePos = pullBack > 0f ? ResolveCameraCollision(camPos, camPos + back * pullBack) : camPos;
+            }
+
+            // 已經在演出中（例如淡出途中又開）就接著目前的視線追，不要跳
+            if (!_cineActive)
+            {
+                _cineLook = target.position + Vector3.up * lookHeight;
+                _cineLookVelocity = Vector3.zero;
+            }
+            _cineActive = true;
+            _cineHolding = true;
+        }
+
+        /// <summary>結束演出鏡頭，用 BeginFollowShot 給的 blendOut 秒數淡回操作鏡頭。重複呼叫無害。</summary>
+        public void EndFollowShot()
+        {
+            if (!_cineActive) return;
+            _cineHolding = false;
+        }
+
+        /// <summary>演出鏡頭疊在操作鏡頭上（操作鏡頭照常算，淡出時才接得回去）。</summary>
+        private void ApplyCinematic()
+        {
+            float dt = Time.deltaTime;
+            if (_cineHolding)
+                _cineWeight = _cineBlendIn > 0f ? Mathf.MoveTowards(_cineWeight, 1f, dt / _cineBlendIn) : 1f;
+            else
+                _cineWeight = _cineBlendOut > 0f ? Mathf.MoveTowards(_cineWeight, 0f, dt / _cineBlendOut) : 0f;
+
+            if (_cineTarget != null)
+                _cineLook = Vector3.SmoothDamp(_cineLook, _cineTarget.position + Vector3.up * _cineLookHeight,
+                                               ref _cineLookVelocity, _cineLookSmooth);
+
+            if (!_cineHolding && _cineWeight <= 0f) { _cineActive = false; _cineTarget = null; return; }
+
+            Vector3 dir = _cineLook - _cinePos;
+            if (dir.sqrMagnitude < 0.0001f) dir = _camera.transform.forward;
+            Quaternion cineRot = Quaternion.LookRotation(dir) * HitFeedback.GetShakeRotation(false);
+
+            float w = Mathf.SmoothStep(0f, 1f, _cineWeight);
+            Transform t = _camera.transform;
+            t.SetPositionAndRotation(Vector3.Lerp(t.position, _cinePos, w), Quaternion.Slerp(t.rotation, cineRot, w));
+        }
+
         // ── 公開狀態 ─────────────────────────────────────────────────
         public bool IsLockedOn { get; private set; }
         public Transform LockTarget { get; private set; }
@@ -132,6 +212,8 @@ namespace PilgrimOfSin.StateMachine
                 UpdateLockOnCamera();
             else
                 UpdateFreeCamera();
+
+            if (_cineActive) ApplyCinematic();
         }
 
         // ── 非鎖定鏡頭 ───────────────────────────────────────────────
@@ -140,6 +222,9 @@ namespace PilgrimOfSin.StateMachine
         {
             var mouseDelta = Mouse.current?.delta.ReadValue() ?? Vector2.zero;
             var stickDelta = _input != null ? _input.CameraRotateInput : Vector2.zero;
+
+            // 演出鏡頭期間不吃轉鏡頭輸入：結束時回到演出前的操作視角
+            if (_cineActive) { mouseDelta = Vector2.zero; stickDelta = Vector2.zero; }
 
             _yaw   += mouseDelta.x * _mouseSensitivityX
                     + stickDelta.x * _stickSensitivityX * Time.deltaTime;

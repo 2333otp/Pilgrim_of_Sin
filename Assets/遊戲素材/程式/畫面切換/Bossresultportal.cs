@@ -29,7 +29,8 @@ namespace PilgrimOfSin
         public static bool IsPlayerDefeated => Instance != null && Instance._playerDefeatedHandled;
 
         [Header("結果延遲（秒）")]
-        [Tooltip("Boss死亡後幾秒才顯示通關通知（讓死亡動畫播完）")]
+        [Tooltip("Boss 死亡後最少等幾秒才顯示通關通知。\n" +
+                 "Boss 有回報死亡動畫長度時（素材總表的死亡動畫），會等「動畫長度」和這個值兩者中較長的那個，讓死亡動畫播完。")]
         [SerializeField] private float _winDelay = 2.5f;
 
         [Tooltip("玩家死亡後幾秒才開始淡出 UI 並顯示失敗提示（要等玩家死亡動畫播完，Muir 的死亡動畫約 3.97 秒）")]
@@ -59,11 +60,13 @@ namespace PilgrimOfSin
         /// Boss 被擊敗 → 流程圖：贏 → 回小木屋（或進入通關流程）。
         /// 只處理第一次呼叫，防止死亡瞬間多重觸發（例如同一幀多重攻擊判定）造成通知/切場景重複播放。
         /// 玩家已經先死了就忽略（先發生的算）。
+        /// deathAnimDuration：Boss 死亡動畫的長度（秒），通關流程會等它播完（至少等 _winDelay）。0 = 只等 _winDelay。
         /// </summary>
-        public void OnBossDefeated()
+        public void OnBossDefeated(float deathAnimDuration = 0f)
         {
             if (_bossDefeatedHandled || _playerDefeatedHandled) return;
             _bossDefeatedHandled = true;
+            _winWait = Mathf.Max(_winDelay, deathAnimDuration);
             SceneTransitionManager.LastBattleFailed = false;
 
             // 直接在 Editor 開這個 Boss 場景測試（不經過小木屋 LoadBossScene()）時，
@@ -98,9 +101,11 @@ namespace PilgrimOfSin
             StartCoroutine(LoseRoutine());
         }
 
+        private float _winWait;
+
         private IEnumerator WinRoutine()
         {
-            yield return new WaitForSeconds(_winDelay);
+            yield return new WaitForSeconds(_winWait);
 
             if (_levelClearNotification != null)
             {

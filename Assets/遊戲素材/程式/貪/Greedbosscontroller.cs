@@ -27,6 +27,12 @@ namespace PilgrimOfSin.StateMachine
         [SerializeField] private Collider _scaleHitbox;   // 天秤踢翻碰撞體
         [SerializeField] private MoneybagSpawner _spawner;       // 錢袋生成器
 
+        [Header("空襲演出鏡頭")]
+        [Tooltip("主角的 CameraController。留空會自動找場景裡的。")]
+        [SerializeField] private CameraController _cameraController;
+        [Tooltip("選填：起飛→踢翻的固定鏡位（只用位置）。留空 = 起飛當下的鏡頭位置往後拉（SO 的 kickCamPullBack）。")]
+        [SerializeField] private Transform _kickCameraAnchor;
+
         /// <summary>骨架模型（子物件 Model）上的 Animator，不在本物件上，所以用 GetComponentInChildren 取得。</summary>
         public Animator Animator { get; private set; }
 
@@ -69,6 +75,8 @@ namespace PilgrimOfSin.StateMachine
         }
         public float HpRatio => MaxHp > 0f ? CurrentHp / MaxHp : 0f;
         public float GroundY => _groundY;
+        /// <summary>場景錢袋生成器用的錢袋 Prefab（死亡演出借用外觀）。</summary>
+        public GameObject MoneybagPrefab => _spawner != null ? _spawner.MoneybagPrefab : null;
 
         private GreedFxPlayer _feedback;
         private float _nextHurtVoiceTime;
@@ -138,6 +146,8 @@ namespace PilgrimOfSin.StateMachine
                 Debug.LogError("[Greed] ❌ 沒有指定素材總表（GreedBossProfile），先用預設值執行（沒有招式可出）。", this);
                 _profile = ScriptableObject.CreateInstance<GreedBossProfile>();
             }
+
+            if (_cameraController == null) _cameraController = FindFirstObjectByType<CameraController>();
 
             Animator = GetComponentInChildren<Animator>(true);
             if (Animator == null)
@@ -632,6 +642,22 @@ namespace PilgrimOfSin.StateMachine
 
         public void BeginAirborne() => _airborne = true;
 
+        /// <summary>起飛：切成固定鏡位、慢半拍跟著 Boss 的演出鏡頭（SO 沒勾 kickCamera 就不做）。</summary>
+        public void BeginKickCamera()
+        {
+            var cfg = _profile.aerialKick;
+            if (!cfg.kickCamera || _cameraController == null) return;
+            Vector3? anchor = _kickCameraAnchor != null ? _kickCameraAnchor.position : (Vector3?)null;
+            _cameraController.BeginFollowShot(transform, anchor, cfg.kickCamPullBack, cfg.kickCamLookHeight,
+                                              cfg.kickCamLookSmooth, cfg.kickCamBlendIn, cfg.kickCamBlendOut);
+        }
+
+        /// <summary>踢翻結束：淡回操作視角。重複呼叫無害。</summary>
+        public void EndKickCamera()
+        {
+            if (_cameraController != null) _cameraController.EndFollowShot();
+        }
+
         /// <summary>空中移動：不做障礙物檢查（會飛越天秤），落地時再推出重疊。</summary>
         public void SetAirPosition(Vector3 pos) => transform.position = pos;
 
@@ -1044,7 +1070,7 @@ namespace PilgrimOfSin.StateMachine
             catch (System.Exception e) { Debug.LogError($"[Greed] 清除錢袋失敗，仍繼續通關流程：{e}"); }
             if (BossResultPortal.Instance == null)
                 Debug.LogError("[Greed] 場景裡找不到 BossResultPortal，通關流程無法啟動！");
-            BossResultPortal.Instance?.OnBossDefeated();
+            BossResultPortal.Instance?.OnBossDefeated(_profile.dead.GetDuration(0f));   // 等死亡動畫播完才跑通關流程
         }
 
         // ════════════════════════════════════════════════════════════

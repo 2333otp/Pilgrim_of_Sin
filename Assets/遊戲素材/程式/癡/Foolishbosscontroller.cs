@@ -676,7 +676,7 @@ namespace PilgrimOfSin.StateMachine
         {
             HideAllSafeZones();
             if (_evilZone) _evilZone.Hide();
-            BossResultPortal.Instance?.OnBossDefeated();
+            BossResultPortal.Instance?.OnBossDefeated(_profile.dead.GetDuration(0f));   // 等死亡動畫播完才跑通關流程
         }
 
         private void OnDrawGizmosSelected()

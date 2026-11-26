@@ -32,6 +32,8 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
+    cameraShake: 0
+    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -51,6 +53,8 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
+    cameraShake: 0
+    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -77,6 +81,8 @@ MonoBehaviour:
       normalizedTime: 1
       followBone: 0
       lifetime: 0
+    cameraShake: 0
+    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -84,7 +90,7 @@ MonoBehaviour:
     hitAngle: 120
   dead:
     stateName: Death
-    clip: {fileID: 7711821597615536454, guid: c60c61db466e3ac4388ee6c74ef0d2c0, type: 3}
+    clip: {fileID: 7711821597615536454, guid: 9d0cc33d96d2f0c49b7b8f319f273753, type: 3}
     baseClip: {fileID: 7711821597615536454, guid: c60c61db466e3ac4388ee6c74ef0d2c0, type: 3}
     endPadding: 0
     fallbackDuration: 0
@@ -103,6 +109,8 @@ MonoBehaviour:
       normalizedTime: 0
       followBone: 0
       lifetime: 0
+    cameraShake: 0
+    cameraShakeNormalizedTime: 0
     damage: 0
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -181,6 +189,8 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
+    cameraShake: 0
+    cameraShakeNormalizedTime: 0
     damage: 1200
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -238,6 +248,8 @@ MonoBehaviour:
     voiceVolume: 1
     voiceNormalizedTime: 0
     vfx: []
+    cameraShake: 0
+    cameraShakeNormalizedTime: 0
     damage: 2300
     attackRange: 0
     hitNormalizedTime: 0.5
@@ -299,6 +311,8 @@ MonoBehaviour:
       voiceVolume: 1
       voiceNormalizedTime: 0
       vfx: []
+      cameraShake: 0
+      cameraShakeNormalizedTime: 0
       damage: 0
       attackRange: 0
       hitNormalizedTime: 0.5
@@ -319,6 +333,12 @@ MonoBehaviour:
     glidePortion: 0.3
     kickPointLocal: {x: 5.5, y: 5, z: 0}
     kickSide: 0
+    kickCamera: 1
+    kickCamLookSmooth: 0.4
+    kickCamLookHeight: 2
+    kickCamPullBack: 3
+    kickCamBlendIn: 0.6
+    kickCamBlendOut: 0.8
     kick:
       stateName: Kick
       clip: {fileID: 2830126056256830266, guid: 6f743dc9cd84cc240a0622d321c7c850, type: 3}
@@ -340,6 +360,8 @@ MonoBehaviour:
         normalizedTime: 0.619
         followBone: 0
         lifetime: 0
+      cameraShake: 0
+      cameraShakeNormalizedTime: 0
       damage: 0
       attackRange: 0
       hitNormalizedTime: 0.5
@@ -368,6 +390,8 @@ MonoBehaviour:
         normalizedTime: 1
         followBone: 0
         lifetime: 0
+      cameraShake: 0
+      cameraShakeNormalizedTime: 0
       damage: 0
       attackRange: 0
       hitNormalizedTime: 0.5
@@ -400,6 +424,8 @@ MonoBehaviour:
         normalizedTime: 0
         followBone: 0
         lifetime: 0
+      cameraShake: 0
+      cameraShakeNormalizedTime: 0
       damage: 0
       attackRange: 0
       hitNormalizedTime: 0.5

@@ -16,6 +16,9 @@ namespace PilgrimOfSin.StateMachine
         PlayerVfxEntry[] Vfx { get; }
     }
 
+    /// <summary>Inspector 只顯示不能改（例如自動填入的原始 Clip，改錯會讓換動畫失效）。</summary>
+    public class BossReadOnlyAttribute : PropertyAttribute { }
+
     /// <summary>
     /// 在 Inspector 隱藏 BossActionEntry 裡用不到的欄位（例如待機動作不需要攻擊判定）。
     /// 也可以掛在 List 上，對每一筆生效。
@@ -45,7 +48,9 @@ namespace PilgrimOfSin.StateMachine
         [Tooltip("這個動作要播的動畫。換成別的 Clip，動作時間會自動跟著 Clip 長度走。留空 = 維持 Animator 原本的動畫。")]
         public AnimationClip clip;
 
-        [Tooltip("Animator Controller 這個 state 原本綁的 Clip（自動填入，請勿修改）。Clip 欄位跟它不同時，執行時會把它換掉。")]
+        [Tooltip("Animator Controller 這個 state 原本綁的 Clip（自動填入、不能手改）。Clip 欄位跟它不同時，執行時會把它換成 Clip。\n" +
+                 "要換動畫只改上面的 Clip；Animator 的 state 換了動畫，就按 Inspector 最下面的按鈕重新讀取。")]
+        [BossReadOnly]
         public AnimationClip baseClip;
 
         [Min(0f)]
