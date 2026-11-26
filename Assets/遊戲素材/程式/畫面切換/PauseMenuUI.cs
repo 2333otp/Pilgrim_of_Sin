@@ -122,6 +122,9 @@ namespace PilgrimOfSin
         [Tooltip("Boss 場景勾選此項，離開前彈出「尚未破關」確認框")]
         [SerializeField] private bool _isBossScene = false;
 
+        /// <summary>是否為 Boss 場景（開場操作引導用來判斷要不要自動顯示）。</summary>
+        public bool IsBossScene => _isBossScene;
+
         // ── 內部狀態 ───────────────────────────────────────────────────
         private StateMachine.PlayerController _playerController;
         private StateMachine.PlayerInputReader _inputReader;

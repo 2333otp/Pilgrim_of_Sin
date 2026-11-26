@@ -241,6 +241,7 @@ namespace PilgrimOfSin.StateMachine
         private void OnGUI()
         {
             if (!Visible || _hitbox == null || string.IsNullOrEmpty(_status)) return;
+            if (PilgrimOfSin.OpeningGuidePanel.IsOpen) return; // 開場引導開著時不蓋在上面
             float s = Mathf.Clamp(Screen.height / 450f, 1f, 4f);
             if (_style == null || _style.fontSize != Mathf.RoundToInt(10f * s))
             {

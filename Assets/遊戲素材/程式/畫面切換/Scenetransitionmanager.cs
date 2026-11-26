@@ -15,6 +15,7 @@ namespace PilgrimOfSin
         public const string WRATH_SCENE = "WrathBossScene";
         public const string FOOLISH_SCENE = "FoolishBossScene";
         public const string CREDITS_SCENE = "CreditsScene";
+        public const string ENDING_CUTSCENE_SCENE = "EndingCutsceneScene"; // 全通關結尾動畫（播完接 CreditsScene）
 
         // ── 單例 ────────────────────────────────────────────────────────
         public static SceneTransitionManager Instance { get; private set; }
@@ -93,7 +94,8 @@ namespace PilgrimOfSin
                 return;
             }
 
-            if (scene.name == CUTSCENE_SCENE)
+            // 開頭／結尾動畫場景由 CutsceneManager 自己處理淡入淡出
+            if (scene.name == CUTSCENE_SCENE || scene.name == ENDING_CUTSCENE_SCENE)
             {
                 _isTransitioning = false;
                 return;

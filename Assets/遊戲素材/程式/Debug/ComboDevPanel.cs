@@ -92,7 +92,7 @@ namespace PilgrimOfSin.StateMachine
         // ── 手把圖 ─────────────────────────────────────────────────────
         private void UpdateGamepad()
         {
-            if (!Visible)
+            if (!Visible || PilgrimOfSin.OpeningGuidePanel.IsOpen) // 開場引導開著時也先收起來
             {
                 if (_gamepadCanvas && _gamepadCanvas.activeSelf) _gamepadCanvas.SetActive(false);
                 return;
@@ -198,7 +198,8 @@ namespace PilgrimOfSin.StateMachine
         private void OnGUI()
         {
             if (!Visible || Player == null) return;
-            _s = Mathf.Clamp(Screen.height / 450f, 1f, 4f);
+            if (PilgrimOfSin.OpeningGuidePanel.IsOpen) return; // 開場引導開著時不蓋在上面
+            _s =Mathf.Clamp(Screen.height / 450f, 1f, 4f);
             EnsureStyles();
             LoadTextures();
 
