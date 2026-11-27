@@ -29,11 +29,14 @@ Material:
     - _CameraFade: 4
     - _DepthSoftness: 2
     - _EdgePower: 2.5
+    - _GradientEnd: 0.75
+    - _GradientStart: 0.1
     - _Intensity: 0.18
     - _StreakAmount: 0.35
     - _StreakSpeed: 0.15
     - _TopFade: 0.08
     m_Colors:
-    - _Color: {r: 0.92, g: 0.88, b: 1, a: 1}
+    - _Color: {r: 1, g: 0.55, b: 0.85, a: 1}
+    - _ColorBottom: {r: 1, g: 0.9, b: 0.96, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
