@@ -1,13 +1,17 @@
 // 假體積光柱（Additive）：彩繪玻璃透進來的聖光
 // - 邊緣用 Fresnel 柔化，看不到網格邊
 // - 沿光柱長度做淡入淡出（uv.y：0=窗邊、1=地面）
+// - 沿長度顏色漸層：窗邊帶彩繪玻璃色（_Color）→ 往下散成白光（_ColorBottom）
 // - 與場景深度相交處柔化（需 URP Depth Texture，PC_RPAsset 已開）
 // - 鏡頭靠近/穿過光柱時自動淡出，避免整片畫面變亮
 Shader "PilgrimOfSin/LightBeam"
 {
     Properties
     {
-        [HDR] _Color ("Color", Color) = (0.8, 0.75, 1.0, 1)
+        [HDR] _Color ("Color (窗邊／上段)", Color) = (0.8, 0.75, 1.0, 1)
+        [HDR] _ColorBottom ("Color Bottom (地面／下段)", Color) = (0.8, 0.75, 1.0, 1)
+        _GradientStart ("Gradient Start (開始變色位置 0=窗邊)", Range(0, 1)) = 0.1
+        _GradientEnd ("Gradient End (變完位置 1=地面)", Range(0, 1)) = 0.7
         _Intensity ("Intensity", Range(0, 5)) = 0.35
         _EdgePower ("Edge Softness (Fresnel Power)", Range(0.5, 8)) = 2.5
         _TopFade ("Top Fade (窗邊淡入長度)", Range(0.001, 0.5)) = 0.08
@@ -39,6 +43,9 @@ Shader "PilgrimOfSin/LightBeam"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _Color;
+                half4 _ColorBottom;
+                half _GradientStart;
+                half _GradientEnd;
                 half _Intensity;
                 half _EdgePower;
                 half _TopFade;
@@ -104,7 +111,8 @@ Shader "PilgrimOfSin/LightBeam"
                 half camFade = saturate((fragEye - _ProjectionParams.y) / _CameraFade);
 
                 half a = edge * len * streakMul * depthFade * camFade * _Intensity;
-                half3 col = _Color.rgb * a;
+                half grad = smoothstep(_GradientStart, max(_GradientEnd, _GradientStart + 0.001), i.uv.y);
+                half3 col = lerp(_Color.rgb, _ColorBottom.rgb, grad) * a;
                 // Additive：霧中逐漸隱沒（往黑色混）
                 col = MixFogColor(col, half3(0, 0, 0), i.fogCoord);
                 return half4(col, 1);
